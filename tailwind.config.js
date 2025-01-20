@@ -9,7 +9,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        inter: ['Inter'],
+        'poppins-light': ['Poppins-Light', 'sans-serif'],
+        'poppins-regular': ['Poppins-Regular', 'sans-serif'],
+        'poppins-medium': ['Poppins-Medium', 'sans-serif'],
+        'poppins-semibold': ['Poppins-SemiBold', 'sans-serif'],
+        'poppins-bold': ['Poppins-Bold', 'sans-serif'],
+        lora: ['Lora-VariableFont_wght', 'serif'],
       },
       colors,
     },
