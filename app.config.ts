@@ -57,6 +57,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     [
       'expo-splash-screen',
+      // TODO: Update for iOS
       {
         backgroundColor: '#003161',
         image: './assets/splash-icon.png',
