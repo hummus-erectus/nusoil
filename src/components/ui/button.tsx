@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function */
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import type { PressableProps, View } from 'react-native';
 import { ActivityIndicator, Pressable, Text } from 'react-native';
@@ -14,9 +16,9 @@ const button = tv({
   variants: {
     variant: {
       default: {
-        container: 'bg-black dark:bg-white',
-        label: 'text-white dark:text-black',
-        indicator: 'text-white dark:text-black',
+        container: 'flex-row items-center justify-center',
+        label: 'font-poppins-medium text-[14px] leading-[21px] text-white',
+        indicator: 'text-white',
       },
       secondary: {
         container: 'bg-primary-600',
@@ -42,6 +44,11 @@ const button = tv({
         container: 'bg-transparent',
         label: 'text-black',
         indicator: 'text-black',
+      },
+      legacy: {
+        container: 'bg-black dark:bg-white',
+        label: 'text-white dark:text-black',
+        indicator: 'text-white dark:text-black',
       },
     },
     size: {
@@ -112,34 +119,61 @@ export const Button = React.forwardRef<View, Props>(
       [variant, disabled, size]
     );
 
+    const content = (
+      <>
+        {loading && (
+          <ActivityIndicator
+            className={styles.indicator()}
+            testID={testID ? `${testID}-loading` : undefined}
+          />
+        )}
+        {text && !loading && (
+          <Text
+            className={styles.label({ className: textClassName })}
+            testID={testID ? `${testID}-text` : undefined}
+          >
+            {text}
+          </Text>
+        )}
+      </>
+    );
+
+    if (variant === 'default') {
+      return (
+        <Pressable
+          ref={ref}
+          disabled={disabled || loading}
+          testID={testID}
+          {...props}
+        >
+          <LinearGradient
+            colors={['#003161', '#335A81']}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            className={styles.container({ className })}
+            style={{
+              borderRadius: 30,
+              paddingHorizontal: 40,
+              paddingVertical: 16,
+              height: 53,
+              minWidth: 154.5,
+            }}
+          >
+            {content}
+          </LinearGradient>
+        </Pressable>
+      );
+    }
+
     return (
       <Pressable
+        ref={ref}
         disabled={disabled || loading}
         className={styles.container({ className })}
-        {...props}
-        ref={ref}
         testID={testID}
+        {...props}
       >
-        {props.children ? (
-          props.children
-        ) : (
-          <>
-            {loading ? (
-              <ActivityIndicator
-                size="small"
-                className={styles.indicator()}
-                testID={testID ? `${testID}-activity-indicator` : undefined}
-              />
-            ) : (
-              <Text
-                testID={testID ? `${testID}-label` : undefined}
-                className={styles.label({ className: textClassName })}
-              >
-                {text}
-              </Text>
-            )}
-          </>
-        )}
+        {content}
       </Pressable>
     );
   }
