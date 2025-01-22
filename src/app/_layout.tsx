@@ -47,8 +47,11 @@ function Providers({ children }: { children: React.ReactNode }) {
   const theme = useThemeConfig();
   return (
     <GestureHandlerRootView
-      style={styles.container}
-      className={theme.dark ? `dark` : undefined}
+      style={[
+        styles.container,
+        { backgroundColor: theme.dark ? '#000' : '#fff', margin: 0 },
+      ]}
+      className={`bg-neutral-100 ${theme.dark ? 'dark' : ''}`}
     >
       <KeyboardProvider>
         <ThemeProvider value={theme}>

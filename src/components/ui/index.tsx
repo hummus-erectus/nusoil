@@ -10,6 +10,7 @@ export * from './input';
 export * from './list';
 export * from './modal';
 export * from './progress-bar';
+export * from './safe-area-view';
 export * from './select';
 export * from './text';
 export * from './utils';
@@ -22,7 +23,6 @@ export {
   TouchableOpacity,
   View,
 } from 'react-native';
-export { SafeAreaView } from 'react-native-safe-area-context';
 
 //Apply cssInterop to Svg to resolve className string into style
 cssInterop(Svg, {
