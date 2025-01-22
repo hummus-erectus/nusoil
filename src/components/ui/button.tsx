@@ -16,8 +16,9 @@ const button = tv({
   variants: {
     variant: {
       default: {
-        container: 'flex-row items-center justify-center',
-        label: 'font-poppins-medium text-[14px] leading-[21px] text-white',
+        container:
+          'h-[53px] min-w-[189px] flex-row items-center justify-center gap-2',
+        label: 'font-poppins-bold text-[14px] leading-[21px] text-white',
         indicator: 'text-white',
       },
       secondary: {
@@ -53,15 +54,15 @@ const button = tv({
     },
     size: {
       default: {
-        container: 'h-10 px-4',
+        container: '',
         label: 'text-base',
       },
       lg: {
-        container: 'h-12 px-8',
+        container: '',
         label: 'text-xl',
       },
       sm: {
-        container: 'h-8 px-3',
+        container: '',
         label: 'text-sm',
         indicator: 'h-2',
       },
@@ -69,9 +70,9 @@ const button = tv({
     },
     disabled: {
       true: {
-        container: 'bg-neutral-300 dark:bg-neutral-300',
-        label: 'text-neutral-600 dark:text-neutral-600',
-        indicator: 'text-neutral-400 dark:text-neutral-400',
+        container: 'opacity-30',
+        label: '',
+        indicator: '',
       },
     },
     fullWidth: {
@@ -155,8 +156,6 @@ export const Button = React.forwardRef<View, Props>(
               borderRadius: 30,
               paddingHorizontal: 40,
               paddingVertical: 16,
-              height: 53,
-              minWidth: 154.5,
             }}
           >
             {content}
