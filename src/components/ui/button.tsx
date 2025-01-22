@@ -9,7 +9,7 @@ import { tv } from 'tailwind-variants';
 const button = tv({
   slots: {
     container: 'my-2 flex flex-row items-center justify-center rounded-md px-4',
-    label: 'font-poppins-regular text-[14px] font-semibold leading-[21px]',
+    label: 'font-poppins-medium text-[14px] leading-[21px]',
     indicator: 'h-6',
   },
 
@@ -38,13 +38,13 @@ const button = tv({
       },
       ghost: {
         container: 'bg-transparent',
-        label: 'text-black underline dark:text-white',
-        indicator: 'text-black dark:text-white',
+        label: 'font-poppins-regular text-neutral-600 dark:text-white',
+        indicator: 'font-poppins-regular text-neutral-600 dark:text-white',
       },
       link: {
         container: 'bg-transparent',
-        label: 'text-black',
-        indicator: 'text-black',
+        label: 'font-poppins-regular text-primary underline dark:text-white',
+        indicator: 'font-poppins-regular text-primary dark:text-white',
       },
       legacy: {
         container: 'bg-black dark:bg-white',
