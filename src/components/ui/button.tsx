@@ -33,12 +33,12 @@ const button = tv({
         indicator: 'text-white',
       },
       destructive: {
-        container: 'bg-danger',
+        container: 'h-[53px] min-w-[189px] gap-2 bg-danger',
         label: 'text-white',
         indicator: 'text-white',
       },
       ghost: {
-        container: 'bg-transparent',
+        container: 'h-[53px] min-w-[189px] gap-2 bg-transparent',
         label: 'text-neutral-600 dark:text-white',
         indicator: 'text-neutral-600 dark:text-white',
       },
@@ -47,38 +47,15 @@ const button = tv({
         label: 'font-poppins-regular text-primary dark:text-white',
         indicator: 'font-poppins-regular text-primary dark:text-white',
       },
-      legacy: {
-        container: 'bg-black dark:bg-white',
-        label: 'text-white dark:text-black',
-        indicator: 'text-white dark:text-black',
-      },
     },
     underline: {
       true: {
         label: 'underline',
       },
     },
-    size: {
-      default: {
-        container: '',
-        label: 'text-base',
-      },
-      lg: {
-        container: '',
-        label: 'text-xl',
-      },
-      sm: {
-        container: '',
-        label: 'text-sm',
-        indicator: 'h-2',
-      },
-      icon: { container: 'size-9' },
-    },
     disabled: {
       true: {
         container: 'opacity-30',
-        label: '',
-        indicator: '',
       },
     },
     fullWidth: {
@@ -94,7 +71,6 @@ const button = tv({
     variant: 'default',
     disabled: false,
     fullWidth: true,
-    size: 'default',
     underline: false,
   },
 });
@@ -114,7 +90,6 @@ export const Button = React.forwardRef<View, Props>(
       loading = false,
       variant = 'default',
       disabled = false,
-      size = 'default',
       underline = false,
       className = '',
       testID,
@@ -124,8 +99,8 @@ export const Button = React.forwardRef<View, Props>(
     ref
   ) => {
     const styles = React.useMemo(
-      () => button({ variant, disabled, size, underline }),
-      [variant, disabled, size, underline]
+      () => button({ variant, disabled, underline }),
+      [variant, disabled, underline]
     );
 
     const content = (
