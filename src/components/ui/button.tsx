@@ -9,22 +9,22 @@ import { tv } from 'tailwind-variants';
 const button = tv({
   slots: {
     container: 'my-2 flex flex-row items-center justify-center rounded-md px-4',
-    label: 'font-poppins-regular text-base font-semibold',
-    indicator: 'h-6 text-white',
+    label: 'font-poppins-regular text-[14px] font-semibold leading-[21px]',
+    indicator: 'h-6',
   },
 
   variants: {
     variant: {
       default: {
-        container:
-          'h-[53px] min-w-[189px] flex-row items-center justify-center gap-2',
-        label: 'font-poppins-bold text-[14px] leading-[21px] text-white',
+        container: 'h-[53px] min-w-[189px] gap-2',
+        label: 'text-white',
         indicator: 'text-white',
       },
       secondary: {
-        container: 'bg-primary-600',
-        label: 'text-secondary-600',
-        indicator: 'text-white',
+        container:
+          'h-[53px] min-w-[189px] gap-2 border border-primary bg-transparent',
+        label: 'text-primary',
+        indicator: 'text-primary',
       },
       outline: {
         container: 'border border-neutral-400',
@@ -170,6 +170,11 @@ export const Button = React.forwardRef<View, Props>(
         disabled={disabled || loading}
         className={styles.container({ className })}
         testID={testID}
+        style={{
+          borderRadius: 30,
+          paddingHorizontal: 40,
+          paddingVertical: 16,
+        }}
         {...props}
       >
         {content}
