@@ -39,6 +39,7 @@ export const Buttons = () => {
         <Button label="Destructive Button" variant="destructive" />
         <Button label="Ghost Button" variant="ghost" />
         <Button label="Link Button" variant="link" />
+        <Button label="Link Button (Underlined)" variant="link" underline />
         <Button label="Button" loading={true} />
         <Button label="Button" loading={true} variant="outline" />
         <Button label="Default Button Disabled" disabled />

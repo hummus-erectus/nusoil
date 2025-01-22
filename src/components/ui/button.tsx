@@ -32,24 +32,29 @@ const button = tv({
         indicator: 'text-black dark:text-neutral-100',
       },
       destructive: {
-        container: 'bg-red-600',
+        container: 'bg-danger',
         label: 'text-white',
         indicator: 'text-white',
       },
       ghost: {
         container: 'bg-transparent',
-        label: 'font-poppins-regular text-neutral-600 dark:text-white',
-        indicator: 'font-poppins-regular text-neutral-600 dark:text-white',
+        label: 'text-neutral-600 dark:text-white',
+        indicator: 'text-neutral-600 dark:text-white',
       },
       link: {
         container: 'bg-transparent',
-        label: 'font-poppins-regular text-primary underline dark:text-white',
+        label: 'font-poppins-regular text-primary dark:text-white',
         indicator: 'font-poppins-regular text-primary dark:text-white',
       },
       legacy: {
         container: 'bg-black dark:bg-white',
         label: 'text-white dark:text-black',
         indicator: 'text-white dark:text-black',
+      },
+    },
+    underline: {
+      true: {
+        label: 'underline',
       },
     },
     size: {
@@ -89,6 +94,7 @@ const button = tv({
     disabled: false,
     fullWidth: true,
     size: 'default',
+    underline: false,
   },
 });
 
@@ -108,6 +114,7 @@ export const Button = React.forwardRef<View, Props>(
       variant = 'default',
       disabled = false,
       size = 'default',
+      underline = false,
       className = '',
       testID,
       textClassName = '',
@@ -116,8 +123,8 @@ export const Button = React.forwardRef<View, Props>(
     ref
   ) => {
     const styles = React.useMemo(
-      () => button({ variant, disabled, size }),
-      [variant, disabled, size]
+      () => button({ variant, disabled, size, underline }),
+      [variant, disabled, size, underline]
     );
 
     const content = (
