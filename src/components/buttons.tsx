@@ -35,13 +35,17 @@ export const Buttons = () => {
         </View> */}
         <Button label="Default Button" />
         <Button label="Secondary Button" variant="secondary" />
-        <Button label="Outline Button" variant="outline" />
+        <View className="rounded-md bg-primary p-2">
+          <Button label="Outline Button" variant="outline" />
+        </View>
         <Button label="Destructive Button" variant="destructive" />
         <Button label="Ghost Button" variant="ghost" />
         <Button label="Link Button" variant="link" />
         <Button label="Link Button (Underlined)" variant="link" underline />
         <Button label="Button" loading={true} />
-        <Button label="Button" loading={true} variant="outline" />
+        <View className="rounded-md bg-primary p-2">
+          <Button label="Button" loading={true} variant="outline" />
+        </View>
         <Button label="Default Button Disabled" disabled />
         <Button
           label="Secondary Button Disabled"
