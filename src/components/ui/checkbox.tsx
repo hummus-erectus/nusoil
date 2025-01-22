@@ -143,7 +143,7 @@ export const Checkbox = Object.assign(CheckboxBase, {
 });
 
 export const RadioIcon = ({ checked = false }: IconProps) => {
-  const color = checked ? colors.primary : colors.neutral[400];
+  const color = checked ? colors.neutral[600] : colors.neutral[300];
   return (
     <MotiView
       style={{
@@ -151,7 +151,7 @@ export const RadioIcon = ({ checked = false }: IconProps) => {
         width: SIZE,
         borderColor: color,
       }}
-      className="items-center justify-center rounded-[20px] border-2 bg-transparent"
+      className="items-center justify-center rounded-[20px] border bg-transparent"
       from={{ borderColor: '#CCCFD6' }}
       animate={{
         borderColor: color,
@@ -159,7 +159,7 @@ export const RadioIcon = ({ checked = false }: IconProps) => {
       transition={{ borderColor: { duration: 100, type: 'timing' } }}
     >
       <MotiView
-        className={`size-[10px] rounded-[10px] ${checked && 'bg-primary-300'} `}
+        className={`size-[9px] rounded-[9px] ${checked && 'bg-neutral-600'} `}
         from={{ opacity: 0 }}
         animate={{ opacity: checked ? 1 : 0 }}
         transition={{ opacity: { duration: 50, type: 'timing' } }}
