@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function */
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import type { PressableProps, View } from 'react-native';
 import { ActivityIndicator, Pressable, Text } from 'react-native';
@@ -7,64 +9,53 @@ import { tv } from 'tailwind-variants';
 const button = tv({
   slots: {
     container: 'my-2 flex flex-row items-center justify-center rounded-md px-4',
-    label: 'font-inter text-base font-semibold',
-    indicator: 'h-6 text-white',
+    label: 'font-poppins-medium text-[14px] leading-[21px]',
+    indicator: 'h-6',
   },
 
   variants: {
     variant: {
       default: {
-        container: 'bg-black dark:bg-white',
-        label: 'text-white dark:text-black',
-        indicator: 'text-white dark:text-black',
-      },
-      secondary: {
-        container: 'bg-primary-600',
-        label: 'text-secondary-600',
+        container: 'h-[53px] min-w-[189px] gap-2',
+        label: 'text-white',
         indicator: 'text-white',
       },
+      secondary: {
+        container:
+          'h-[53px] min-w-[189px] gap-2 border border-primary bg-transparent',
+        label: 'text-primary',
+        indicator: 'text-primary',
+      },
       outline: {
-        container: 'border border-neutral-400',
-        label: 'text-black dark:text-neutral-100',
-        indicator: 'text-black dark:text-neutral-100',
+        container:
+          'h-[53px] min-w-[189px] gap-2 border border-white bg-transparent',
+        label: 'text-white',
+        indicator: 'text-white',
       },
       destructive: {
-        container: 'bg-red-600',
+        container: 'h-[53px] min-w-[189px] gap-2 bg-danger',
         label: 'text-white',
         indicator: 'text-white',
       },
       ghost: {
-        container: 'bg-transparent',
-        label: 'text-black underline dark:text-white',
-        indicator: 'text-black dark:text-white',
+        container: 'h-[53px] min-w-[189px] gap-2 bg-transparent',
+        label: 'text-neutral-600 dark:text-white',
+        indicator: 'text-neutral-600 dark:text-white',
       },
       link: {
         container: 'bg-transparent',
-        label: 'text-black',
-        indicator: 'text-black',
+        label: 'font-poppins-regular text-primary dark:text-white',
+        indicator: 'font-poppins-regular text-primary dark:text-white',
       },
     },
-    size: {
-      default: {
-        container: 'h-10 px-4',
-        label: 'text-base',
+    underline: {
+      true: {
+        label: 'underline',
       },
-      lg: {
-        container: 'h-12 px-8',
-        label: 'text-xl',
-      },
-      sm: {
-        container: 'h-8 px-3',
-        label: 'text-sm',
-        indicator: 'h-2',
-      },
-      icon: { container: 'size-9' },
     },
     disabled: {
       true: {
-        container: 'bg-neutral-300 dark:bg-neutral-300',
-        label: 'text-neutral-600 dark:text-neutral-600',
-        indicator: 'text-neutral-400 dark:text-neutral-400',
+        container: 'opacity-30',
       },
     },
     fullWidth: {
@@ -80,7 +71,7 @@ const button = tv({
     variant: 'default',
     disabled: false,
     fullWidth: true,
-    size: 'default',
+    underline: false,
   },
 });
 
@@ -99,7 +90,7 @@ export const Button = React.forwardRef<View, Props>(
       loading = false,
       variant = 'default',
       disabled = false,
-      size = 'default',
+      underline = false,
       className = '',
       testID,
       textClassName = '',
@@ -108,38 +99,68 @@ export const Button = React.forwardRef<View, Props>(
     ref
   ) => {
     const styles = React.useMemo(
-      () => button({ variant, disabled, size }),
-      [variant, disabled, size]
+      () => button({ variant, disabled, underline }),
+      [variant, disabled, underline]
     );
+
+    const content = (
+      <>
+        {loading && (
+          <ActivityIndicator
+            className={styles.indicator()}
+            testID={testID ? `${testID}-loading` : undefined}
+          />
+        )}
+        {text && !loading && (
+          <Text
+            className={styles.label({ className: textClassName })}
+            testID={testID ? `${testID}-text` : undefined}
+          >
+            {text}
+          </Text>
+        )}
+      </>
+    );
+
+    if (variant === 'default') {
+      return (
+        <Pressable
+          ref={ref}
+          disabled={disabled || loading}
+          testID={testID}
+          {...props}
+        >
+          <LinearGradient
+            colors={['#003161', '#335A81']}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            className={styles.container({ className })}
+            style={{
+              borderRadius: 30,
+              paddingHorizontal: 40,
+              paddingVertical: 16,
+            }}
+          >
+            {content}
+          </LinearGradient>
+        </Pressable>
+      );
+    }
 
     return (
       <Pressable
+        ref={ref}
         disabled={disabled || loading}
         className={styles.container({ className })}
-        {...props}
-        ref={ref}
         testID={testID}
+        style={{
+          borderRadius: 30,
+          paddingHorizontal: 40,
+          paddingVertical: 16,
+        }}
+        {...props}
       >
-        {props.children ? (
-          props.children
-        ) : (
-          <>
-            {loading ? (
-              <ActivityIndicator
-                size="small"
-                className={styles.indicator()}
-                testID={testID ? `${testID}-activity-indicator` : undefined}
-              />
-            ) : (
-              <Text
-                testID={testID ? `${testID}-label` : undefined}
-                className={styles.label({ className: textClassName })}
-              >
-                {text}
-              </Text>
-            )}
-          </>
-        )}
+        {content}
       </Pressable>
     );
   }

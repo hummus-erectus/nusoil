@@ -46,7 +46,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
-      backgroundColor: '#2E3C4B',
+      backgroundColor: '#003161',
     },
     package: Env.PACKAGE,
   },
@@ -57,8 +57,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     [
       'expo-splash-screen',
+      // TODO: Update for iOS
       {
-        backgroundColor: '#2E3C4B',
+        backgroundColor: '#003161',
         image: './assets/splash-icon.png',
         imageWidth: 150,
       },
@@ -66,7 +67,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-font',
       {
-        fonts: ['./assets/fonts/Inter.ttf'],
+        fonts: [
+          './assets/fonts/Poppins-Light.ttf',
+          './assets/fonts/Poppins-Regular.ttf',
+          './assets/fonts/Poppins-Medium.ttf',
+          './assets/fonts/Poppins-SemiBold.ttf',
+          './assets/fonts/Poppins-Bold.ttf',
+          './assets/fonts/Lora-VariableFont_wght.ttf',
+        ],
       },
     ],
     'expo-localization',
