@@ -22,7 +22,7 @@ const selectTv = tv({
     inputValue:
       'font-poppins-semibold text-base text-neutral-700 dark:text-neutral-100',
     dropdown:
-      'absolute inset-x-0 top-full z-50 mt-1 overflow-hidden rounded-3xl bg-white shadow-lg dark:bg-neutral-800',
+      'absolute inset-x-0 top-full z-[100] mt-1 overflow-hidden rounded-3xl bg-white dark:bg-neutral-800',
     option:
       'flex-row items-center justify-between border-b border-neutral-100 px-6 py-3 dark:border-neutral-700',
     optionText:
@@ -99,7 +99,7 @@ export const Options = React.forwardRef<
   return (
     <View
       ref={ref}
-      className="overflow-hidden rounded-3xl bg-white shadow-lg dark:bg-neutral-800"
+      className="overflow-hidden rounded-3xl bg-white dark:bg-neutral-800"
     >
       {options.map((option) => (
         <Option
