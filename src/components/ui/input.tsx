@@ -19,19 +19,19 @@ const inputTv = tv({
     container: 'mb-4',
     label: 'mb-2 text-sm text-neutral-600 dark:text-neutral-100',
     input:
-      'w-full border-b border-neutral-300 bg-transparent px-0 py-3 font-poppins-regular text-sm font-medium leading-normal placeholder:text-neutral-400 focus:outline-none dark:border-neutral-600 dark:text-white dark:placeholder:text-neutral-500',
+      'w-full border-b-2 border-neutral-300/50 bg-transparent px-0 py-3 font-poppins-regular text-sm font-medium leading-normal placeholder:text-neutral-400 focus:outline-none dark:border-neutral-600/50 dark:text-white dark:placeholder:text-neutral-500',
   },
 
   variants: {
     focused: {
       true: {
-        input: 'border-b-2 border-neutral-800 dark:border-neutral-300',
+        input: 'border-neutral-700 dark:border-neutral-300',
       },
     },
     error: {
       true: {
-        input: 'border-danger',
-        label: 'dark:text-danger-600 text-danger',
+        input: 'border-b-2 border-danger/50',
+        label: 'text-danger dark:text-danger',
       },
     },
     disabled: {
@@ -40,6 +40,15 @@ const inputTv = tv({
       },
     },
   },
+  compoundVariants: [
+    {
+      error: true,
+      focused: true,
+      class: {
+        input: 'border-danger',
+      },
+    },
+  ],
   defaultVariants: {
     focused: false,
     error: false,
