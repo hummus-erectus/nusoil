@@ -16,30 +16,39 @@ import { Text } from './text';
 
 const inputTv = tv({
   slots: {
-    container: 'mb-2',
-    label: 'text-grey-100 mb-1 text-lg dark:text-neutral-100',
+    container: 'mb-4',
+    label: 'mb-2 text-sm text-neutral-600 dark:text-neutral-100',
     input:
-      'mt-0 rounded-xl border-[0.5px] border-neutral-300 bg-neutral-100 px-4 py-3 font-inter text-base  font-medium leading-5 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white',
+      'w-full border-b-2 border-neutral-300/50 bg-transparent px-0 py-3 font-poppins-regular text-sm font-medium leading-normal placeholder:text-neutral-400 focus:outline-none dark:border-neutral-600/50 dark:text-white dark:placeholder:text-neutral-500',
   },
 
   variants: {
     focused: {
       true: {
-        input: 'border-neutral-400 dark:border-neutral-300',
+        input: 'border-neutral-700 dark:border-neutral-300',
       },
     },
     error: {
       true: {
-        input: 'border-danger-600',
-        label: 'text-danger-600 dark:text-danger-600',
+        input: 'border-b-2 border-danger/50',
+        label: 'text-danger dark:text-danger',
       },
     },
     disabled: {
       true: {
-        input: 'bg-neutral-200',
+        input: 'opacity-50',
       },
     },
   },
+  compoundVariants: [
+    {
+      error: true,
+      focused: true,
+      class: {
+        input: 'border-danger',
+      },
+    },
+  ],
   defaultVariants: {
     focused: false,
     error: false,
@@ -114,7 +123,7 @@ export const Input = React.forwardRef<NTextInput, NInputProps>((props, ref) => {
       {error && (
         <Text
           testID={testID ? `${testID}-error` : undefined}
-          className="text-sm text-danger-400 dark:text-danger-600"
+          className="text-sm text-danger dark:text-danger"
         >
           {error}
         </Text>

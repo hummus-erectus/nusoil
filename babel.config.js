@@ -9,22 +9,10 @@ module.exports = function (api) {
       [
         'module-resolver',
         {
-          root: ['./'],
+          root: ['./src'],
           alias: {
             '@': './src',
-            '@env': './src/lib/env.js',
           },
-          extensions: [
-            '.ios.ts',
-            '.android.ts',
-            '.ts',
-            '.ios.tsx',
-            '.android.tsx',
-            '.tsx',
-            '.jsx',
-            '.js',
-            '.json',
-          ],
         },
       ],
       'react-native-reanimated/plugin',

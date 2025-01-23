@@ -1,34 +1,34 @@
 /* eslint-disable max-lines-per-function */
-import {
-  BottomSheetFlatList,
-  type BottomSheetModal,
-} from '@gorhom/bottom-sheet';
-import { FlashList } from '@shopify/flash-list';
-import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import type { FieldValues } from 'react-hook-form';
 import { useController } from 'react-hook-form';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { Pressable, type PressableProps } from 'react-native';
 import type { SvgProps } from 'react-native-svg';
 import Svg, { Path } from 'react-native-svg';
 import { tv } from 'tailwind-variants';
 
-import colors from '@/components/ui/colors';
 import { CaretDown } from '@/components/ui/icons';
 
 import type { InputControllerType } from './input';
-import { useModal } from './modal';
-import { Modal } from './modal';
 import { Text } from './text';
 
 const selectTv = tv({
   slots: {
-    container: 'mb-4',
-    label: 'text-grey-100 mb-1 text-lg dark:text-neutral-100',
+    container: 'relative mb-4',
+    label: 'mb-4 text-sm text-neutral-500 dark:text-neutral-100',
     input:
-      'border-grey-50 mt-0 flex-row items-center justify-center rounded-xl border-[0.5px] p-3  dark:border-neutral-500 dark:bg-neutral-800',
-    inputValue: 'dark:text-neutral-100',
+      'mt-0 flex-row items-center justify-between rounded-full bg-neutral-200 px-6 py-3 dark:bg-neutral-800',
+    inputValue:
+      'font-poppins-semibold text-base text-neutral-700 dark:text-neutral-100',
+    dropdown:
+      'absolute inset-x-0 top-full z-[100] mt-1 overflow-hidden rounded-3xl bg-white dark:bg-neutral-800',
+    option:
+      'flex-row items-center justify-between border-b border-neutral-100 px-6 py-3 dark:border-neutral-700',
+    optionText:
+      'font-poppins-regular text-base text-neutral-700 dark:text-neutral-100',
+    optionTextSelected:
+      'font-poppins-semibold text-base text-neutral-700 dark:text-neutral-100',
   },
 
   variants: {
@@ -39,14 +39,14 @@ const selectTv = tv({
     },
     error: {
       true: {
-        input: 'border-danger-600',
-        label: 'text-danger-600 dark:text-danger-600',
-        inputValue: 'text-danger-600',
+        input: 'border-danger',
+        label: 'text-danger dark:text-danger',
+        inputValue: 'text-danger',
       },
     },
     disabled: {
       true: {
-        input: 'bg-neutral-200',
+        input: 'opacity-50',
       },
     },
   },
@@ -56,61 +56,7 @@ const selectTv = tv({
   },
 });
 
-const List = Platform.OS === 'web' ? FlashList : BottomSheetFlatList;
-
 export type OptionType = { label: string; value: string | number };
-
-type OptionsProps = {
-  options: OptionType[];
-  onSelect: (option: OptionType) => void;
-  value?: string | number;
-  testID?: string;
-};
-
-function keyExtractor(item: OptionType) {
-  return `select-item-${item.value}`;
-}
-
-export const Options = React.forwardRef<BottomSheetModal, OptionsProps>(
-  ({ options, onSelect, value, testID }, ref) => {
-    const height = options.length * 70 + 100;
-    const snapPoints = React.useMemo(() => [height], [height]);
-    const { colorScheme } = useColorScheme();
-    const isDark = colorScheme === 'dark';
-
-    const renderSelectItem = React.useCallback(
-      ({ item }: { item: OptionType }) => (
-        <Option
-          key={`select-item-${item.value}`}
-          label={item.label}
-          selected={value === item.value}
-          onPress={() => onSelect(item)}
-          testID={testID ? `${testID}-item-${item.value}` : undefined}
-        />
-      ),
-      [onSelect, value, testID]
-    );
-
-    return (
-      <Modal
-        ref={ref}
-        index={0}
-        snapPoints={snapPoints}
-        backgroundStyle={{
-          backgroundColor: isDark ? colors.neutral[800] : colors.white,
-        }}
-      >
-        <List
-          data={options}
-          keyExtractor={keyExtractor}
-          renderItem={renderSelectItem}
-          testID={testID ? `${testID}-modal` : undefined}
-          estimatedItemSize={52}
-        />
-      </Modal>
-    );
-  }
-);
 
 const Option = React.memo(
   ({
@@ -121,17 +67,52 @@ const Option = React.memo(
     selected?: boolean;
     label: string;
   }) => {
+    const styles = selectTv();
     return (
       <Pressable
-        className="flex-row items-center border-b border-neutral-300 bg-white px-3 py-2 dark:border-neutral-700 dark:bg-neutral-800"
+        className="flex-row items-center justify-between border-b border-neutral-100 px-6 py-3 last:border-b-0 active:bg-neutral-100 dark:border-neutral-700 dark:active:bg-neutral-700"
         {...props}
       >
-        <Text className="flex-1 dark:text-neutral-100 ">{label}</Text>
+        <Text
+          className={
+            selected ? styles.optionTextSelected() : styles.optionText()
+          }
+        >
+          {label}
+        </Text>
         {selected && <Check />}
       </Pressable>
     );
   }
 );
+
+// Legacy Options component for backwards compatibility
+export const Options = React.forwardRef<
+  any,
+  {
+    options: OptionType[];
+    onSelect: (option: OptionType) => void;
+    value?: string | number;
+    testID?: string;
+  }
+>(({ options, onSelect, value, testID }, ref) => {
+  return (
+    <View
+      ref={ref}
+      className="overflow-hidden rounded-3xl bg-white dark:bg-neutral-800"
+    >
+      {options.map((option) => (
+        <Option
+          key={option.value}
+          label={option.label}
+          selected={value === option.value}
+          onPress={() => onSelect(option)}
+          testID={testID ? `${testID}-item-${option.value}` : undefined}
+        />
+      ))}
+    </View>
+  );
+});
 
 export interface SelectProps {
   value?: string | number;
@@ -143,6 +124,7 @@ export interface SelectProps {
   placeholder?: string;
   testID?: string;
 }
+
 interface ControlledSelectProps<T extends FieldValues>
   extends SelectProps,
     InputControllerType<T> {}
@@ -158,14 +140,15 @@ export const Select = (props: SelectProps) => {
     onSelect,
     testID,
   } = props;
-  const modal = useModal();
+
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const onSelectOption = React.useCallback(
     (option: OptionType) => {
       onSelect?.(option.value);
-      modal.dismiss();
+      setIsOpen(false);
     },
-    [modal, onSelect]
+    [onSelect]
   );
 
   const styles = React.useMemo(
@@ -186,84 +169,84 @@ export const Select = (props: SelectProps) => {
   );
 
   return (
-    <>
-      <View className={styles.container()}>
-        {label && (
-          <Text
-            testID={testID ? `${testID}-label` : undefined}
-            className={styles.label()}
-          >
-            {label}
-          </Text>
-        )}
-        <Pressable
-          className={styles.input()}
-          disabled={disabled}
-          onPress={modal.present}
-          testID={testID ? `${testID}-trigger` : undefined}
+    <View className={styles.container()}>
+      {label && (
+        <Text
+          testID={testID ? `${testID}-label` : undefined}
+          className={styles.label()}
         >
-          <View className="flex-1">
-            <Text className={styles.inputValue()}>{textValue}</Text>
-          </View>
-          <CaretDown />
-        </Pressable>
-        {error && (
-          <Text
-            testID={`${testID}-error`}
-            className="text-sm text-danger-300 dark:text-danger-600"
-          >
-            {error}
-          </Text>
-        )}
-      </View>
-      <Options
+          {label}
+        </Text>
+      )}
+      <Pressable
+        className={styles.input()}
+        disabled={disabled}
+        onPress={() => setIsOpen(!isOpen)}
         testID={testID}
-        ref={modal.ref}
-        options={options}
-        onSelect={onSelectOption}
-      />
-    </>
+      >
+        <Text className={styles.inputValue()}>{textValue}</Text>
+        <View className="size-4 items-center justify-center">
+          <CaretDown
+            width={16}
+            height={16}
+            style={{
+              transform: [{ rotateX: isOpen ? '180deg' : '0deg' }],
+              transformOrigin: 'center',
+            }}
+            className="text-neutral-700 dark:text-neutral-300"
+          />
+        </View>
+      </Pressable>
+      {isOpen && (
+        <View className={styles.dropdown()}>
+          {options.map((option) => (
+            <Option
+              key={option.value}
+              label={option.label}
+              selected={value === option.value}
+              onPress={() => onSelectOption(option)}
+              testID={testID ? `${testID}-item-${option.value}` : undefined}
+            />
+          ))}
+        </View>
+      )}
+      {error && (
+        <Text
+          testID={testID ? `${testID}-error` : undefined}
+          className="text-sm text-danger dark:text-danger"
+        >
+          {error}
+        </Text>
+      )}
+    </View>
   );
 };
 
-// only used with react-hook-form
 export function ControlledSelect<T extends FieldValues>(
   props: ControlledSelectProps<T>
 ) {
-  const { name, control, rules, onSelect: onNSelect, ...selectProps } = props;
+  const { name, control, rules, ...selectProps } = props;
 
   const { field, fieldState } = useController({ control, name, rules });
-  const onSelect = React.useCallback(
-    (value: string | number) => {
-      field.onChange(value);
-      onNSelect?.(value);
-    },
-    [field, onNSelect]
-  );
   return (
     <Select
-      onSelect={onSelect}
       value={field.value}
-      error={fieldState.error?.message}
+      onSelect={field.onChange}
       {...selectProps}
+      error={fieldState.error?.message}
     />
   );
 }
 
-const Check = ({ ...props }: SvgProps) => (
-  <Svg
-    width={25}
-    height={24}
-    fill="none"
-    viewBox="0 0 25 24"
-    {...props}
-    className="stroke-black dark:stroke-white"
-  >
-    <Path
-      d="m20.256 6.75-10.5 10.5L4.506 12"
-      strokeWidth={2.438}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </Svg>
-);
+function Check({ ...props }: SvgProps) {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 20 20" fill="none" {...props}>
+      <Path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M16.704 5.296a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L8 12.586l7.296-7.29a1 1 0 0 1 1.414 0Z"
+        fill="currentColor"
+      />
+    </Svg>
+  );
+}

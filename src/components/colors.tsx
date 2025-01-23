@@ -18,19 +18,25 @@ export const Colors = () => {
 };
 
 const Color = ({ name }: { name: ColorName }) => {
-  if (typeof colors[name] === 'string') return null;
+  if (typeof colors[name] === 'string') {
+    return (
+      <View className="pt-2">
+        <Text className="font-medium">{name.toUpperCase()}</Text>
+        <ColorCard
+          key={`${name}-single`}
+          value="Default"
+          color={colors[name] as string}
+        />
+      </View>
+    );
+  }
+
   return (
     <View className="pt-2">
       <Text className="font-medium">{name.toUpperCase()}</Text>
       <View className="flex-row flex-wrap content-between justify-around ">
         {Object.entries(colors[name]).map(([key, value]) => {
-          return (
-            <ColorCard
-              key={`${colors[name]}-${key}`}
-              value={key}
-              color={value}
-            />
-          );
+          return <ColorCard key={`${name}-${key}`} value={key} color={value} />;
         })}
       </View>
     </View>
