@@ -25,7 +25,7 @@ describe('Select component ', () => {
         testID="select"
       />
     );
-    expect(screen.getByTestId('select-trigger')).toBeOnTheScreen();
+    expect(screen.getByTestId('select')).toBeOnTheScreen();
     expect(screen.getByTestId('select-label')).toBeOnTheScreen();
   });
 
@@ -39,7 +39,7 @@ describe('Select component ', () => {
         testID="select"
       />
     );
-    expect(screen.getByTestId('select-trigger')).toBeOnTheScreen();
+    expect(screen.getByTestId('select')).toBeOnTheScreen();
     expect(screen.getByTestId('select-label')).toBeOnTheScreen();
     expect(screen.getByTestId('select-label')).toHaveTextContent('Select');
   });
@@ -55,7 +55,7 @@ describe('Select component ', () => {
         error="Please select an option"
       />
     );
-    expect(screen.getByTestId('select-trigger')).toBeOnTheScreen();
+    expect(screen.getByTestId('select')).toBeOnTheScreen();
     expect(screen.getByTestId('select-error')).toBeOnTheScreen();
     expect(screen.getByTestId('select-error')).toHaveTextContent(
       'Please select an option'
@@ -72,7 +72,7 @@ describe('Select component ', () => {
       />
     );
 
-    const selectTrigger = screen.getByTestId('select-trigger');
+    const selectTrigger = screen.getByTestId('select');
     await user.press(selectTrigger);
 
     expect(screen.getByTestId('select-item-chocolate')).toBeOnTheScreen();
@@ -82,20 +82,16 @@ describe('Select component ', () => {
 
   it('should call onSelect on selecting an option', async () => {
     const onSelect = jest.fn();
-
     const { user } = setup(
       <Select options={options} onSelect={onSelect} testID="select" />
     );
 
-    const selectTrigger = screen.getByTestId('select-trigger');
+    const selectTrigger = screen.getByTestId('select');
     await user.press(selectTrigger);
 
-    const optionModal = screen.getByTestId('select-modal');
-    await user.press(optionModal);
+    const optionItem = screen.getByTestId('select-item-chocolate');
+    await user.press(optionItem);
 
-    const optionItem1 = screen.getByTestId('select-item-chocolate');
-    await user.press(optionItem1);
-
-    expect(onSelect).toHaveBeenCalledWith(options[0].value);
+    expect(onSelect).toHaveBeenCalledWith('chocolate');
   });
 });

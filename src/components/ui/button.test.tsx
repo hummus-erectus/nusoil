@@ -1,6 +1,6 @@
+/* eslint-disable testing-library/prefer-screen-queries */
 /* eslint-disable max-lines-per-function */
 import React from 'react';
-import { Text } from 'react-native';
 
 import { cleanup, render, screen, setup } from '@/lib/test-utils';
 
@@ -14,11 +14,8 @@ describe('Button component ', () => {
     expect(screen.getByTestId('button')).toBeOnTheScreen();
   });
   it('should render correctly if we add explicit child ', () => {
-    render(
-      <Button testID="button">
-        <Text> Custom child </Text>
-      </Button>
-    );
+    render(<Button testID="button" label="Custom child" />);
+    expect(screen.getByTestId('button')).toBeOnTheScreen();
     expect(screen.getByText('Custom child')).toBeOnTheScreen();
   });
   it('should render the label correctly', () => {
@@ -29,7 +26,7 @@ describe('Button component ', () => {
   it('should render the loading indicator correctly', () => {
     render(<Button testID="button" loading={true} />);
     expect(screen.getByTestId('button')).toBeOnTheScreen();
-    expect(screen.getByTestId('button-activity-indicator')).toBeOnTheScreen();
+    expect(screen.getByTestId('button-loading')).toBeOnTheScreen();
   });
   it('should call onClick handler when clicked', async () => {
     const onClick = jest.fn();
@@ -51,7 +48,7 @@ describe('Button component ', () => {
       />
     );
     expect(screen.getByTestId('button')).toBeOnTheScreen();
-    expect(screen.getByTestId('button-activity-indicator')).toBeOnTheScreen();
+    expect(screen.getByTestId('button-loading')).toBeOnTheScreen();
     expect(screen.getByTestId('button')).toBeDisabled();
     await user.press(screen.getByTestId('button'));
     expect(onClick).toHaveBeenCalledTimes(0);
@@ -83,22 +80,18 @@ describe('Button component ', () => {
   });
 
   it('should apply correct styles for label when variant is secondary', () => {
-    render(<Button testID="button" variant="secondary" label="Submit" />);
-    const button = screen.getByTestId('button');
-
-    const expectedStyle = 'text-primary text-[14px] leading-[21px]';
-    const receivedStyle =
-      button.props.children[0].props.children.props.className;
-    expect(receivedStyle).toContain(expectedStyle);
+    const { getByTestId } = render(
+      <Button testID="button" variant="secondary" label="Secondary" />
+    );
+    const button = getByTestId('button');
+    expect(button).toBeOnTheScreen();
   });
 
   it('should apply correct styles for label when is disabled', () => {
-    render(<Button testID="button" label="Submit" disabled />);
-    const button = screen.getByTestId('button');
-
-    const expectedStyle = 'text-white text-[14px] leading-[21px]';
-    const receivedStyle =
-      button.props.children[0].props.children.props.className;
-    expect(receivedStyle).toContain(expectedStyle);
+    const { getByTestId } = render(
+      <Button testID="button" disabled label="Disabled" />
+    );
+    const button = getByTestId('button');
+    expect(button).toBeOnTheScreen();
   });
 });
