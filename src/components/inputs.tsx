@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { OptionType } from '@/components/ui';
-import { Input, Select, View } from '@/components/ui';
+import { FormCard, Input, Select, View } from '@/components/ui';
 import { Checkbox, Radio, Switch } from '@/components/ui';
 
 import { Title } from './title';
@@ -18,18 +18,23 @@ export const Inputs = () => {
     <>
       <Title text="Form" />
       <View>
-        <Input label="Default" placeholder="Lorem ipsum dolor sit amet" />
-        <Input label="Error" error="This is a message error" />
-        <Input label="Focused" />
-        <Select
-          label="Select"
-          options={options}
-          value={value}
-          onSelect={(option) => setValue(option)}
-        />
-        <CheckboxExample />
-        <RadioExample />
-        <SwitchExample />
+        <FormCard className="mb-4">
+          <Input label="Default" placeholder="Lorem ipsum dolor sit amet" />
+          <Input label="Error" error="This is a message error" />
+          <Input label="Focused" />
+          <Select
+            label="Select"
+            options={options}
+            value={value}
+            onSelect={(option) => setValue(option)}
+          />
+        </FormCard>
+
+        <FormCard>
+          <CheckboxExample />
+          <RadioExample />
+          <SwitchExample />
+        </FormCard>
       </View>
     </>
   );
