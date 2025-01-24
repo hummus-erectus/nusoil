@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { Redirect, SplashScreen, Tabs } from 'expo-router';
 import React, { useCallback, useEffect } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import colors from '@/components/ui/colors';
 import {
@@ -12,6 +12,27 @@ import {
   Profile as ProfileIcon,
 } from '@/components/ui/icons';
 import { useAuth, useIsFirstTime } from '@/lib';
+
+const styles = StyleSheet.create({
+  tabLabel: {
+    textAlign: 'center',
+    fontSize: 10,
+    lineHeight: 12,
+    fontFamily: 'Poppins-Medium',
+    flexWrap: 'wrap',
+  },
+});
+
+interface TabLabelProps {
+  color: string;
+  title: string;
+}
+
+const TabLabel: React.FC<TabLabelProps> = ({ color, title }) => (
+  <Text style={[styles.tabLabel, { color }]} numberOfLines={2}>
+    {title}
+  </Text>
+);
 
 export default function TabLayout() {
   const status = useAuth.use.status();
@@ -50,15 +71,7 @@ export default function TabLayout() {
           position: 'relative',
           height: '100%',
           paddingTop: 0,
-        },
-        tabBarLabelStyle: {
-          textAlign: 'center',
-          fontSize: 12,
-          lineHeight: 14,
-          height: 28,
-          flexWrap: 'wrap',
-          fontFamily: 'DMSans-Medium',
-          marginTop: 4,
+          flex: 1,
         },
         tabBarActiveTintColor: colors.primary[600],
         tabBarInactiveTintColor: 'white',
@@ -118,6 +131,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <HomeIcon color={color} />,
+          tabBarLabel: ({ color }) => <TabLabel color={color} title="Home" />,
           tabBarButtonTestID: 'home-tab',
         }}
       />
@@ -128,6 +142,9 @@ export default function TabLayout() {
           title: 'Nutrient\nManagement',
           headerShown: false,
           tabBarIcon: ({ color }) => <NutrientManagementIcon color={color} />,
+          tabBarLabel: ({ color }) => (
+            <TabLabel color={color} title={`Nutrient\nManagement`} />
+          ),
           tabBarButtonTestID: 'nutrient-management-tab',
         }}
       />
@@ -138,6 +155,9 @@ export default function TabLayout() {
           title: 'Nutrient\nPortfolio',
           headerShown: false,
           tabBarIcon: ({ color }) => <NutrientPortfolioIcon color={color} />,
+          tabBarLabel: ({ color }) => (
+            <TabLabel color={color} title={`Nutrient\nPortfolio`} />
+          ),
           tabBarButtonTestID: 'nutrient-portfolio-tab',
         }}
       />
@@ -148,6 +168,9 @@ export default function TabLayout() {
           title: 'Profile',
           headerShown: false,
           tabBarIcon: ({ color }) => <ProfileIcon color={color} />,
+          tabBarLabel: ({ color }) => (
+            <TabLabel color={color} title="Profile" />
+          ),
           tabBarButtonTestID: 'settings-tab',
         }}
       />
