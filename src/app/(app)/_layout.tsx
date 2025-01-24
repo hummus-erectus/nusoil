@@ -3,6 +3,7 @@
 import { Redirect, SplashScreen, Tabs } from 'expo-router';
 import React, { useCallback, useEffect } from 'react';
 
+import colors from '@/components/ui/colors';
 import {
   Feed as FeedIcon,
   Settings as SettingsIcon,
@@ -33,12 +34,27 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarStyle: {
+          backgroundColor: colors.primary,
+          borderTopWidth: 0,
+          height: 110,
+          paddingBottom: 8,
+        },
+        tabBarItemStyle: {
+          borderRadius: 20,
+          marginHorizontal: 4,
+        },
         tabBarLabelStyle: {
           textAlign: 'center',
           fontSize: 10,
-          lineHeight: 14,
+          lineHeight: 11,
+          height: 22,
           flexWrap: 'wrap',
         },
+        tabBarActiveTintColor: colors.primary[600],
+        tabBarInactiveTintColor: 'white',
+        tabBarActiveBackgroundColor: colors.neutral[200],
+        tabBarInactiveBackgroundColor: 'transparent',
       }}
     >
       <Tabs.Screen
@@ -47,29 +63,26 @@ export default function TabLayout() {
           title: 'Home',
           tabBarIcon: ({ color }) => <FeedIcon color={color} />,
           tabBarButtonTestID: 'home-tab',
-          tabBarLabel: 'Home',
         }}
       />
 
       <Tabs.Screen
         name="nutrient-management"
         options={{
-          title: 'Nutrient Management',
+          title: 'Nutrient\nManagement',
           headerShown: false,
           tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
           tabBarButtonTestID: 'nutrient-management-tab',
-          tabBarLabel: 'Nutrient Management',
         }}
       />
 
       <Tabs.Screen
         name="nutrient-portfolio"
         options={{
-          title: 'Nutrient Portfolio',
+          title: 'Nutrient\nPortfolio',
           headerShown: false,
           tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
           tabBarButtonTestID: 'nutrient-portfolio-tab',
-          tabBarLabel: 'Nutrient Portfolio',
         }}
       />
 
@@ -80,7 +93,6 @@ export default function TabLayout() {
           headerShown: false,
           tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
           tabBarButtonTestID: 'settings-tab',
-          tabBarLabel: 'Profile',
         }}
       />
     </Tabs>
