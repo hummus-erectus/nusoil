@@ -1,5 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { Env } from '@env';
+import { Link } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 
 import { Item } from '@/components/settings/item';
@@ -33,6 +34,9 @@ export default function Settings() {
           <ItemsContainer title="settings.generale">
             <LanguageItem />
             <ThemeItem />
+            <Link href="/settings/style" asChild>
+              <Item text="settings.style_guide" onPress={() => {}} />
+            </Link>
           </ItemsContainer>
 
           <ItemsContainer title="settings.about">
