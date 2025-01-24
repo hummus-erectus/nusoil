@@ -6,8 +6,10 @@ import { Pressable, View } from 'react-native';
 
 import colors from '@/components/ui/colors';
 import {
-  Feed as FeedIcon,
-  Settings as SettingsIcon,
+  Home as HomeIcon,
+  NutrientManagement as NutrientManagementIcon,
+  NutrientPortfolio as NutrientPortfolioIcon,
+  Profile as ProfileIcon,
 } from '@/components/ui/icons';
 import { useAuth, useIsFirstTime } from '@/lib';
 
@@ -115,7 +117,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <FeedIcon color={color} />,
+          tabBarIcon: ({ color }) => <HomeIcon color={color} />,
           tabBarButtonTestID: 'home-tab',
         }}
       />
@@ -125,7 +127,7 @@ export default function TabLayout() {
         options={{
           title: 'Nutrient\nManagement',
           headerShown: false,
-          tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
+          tabBarIcon: ({ color }) => <NutrientManagementIcon color={color} />,
           tabBarButtonTestID: 'nutrient-management-tab',
         }}
       />
@@ -135,7 +137,7 @@ export default function TabLayout() {
         options={{
           title: 'Nutrient\nPortfolio',
           headerShown: false,
-          tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
+          tabBarIcon: ({ color }) => <NutrientPortfolioIcon color={color} />,
           tabBarButtonTestID: 'nutrient-portfolio-tab',
         }}
       />
@@ -145,7 +147,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           headerShown: false,
-          tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
+          tabBarIcon: ({ color }) => <ProfileIcon color={color} />,
           tabBarButtonTestID: 'settings-tab',
         }}
       />
