@@ -1,12 +1,11 @@
+/* eslint-disable max-lines-per-function */
 /* eslint-disable react/no-unstable-nested-components */
-import { Link, Redirect, SplashScreen, Tabs } from 'expo-router';
+import { Redirect, SplashScreen, Tabs } from 'expo-router';
 import React, { useCallback, useEffect } from 'react';
 
-import { Pressable, Text } from '@/components/ui';
 import {
   Feed as FeedIcon,
   Settings as SettingsIcon,
-  Style as StyleIcon,
 } from '@/components/ui/icons';
 import { useAuth, useIsFirstTime } from '@/lib';
 
@@ -30,46 +29,60 @@ export default function TabLayout() {
   if (status === 'signOut') {
     return <Redirect href="/login" />;
   }
+
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        tabBarLabelStyle: {
+          textAlign: 'center',
+          fontSize: 10,
+          lineHeight: 14,
+          flexWrap: 'wrap',
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Feed',
+          title: 'Home',
           tabBarIcon: ({ color }) => <FeedIcon color={color} />,
-          headerRight: () => <CreateNewPostLink />,
-          tabBarButtonTestID: 'feed-tab',
+          tabBarButtonTestID: 'home-tab',
+          tabBarLabel: 'Home',
         }}
       />
 
       <Tabs.Screen
-        name="style"
+        name="nutrient-management"
         options={{
-          title: 'Style',
+          title: 'Nutrient Management',
           headerShown: false,
-          tabBarIcon: ({ color }) => <StyleIcon color={color} />,
-          tabBarButtonTestID: 'style-tab',
+          tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
+          tabBarButtonTestID: 'nutrient-management-tab',
+          tabBarLabel: 'Nutrient Management',
         }}
       />
+
+      <Tabs.Screen
+        name="nutrient-portfolio"
+        options={{
+          title: 'Nutrient Portfolio',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
+          tabBarButtonTestID: 'nutrient-portfolio-tab',
+          tabBarLabel: 'Nutrient Portfolio',
+        }}
+      />
+
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
+          title: 'Profile',
           headerShown: false,
           tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
           tabBarButtonTestID: 'settings-tab',
+          tabBarLabel: 'Profile',
         }}
       />
     </Tabs>
   );
 }
-
-const CreateNewPostLink = () => {
-  return (
-    <Link href="/feed/add-post" asChild>
-      <Pressable>
-        <Text className="px-3 text-primary-300">Create</Text>
-      </Pressable>
-    </Link>
-  );
-};

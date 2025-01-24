@@ -11,10 +11,14 @@ type ItemProps = {
   icon?: React.ReactNode;
 };
 
-export const Item = ({ text, value, icon, onPress }: ItemProps) => {
+export const Item = React.forwardRef<
+  React.ElementRef<typeof Pressable>,
+  ItemProps
+>(({ text, value, icon, onPress }, ref) => {
   const isPressable = onPress !== undefined;
   return (
     <Pressable
+      ref={ref}
       onPress={onPress}
       pointerEvents={isPressable ? 'auto' : 'none'}
       className="flex-1 flex-row items-center justify-between px-4 py-2"
@@ -33,4 +37,4 @@ export const Item = ({ text, value, icon, onPress }: ItemProps) => {
       </View>
     </Pressable>
   );
-};
+});

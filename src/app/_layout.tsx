@@ -38,6 +38,14 @@ export default function RootLayout() {
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="style"
+          options={{
+            headerTitle: 'Style Guide',
+            headerShown: true,
+            presentation: 'modal',
+          }}
+        />
       </Stack>
     </Providers>
   );
