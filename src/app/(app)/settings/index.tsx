@@ -34,7 +34,7 @@ export default function Settings() {
           <ItemsContainer title="settings.generale">
             <LanguageItem />
             <ThemeItem />
-            <Link href="/style" asChild>
+            <Link href="/settings/style" asChild>
               <Item text="settings.style_guide" onPress={() => {}} />
             </Link>
           </ItemsContainer>
