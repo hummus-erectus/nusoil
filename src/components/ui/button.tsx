@@ -8,8 +8,7 @@ import { tv } from 'tailwind-variants';
 
 const button = tv({
   slots: {
-    container:
-      'my-2 flex flex-row items-center justify-center rounded-md px-12',
+    container: 'flex flex-row items-center justify-center rounded-md',
     label: 'font-poppins-medium text-[14px] leading-[21px]',
     indicator: 'h-6',
   },
@@ -40,6 +39,9 @@ const button = tv({
         container: 'h-[53px] gap-2 bg-transparent',
         label: 'text-neutral-600 dark:text-white',
         indicator: 'text-neutral-600 dark:text-white',
+      },
+      icon: {
+        container: 'gap-0 p-0',
       },
       link: {
         container: 'bg-transparent',
@@ -156,11 +158,14 @@ export const Button = React.forwardRef<View, Props>(
         disabled={disabled || loading}
         className={styles.container({ className })}
         testID={testID}
-        style={{
-          borderRadius: 30,
-          paddingHorizontal: 40,
-          paddingVertical: 16,
-        }}
+        style={
+          variant !== 'icon' &&
+          variant !== 'link' && {
+            borderRadius: 30,
+            paddingHorizontal: 40,
+            paddingVertical: 16,
+          }
+        }
         {...props}
       >
         {content}

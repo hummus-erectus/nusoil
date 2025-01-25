@@ -4,7 +4,7 @@ import { tv } from 'tailwind-variants';
 
 const formCardTv = tv({
   slots: {
-    container: 'rounded-3xl bg-white p-6 dark:bg-neutral-800',
+    container: 'rounded-2xl bg-white p-6 dark:bg-neutral-800',
   },
   variants: {
     spacing: {
