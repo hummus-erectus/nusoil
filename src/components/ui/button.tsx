@@ -8,7 +8,8 @@ import { tv } from 'tailwind-variants';
 
 const button = tv({
   slots: {
-    container: 'my-2 flex flex-row items-center justify-center rounded-md px-4',
+    container:
+      'my-2 flex flex-row items-center justify-center rounded-md px-12',
     label: 'font-poppins-medium text-[14px] leading-[21px]',
     indicator: 'h-6',
   },
@@ -16,29 +17,27 @@ const button = tv({
   variants: {
     variant: {
       default: {
-        container: 'h-[53px] min-w-[189px] gap-2',
+        container: 'h-[53px] gap-2',
         label: 'text-white',
         indicator: 'text-white',
       },
       secondary: {
-        container:
-          'h-[53px] min-w-[189px] gap-2 border border-primary bg-transparent',
+        container: 'h-[53px] gap-2 border border-primary bg-transparent',
         label: 'text-primary',
         indicator: 'text-primary',
       },
       outline: {
-        container:
-          'h-[53px] min-w-[189px] gap-2 border border-white bg-transparent',
+        container: 'h-[53px] gap-2 border border-white bg-transparent',
         label: 'text-white',
         indicator: 'text-white',
       },
       destructive: {
-        container: 'h-[53px] min-w-[189px] gap-2 bg-danger',
+        container: 'h-[53px] gap-2 bg-danger',
         label: 'text-white',
         indicator: 'text-white',
       },
       ghost: {
-        container: 'h-[53px] min-w-[189px] gap-2 bg-transparent',
+        container: 'h-[53px] gap-2 bg-transparent',
         label: 'text-neutral-600 dark:text-white',
         indicator: 'text-neutral-600 dark:text-white',
       },
@@ -77,7 +76,7 @@ const button = tv({
 
 type ButtonVariants = VariantProps<typeof button>;
 interface Props extends ButtonVariants, Omit<PressableProps, 'disabled'> {
-  label?: string;
+  label?: string | React.ReactNode;
   loading?: boolean;
   className?: string;
   textClassName?: string;
@@ -91,6 +90,7 @@ export const Button = React.forwardRef<View, Props>(
       variant = 'default',
       disabled = false,
       underline = false,
+      fullWidth = true,
       className = '',
       testID,
       textClassName = '',
@@ -99,8 +99,8 @@ export const Button = React.forwardRef<View, Props>(
     ref
   ) => {
     const styles = React.useMemo(
-      () => button({ variant, disabled, underline }),
-      [variant, disabled, underline]
+      () => button({ variant, disabled, underline, fullWidth }),
+      [variant, disabled, underline, fullWidth]
     );
 
     const content = (
@@ -111,14 +111,17 @@ export const Button = React.forwardRef<View, Props>(
             testID={testID ? `${testID}-loading` : undefined}
           />
         )}
-        {text && !loading && (
-          <Text
-            className={styles.label({ className: textClassName })}
-            testID={testID ? `${testID}-text` : undefined}
-          >
-            {text}
-          </Text>
-        )}
+        {!loading &&
+          (typeof text === 'string' ? (
+            <Text
+              className={styles.label({ className: textClassName })}
+              testID={testID ? `${testID}-text` : undefined}
+            >
+              {text}
+            </Text>
+          ) : (
+            text
+          ))}
       </>
     );
 
