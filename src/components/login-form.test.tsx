@@ -19,35 +19,40 @@ describe('LoginForm Form ', () => {
     const { user } = setup(<LoginForm />);
 
     const button = screen.getByTestId('login-button');
-    expect(screen.queryByText(/Email is required/i)).not.toBeOnTheScreen();
+    expect(
+      screen.queryByText(/Phone number is required/i)
+    ).not.toBeOnTheScreen();
     await user.press(button);
-    expect(await screen.findByText(/Email is required/i)).toBeOnTheScreen();
+    expect(
+      await screen.findByText(/Phone number is required/i)
+    ).toBeOnTheScreen();
     expect(screen.getByText(/Password is required/i)).toBeOnTheScreen();
   });
 
-  it('should display matching error when email is invalid', async () => {
+  it('should display matching error when phone number is invalid', async () => {
     const { user } = setup(<LoginForm />);
 
     const button = screen.getByTestId('login-button');
-    const emailInput = screen.getByTestId('email-input');
+    const phoneNumberInput = screen.getByTestId('phoneNumber');
     const passwordInput = screen.getByTestId('password-input');
 
-    await user.type(emailInput, 'yyyyy');
+    await user.type(phoneNumberInput, 'invalid');
     await user.type(passwordInput, 'test');
     await user.press(button);
 
-    expect(await screen.findByText(/Invalid Email Format/i)).toBeOnTheScreen();
-    expect(screen.queryByText(/Email is required/i)).not.toBeOnTheScreen();
+    expect(
+      await screen.findByText(/Invalid phone number format/i)
+    ).toBeOnTheScreen();
   });
 
   it('Should call LoginForm with correct values when values are valid', async () => {
     const { user } = setup(<LoginForm onSubmit={onSubmitMock} />);
 
     const button = screen.getByTestId('login-button');
-    const emailInput = screen.getByTestId('email-input');
+    const phoneNumberInput = screen.getByTestId('phoneNumber');
     const passwordInput = screen.getByTestId('password-input');
 
-    await user.type(emailInput, 'youssef@gmail.com');
+    await user.type(phoneNumberInput, '+1234567890');
     await user.type(passwordInput, 'password');
     await user.press(button);
     await waitFor(() => {
@@ -56,7 +61,7 @@ describe('LoginForm Form ', () => {
     // expect.objectContaining({}) because we don't want to test the target event we are receiving from the onSubmit function
     expect(onSubmitMock).toHaveBeenCalledWith(
       {
-        email: 'youssef@gmail.com',
+        phoneNumber: '+1234567890',
         password: 'password',
       },
       expect.objectContaining({})
