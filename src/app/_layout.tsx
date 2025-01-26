@@ -6,12 +6,17 @@ import { ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { APIProvider } from '@/api';
+import colors from '@/components/ui/colors';
+import {
+  HamburgerMenu as HamburgerMenuIcon,
+  NotificationBell as NotificationBellIcon,
+} from '@/components/ui/icons';
 import { hydrateAuth, loadSelectedTheme } from '@/lib';
 import { useThemeConfig } from '@/lib/use-theme-config';
 
@@ -31,11 +36,57 @@ SplashScreen.setOptions({
   fade: true,
 });
 
+// Custom header component
+function CustomHeader() {
+  return (
+    <View style={[styles.headerContainer, { backgroundColor: colors.primary }]}>
+      <Image
+        source={require('../../assets/splash-icon.png')}
+        style={styles.logo}
+      />
+
+      <View className="flex flex-row gap-14">
+        <View style={styles.headerRight}>
+          <Pressable
+            onPress={() => {
+              /* TODO: Handle notification press */
+            }}
+          >
+            <NotificationBellIcon
+              color={colors.neutral[100]}
+              className="w-full"
+            />
+          </Pressable>
+        </View>
+
+        <Pressable
+          onPress={() => {
+            /* TODO: Handle menu press */
+          }}
+        >
+          <HamburgerMenuIcon color={colors.neutral[100]} />
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
 export default function RootLayout() {
   return (
     <Providers>
-      <Stack>
-        <Stack.Screen name="(app)" options={{ headerShown: false }} />
+      <Stack
+        screenOptions={{
+          header: (props) => {
+            // Only show header for screens within (app) group
+            const routeName = props.route.name;
+            if (routeName === 'login' || routeName === 'onboarding') {
+              return null;
+            }
+            return <CustomHeader />;
+          },
+        }}
+      >
+        <Stack.Screen name="(app)" options={{ headerShown: true }} />
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
       </Stack>
@@ -70,5 +121,23 @@ function Providers({ children }: { children: React.ReactNode }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    paddingTop: 63,
+  },
+  logo: {
+    width: 100,
+    height: 30,
+    resizeMode: 'contain',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
   },
 });
