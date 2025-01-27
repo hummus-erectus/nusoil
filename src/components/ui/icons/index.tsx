@@ -1,4 +1,5 @@
 export * from './arrow-right';
+export * from './arrow-right-full';
 export * from './caret-down';
 export * from './enter';
 export * from './eye-closed';
