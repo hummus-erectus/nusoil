@@ -2,11 +2,11 @@ import * as React from 'react';
 import type { SvgProps } from 'react-native-svg';
 import Svg, { Path } from 'react-native-svg';
 
-export function ArrowRightFull({ color = '#000', ...props }: SvgProps) {
+export function ArrowLeftFull({ color = '#000', ...props }: SvgProps) {
   return (
     <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" {...props}>
       <Path
-        d="M12 18L18 12L12 6"
+        d="M12 18L6 12L12 6"
         stroke={color}
         strokeWidth="1.5"
         strokeMiterlimit="10"
@@ -14,7 +14,7 @@ export function ArrowRightFull({ color = '#000', ...props }: SvgProps) {
         strokeLinejoin="round"
       />
       <Path
-        d="M3 12H18"
+        d="M21 12H6"
         stroke={color}
         strokeWidth="1.5"
         strokeMiterlimit="10"

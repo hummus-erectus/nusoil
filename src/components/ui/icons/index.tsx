@@ -1,3 +1,4 @@
+export * from './arrow-left-full';
 export * from './arrow-right';
 export * from './arrow-right-full';
 export * from './caret-down';
