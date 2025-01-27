@@ -4,6 +4,7 @@ import React from 'react';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Text, View } from '@/components/ui';
+import { useSignupStore } from '@/stores/signup-store';
 
 import { SignupProgress } from './signup-progress';
 import { ArrowRightFull as ArrowRightFullIcon } from './ui/icons';
@@ -13,6 +14,13 @@ export type SignupSplashProps = {
 };
 
 export const SignupSplash = ({ onSubmit = () => {} }: SignupSplashProps) => {
+  const resetSignupForm = useSignupStore((state) => state.resetSignupForm);
+
+  // Reset form data when splash screen mounts
+  React.useEffect(() => {
+    resetSignupForm();
+  }, [resetSignupForm]);
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -78,9 +86,7 @@ export const SignupSplash = ({ onSubmit = () => {} }: SignupSplashProps) => {
           </Text>
 
           <Link href="/login" asChild>
-            <Button variant="link" label="Log in" underline>
-              Log in
-            </Button>
+            <Button variant="link" label="Log in" underline />
           </Link>
         </View>
       </View>

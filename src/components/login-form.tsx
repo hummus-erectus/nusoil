@@ -16,6 +16,7 @@ import {
   Text,
   View,
 } from '@/components/ui';
+import { useSignupStore } from '@/stores/signup-store';
 
 import { Enter as EnterIcon, EyeClosed, EyeOpen } from './ui/icons';
 
@@ -58,6 +59,7 @@ const RememberMeCheckbox = () => {
 };
 
 export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
+  const resetSignupForm = useSignupStore((state) => state.resetSignupForm);
   const { handleSubmit, control } = useForm<FormType>({
     resolver: zodResolver(schema),
   });
@@ -67,6 +69,15 @@ export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
+
+  const handleFormSubmit = React.useCallback<SubmitHandler<FormType>>(
+    (data) => {
+      // Reset signup form data when logging in
+      resetSignupForm();
+      onSubmit(data);
+    },
+    [onSubmit, resetSignupForm]
+  );
 
   return (
     <KeyboardAvoidingView
@@ -143,7 +154,7 @@ export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
                 <EnterIcon color="white" />
               </View>
             }
-            onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmit(handleFormSubmit)}
           />
           <View className="gap-5">
             <Text className="text-center text-sm text-neutral-700">

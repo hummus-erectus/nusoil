@@ -9,7 +9,7 @@ export default function Signup() {
   const router = useRouter();
 
   const onSubmit: SignupSplashProps['onSubmit'] = () => {
-    router.push('/signup/step1');
+    router.push('/signup/step1'); // Use type assertion
   };
 
   return (

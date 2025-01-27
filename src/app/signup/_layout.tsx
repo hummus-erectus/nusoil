@@ -18,21 +18,21 @@ export default function SignupLayout() {
       <Stack.Screen
         name="step1"
         options={{
-          title: 'Personal Details',
+          title: 'Farmer',
           headerShown: false,
         }}
       />
       <Stack.Screen
         name="step2"
         options={{
-          title: 'Farm Details',
+          title: 'Farm Land',
           headerShown: false,
         }}
       />
       <Stack.Screen
         name="step3"
         options={{
-          title: 'Nutrient Preferences',
+          title: 'Nutrients',
           headerShown: false,
         }}
       />
