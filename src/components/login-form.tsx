@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Link } from 'expo-router';
 import React from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
@@ -73,7 +74,7 @@ export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
       behavior="padding"
       keyboardVerticalOffset={10}
     >
-      <View className="flex-1 justify-center p-6">
+      <View className="flex-1 justify-center bg-neutral-100 p-6">
         <View className="items-center justify-center">
           <Text
             testID="form-title"
@@ -149,9 +150,11 @@ export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
               Don't have a user account yet?
             </Text>
 
-            <Button variant="link" label="Sign Up" underline>
-              Sign Up
-            </Button>
+            <Link href="/signup" asChild>
+              <Button variant="link" label="Sign Up" underline>
+                Sign Up
+              </Button>
+            </Link>
           </View>
         </FormCard>
       </View>
