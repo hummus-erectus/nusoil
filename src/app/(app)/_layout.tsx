@@ -11,7 +11,7 @@ import {
   NutrientPortfolio as NutrientPortfolioIcon,
   Profile as ProfileIcon,
 } from '@/components/ui/icons';
-import { useAuth, useIsFirstTime } from '@/lib';
+import { useAuth } from '@/lib';
 
 const styles = StyleSheet.create({
   tabLabel: {
@@ -36,7 +36,7 @@ const TabLabel: React.FC<TabLabelProps> = ({ color, title }) => (
 
 export default function TabLayout() {
   const status = useAuth.use.status();
-  const [isFirstTime] = useIsFirstTime();
+  // const [isFirstTime] = useIsFirstTime();
   const hideSplash = useCallback(async () => {
     await SplashScreen.hideAsync();
   }, []);
@@ -48,9 +48,9 @@ export default function TabLayout() {
     }
   }, [hideSplash, status]);
 
-  if (isFirstTime) {
-    return <Redirect href="/onboarding" />;
-  }
+  // if (isFirstTime) {
+  //   return <Redirect href="/onboarding" />;
+  // }
   if (status === 'signOut') {
     return <Redirect href="/login" />;
   }
