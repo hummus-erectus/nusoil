@@ -19,4 +19,5 @@ export * from './settings';
 export * from './share';
 export * from './style';
 export * from './support';
+export * from './upload';
 export * from './website';
