@@ -24,7 +24,10 @@ export default function FarmerStep() {
   };
 
   return (
-    <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1 }}>
+    <KeyboardAwareScrollView
+      bottomOffset={62}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
       <View className="flex-1 bg-neutral-100 p-6">
         <SignupHeader currentStep="farmer" />
 
