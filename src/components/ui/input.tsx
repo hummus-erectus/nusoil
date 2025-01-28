@@ -19,7 +19,7 @@ const inputTv = tv({
     container: 'mb-4',
     label: 'mb-2 text-sm text-neutral-600 dark:text-neutral-100',
     input:
-      'w-full border-b-2 border-neutral-300/50 bg-transparent px-0 py-3 pl-2 font-poppins-regular text-sm font-medium leading-normal placeholder:text-neutral-400 focus:outline-none dark:border-neutral-600/50 dark:text-white dark:placeholder:text-neutral-500',
+      'w-full border-b-2 border-neutral-300/50 bg-transparent px-0 py-3 pl-2 font-poppins-regular text-sm font-medium leading-normal placeholder:text-neutral-400 focus:outline-none dark:border-neutral-600/50  dark:placeholder:text-neutral-500',
   },
 
   variants: {
@@ -120,7 +120,7 @@ export const Input = React.forwardRef<NTextInput, NInputProps>((props, ref) => {
           inputProps.style,
         ])}
       />
-      <View className="min-h-[20px]">
+      <View>
         {error && (
           <Text
             testID={testID ? `${testID}-error` : undefined}
