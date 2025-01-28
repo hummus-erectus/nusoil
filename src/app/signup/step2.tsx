@@ -353,7 +353,7 @@ export default function FarmStep() {
             </FormCard>
           </View>
         </View>
-        <View className="mt-auto">
+        <View className="mt-4">
           <Button
             onPress={handleNext}
             fullWidth={false}
