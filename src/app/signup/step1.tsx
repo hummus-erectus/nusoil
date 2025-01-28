@@ -4,7 +4,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
-import { SignupProgress } from '@/components/signup-progress';
+import { SignupHeader } from '@/components/signup-header';
 import { Button, FormCard, Input, Select, Text } from '@/components/ui';
 import { ArrowRightFull as ArrowRightFullIcon } from '@/components/ui/icons';
 import { useSignupStore } from '@/stores/signup-store';
@@ -29,12 +29,8 @@ export default function FarmerStep() {
       behavior="padding"
       keyboardVerticalOffset={10}
     >
-      <View className="flex-1 justify-center gap-4 bg-neutral-100 p-6">
-        <Text className="mb-6 text-center font-lora text-3xl text-primary">
-          Sign Up
-        </Text>
-
-        <SignupProgress currentStep="farmer" />
+      <View className="flex-1 bg-neutral-100 p-6">
+        <SignupHeader currentStep="farmer" />
 
         <Text className="mb-6 text-center font-lora text-3xl text-neutral-700">
           Farmer
