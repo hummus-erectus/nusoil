@@ -62,7 +62,7 @@ export default function FarmerStep() {
               value={farmerData.country}
               onSelect={(value) => setFarmerData({ country: value.toString() })}
               options={countryOptions}
-              placeholder="Country"
+              label="Country"
             />
             <Input
               value={farmerData.zipCode}
