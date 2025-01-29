@@ -38,6 +38,47 @@ interface FarmData {
 interface NutrientData {
   currentCrops: string;
   soilType: string;
+  nutrientTestingDone?: boolean;
+  testingType?: 'soil' | 'water' | 'plant';
+  nutrientTestingMonth?: string;
+  nutrientTestingYear?: string;
+  soilTestingDone?: boolean;
+  soilTestingMonth?: string;
+  soilTestingYear?: string;
+  soilTestingFrequency?: string;
+  // Parameters
+  phValue?: string;
+  phRange?: string;
+  ecValue?: string;
+  ecRange?: string;
+  ocValue?: string;
+  ocRange?: string;
+  // Macro Nutrients
+  nValue?: string;
+  nRange?: string;
+  pValue?: string;
+  pRange?: string;
+  kValue?: string;
+  kRange?: string;
+  // Micro Nutrients
+  znValue?: string;
+  znRange?: string;
+  bValue?: string;
+  bRange?: string;
+  feValue?: string;
+  feRange?: string;
+  mnValue?: string;
+  mnRange?: string;
+  moValue?: string;
+  moRange?: string;
+  cuValue?: string;
+  cuRange?: string;
+  clValue?: string;
+  clRange?: string;
+  niValue?: string;
+  niRange?: string;
+  newField1?: string;
+  newField2?: string;
 }
 
 const initialState = {
@@ -77,6 +118,44 @@ const initialState = {
   nutrientData: {
     currentCrops: '',
     soilType: '',
+    nutrientTestingDone: undefined,
+    testingType: undefined,
+    nutrientTestingMonth: undefined,
+    nutrientTestingYear: undefined,
+    soilTestingDone: undefined,
+    soilTestingMonth: undefined,
+    soilTestingYear: undefined,
+    soilTestingFrequency: undefined,
+    phValue: undefined,
+    phRange: undefined,
+    ecValue: undefined,
+    ecRange: undefined,
+    ocValue: undefined,
+    ocRange: undefined,
+    nValue: undefined,
+    nRange: undefined,
+    pValue: undefined,
+    pRange: undefined,
+    kValue: undefined,
+    kRange: undefined,
+    znValue: undefined,
+    znRange: undefined,
+    bValue: undefined,
+    bRange: undefined,
+    feValue: undefined,
+    feRange: undefined,
+    mnValue: undefined,
+    mnRange: undefined,
+    moValue: undefined,
+    moRange: undefined,
+    cuValue: undefined,
+    cuRange: undefined,
+    clValue: undefined,
+    clRange: undefined,
+    niValue: undefined,
+    niRange: undefined,
+    newField1: '',
+    newField2: '',
   },
 };
 
