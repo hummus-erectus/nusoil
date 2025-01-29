@@ -90,7 +90,7 @@ export default function FarmStep() {
 
         <View className="gap-6">
           <View className="gap-4">
-            <Text className="text-secondary">
+            <Text className="font-lora text-secondary">
               Physical Location of Your Farm
             </Text>
             <FormCard className="gap-4">
@@ -132,7 +132,7 @@ export default function FarmStep() {
           </View>
 
           <View className="gap-4">
-            <Text className="text-secondary">Ownership</Text>
+            <Text className="font-lora text-secondary">Ownership</Text>
             <FormCard className="gap-4">
               <Select
                 value={farmData.ownershipType}
@@ -158,7 +158,7 @@ export default function FarmStep() {
           </View>
 
           <View className="gap-4">
-            <Text className="text-secondary">Water Availability</Text>
+            <Text className="font-lora text-secondary">Water Availability</Text>
             <FormCard className="gap-4">
               <Select
                 value={farmData.rainWater}
@@ -195,7 +195,9 @@ export default function FarmStep() {
           </View>
 
           <View className="gap-4">
-            <Text className="text-secondary">Irrigation Technology</Text>
+            <Text className="font-lora text-secondary">
+              Irrigation Technology
+            </Text>
             <FormCard className="gap-4">
               {/* TODO: Clarify - there is already a field for irrigation type above */}
               <Select
@@ -218,7 +220,7 @@ export default function FarmStep() {
           </View>
 
           <View className="gap-4">
-            <Text className="text-secondary">Tillage Practices</Text>
+            <Text className="font-lora text-secondary">Tillage Practices</Text>
             <FormCard className="gap-4">
               <Select
                 value={farmData.tillageType}
@@ -232,7 +234,7 @@ export default function FarmStep() {
           </View>
 
           <View className="gap-4">
-            <Text className="text-secondary">Land Use Intensity</Text>
+            <Text className="font-lora text-secondary">Land Use Intensity</Text>
             <FormCard className="gap-4">
               <Select
                 value={farmData.cropsPerYear}
@@ -260,7 +262,7 @@ export default function FarmStep() {
           </View>
 
           <View className="gap-4">
-            <Text className="text-secondary">Cost</Text>
+            <Text className="font-lora text-secondary">Cost</Text>
             <FormCard className="gap-4">
               {/* TODO: Validation for cost input */}
               <View className="flex w-full flex-row items-center">
@@ -353,7 +355,7 @@ export default function FarmStep() {
             </FormCard>
           </View>
         </View>
-        <View className="mt-4">
+        <View className="my-8">
           <Button
             onPress={handleNext}
             fullWidth={false}
