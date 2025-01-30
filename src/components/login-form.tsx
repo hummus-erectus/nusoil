@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Link } from 'expo-router';
 import React from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
@@ -15,6 +16,7 @@ import {
   Text,
   View,
 } from '@/components/ui';
+import { useSignupStore } from '@/stores/signup-store';
 
 import { Enter as EnterIcon, EyeClosed, EyeOpen } from './ui/icons';
 
@@ -57,6 +59,7 @@ const RememberMeCheckbox = () => {
 };
 
 export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
+  const resetSignupForm = useSignupStore((state) => state.resetSignupForm);
   const { handleSubmit, control } = useForm<FormType>({
     resolver: zodResolver(schema),
   });
@@ -67,13 +70,22 @@ export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
+  const handleFormSubmit = React.useCallback<SubmitHandler<FormType>>(
+    (data, event) => {
+      // Reset signup form data when logging in
+      resetSignupForm();
+      onSubmit(data, event);
+    },
+    [onSubmit, resetSignupForm]
+  );
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior="padding"
       keyboardVerticalOffset={10}
     >
-      <View className="flex-1 justify-center p-6">
+      <View className="flex-1 justify-center bg-neutral-100 p-6">
         <View className="items-center justify-center">
           <Text
             testID="form-title"
@@ -142,16 +154,18 @@ export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
                 <EnterIcon color="white" />
               </View>
             }
-            onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmit(handleFormSubmit)}
           />
           <View className="gap-5">
             <Text className="text-center text-sm text-neutral-700">
               Don't have a user account yet?
             </Text>
 
-            <Button variant="link" label="Sign Up" underline>
-              Sign Up
-            </Button>
+            <Link href="/signup" asChild>
+              <Button variant="link" label="Sign Up" underline>
+                Sign Up
+              </Button>
+            </Link>
           </View>
         </FormCard>
       </View>

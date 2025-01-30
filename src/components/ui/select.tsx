@@ -16,7 +16,7 @@ import { Text } from './text';
 const selectTv = tv({
   slots: {
     container: 'relative mb-4',
-    label: 'mb-4 text-sm text-neutral-500 dark:text-neutral-100',
+    label: 'mb-4 ml-2 text-sm text-neutral-600 dark:text-neutral-100',
     input:
       'mt-0 flex-row items-center justify-between rounded-full bg-neutral-200 px-6 py-3 dark:bg-neutral-800',
     inputValue:
@@ -135,13 +135,19 @@ export const Select = (props: SelectProps) => {
     value,
     error,
     options = [],
-    placeholder = 'select...',
+    placeholder = 'Select...',
     disabled = false,
     onSelect,
     testID,
   } = props;
 
   const [isOpen, setIsOpen] = React.useState(false);
+
+  // Set default value to first option if available and no value is provided
+  const defaultValue = React.useMemo(() => {
+    if (value !== undefined) return value;
+    return options.length > 0 ? options[0].value : undefined;
+  }, [value, options]);
 
   const onSelectOption = React.useCallback(
     (option: OptionType) => {
@@ -162,14 +168,16 @@ export const Select = (props: SelectProps) => {
 
   const textValue = React.useMemo(
     () =>
-      value !== undefined
-        ? (options?.filter((t) => t.value === value)?.[0]?.label ?? placeholder)
+      defaultValue !== undefined
+        ? (options?.filter((t) => t.value === defaultValue)?.[0]?.label ??
+          placeholder)
         : placeholder,
-    [value, options, placeholder]
+    [defaultValue, options, placeholder]
   );
 
   return (
     <View className={styles.container()}>
+      {/* Always show label if provided */}
       {label && (
         <Text
           testID={testID ? `${testID}-label` : undefined}
@@ -199,22 +207,17 @@ export const Select = (props: SelectProps) => {
       </Pressable>
       {isOpen && (
         <View className={styles.dropdown()}>
-          {options.map((option) => (
-            <Option
-              key={option.value}
-              label={option.label}
-              selected={value === option.value}
-              onPress={() => onSelectOption(option)}
-              testID={testID ? `${testID}-item-${option.value}` : undefined}
-            />
-          ))}
+          <Options
+            ref={undefined}
+            options={options}
+            value={defaultValue}
+            onSelect={onSelectOption}
+            testID={testID}
+          />
         </View>
       )}
       {error && (
-        <Text
-          testID={testID ? `${testID}-error` : undefined}
-          className="text-sm text-danger dark:text-danger"
-        >
+        <Text testID="select-error" className="ml-2 mt-2 text-sm text-danger">
           {error}
         </Text>
       )}
