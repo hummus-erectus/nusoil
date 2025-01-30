@@ -49,6 +49,7 @@ export default function RootLayout() {
         <Stack.Screen name="(app)" options={{ headerShown: true }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="signup" options={{ headerShown: false }} />
+        <Stack.Screen name="soil-test" options={{ headerShown: false }} />
       </Stack>
     </Providers>
   );

@@ -488,10 +488,7 @@ export default function NutrientStep() {
           <View className="py-4">
             <Button
               // TODO: Check - should the option be disabled (as in Figma doc) if the soil test is done? Can't farmers book anyway?
-              onPress={() => {
-                // TODO: Implement booking a soil test functionality
-                console.log('Booking a soil test');
-              }}
+              onPress={() => router.push('/soil-test')}
               fullWidth={false}
               label="Book a Soil Test"
               disabled={nutrientData.soilTestingDone === true}
