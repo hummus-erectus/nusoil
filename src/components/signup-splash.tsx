@@ -27,7 +27,7 @@ export const SignupSplash = ({ onSubmit = () => {} }: SignupSplashProps) => {
       behavior="padding"
       keyboardVerticalOffset={10}
     >
-      <View className="flex-1 justify-center gap-4 bg-neutral-100 p-6">
+      <View className="flex-1 justify-center gap-4 p-6">
         <Text className="mb-6 text-center font-lora text-3xl text-primary">
           Sign Up
         </Text>

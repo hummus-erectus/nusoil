@@ -64,7 +64,7 @@ export default function SoilTestTracking() {
       bottomOffset={62}
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View className="flex-1 bg-neutral-100 p-6">
+      <View className="flex-1 p-6">
         <SoilTestHeader currentStep={currentStep as SoilTestStep} />
 
         <View className="mt-6 gap-6">
