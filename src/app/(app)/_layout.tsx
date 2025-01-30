@@ -134,6 +134,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
+          headerShown: false,
           tabBarIcon: ({ color }) => <HomeIcon color={color} />,
           tabBarLabel: ({ color }) => <TabLabel color={color} title="Home" />,
           tabBarButtonTestID: 'home-tab',
