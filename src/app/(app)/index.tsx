@@ -5,13 +5,11 @@ import { BackHandler, View } from 'react-native';
 
 import { Button, colors, FormCard, Text } from '@/components/ui';
 import { CircleTick as CircleTickIcon } from '@/components/ui/icons';
+import { useUserStore } from '@/stores/user-store';
 
-interface WelcomeScreenProps {
-  userName?: string;
-}
-
-const WelcomeScreen = ({ userName = 'Emily Anderson' }: WelcomeScreenProps) => {
+const WelcomeScreen = () => {
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const { userName } = useUserStore();
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
