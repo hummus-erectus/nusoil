@@ -17,8 +17,8 @@ export default function WelcomeScreen() {
 
   if (showUpgrade) {
     return (
-      <View className="flex-1 p-5 items-center justify-center">
-        <Text className="text-2xl font-poppins-bold text-primary-600 mb-2 text-center">
+      <View className="flex-1 items-center justify-center p-5">
+        <Text className="text-primary-600 mb-2 text-center font-poppins-bold text-2xl">
           Upgrade Screen
         </Text>
         {/* Add your upgrade screen content here */}
@@ -27,25 +27,25 @@ export default function WelcomeScreen() {
   }
 
   return (
-    <View className="flex-1 p-6 items-center justify-center">
+    <View className="flex-1 items-center justify-center p-6">
       <FormCard>
-        <Text className="text-2xl font-poppins-bold text-primary-600 mb-2 text-center">
+        <Text className="text-primary-600 mb-2 text-center font-poppins-bold text-2xl">
           Welcome
         </Text>
-        <Text className="text-xl font-poppins-medium text-neutral-700 mb-8 text-center">
+        <Text className="mb-8 text-center font-poppins-medium text-xl text-neutral-700">
           Emily Anderson!
         </Text>
-        <Text className="text-lg font-poppins text-neutral-600 mb-10 text-center">
+        <Text className="font-poppins mb-10 text-center text-lg text-neutral-600">
           You have enrolled in the Seed Plan!
         </Text>
-        <Text className="text-base font-poppins text-neutral-600 mb-6 text-center">
+        <Text className="font-poppins mb-6 text-center text-base text-neutral-600">
           Would you like to Upgrade to Mature and Harvesting Plan?
         </Text>
 
         <Button
           variant="default"
           onPress={handleUpgrade}
-          className="w-full mb-3"
+          className="mb-3 w-full"
           label="Upgrade!"
         />
         <Button
