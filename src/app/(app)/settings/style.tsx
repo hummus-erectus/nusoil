@@ -10,7 +10,7 @@ export default function StyleGuide() {
   return (
     <>
       <FocusAwareStatusBar />
-      <ScrollView className="flex-1 bg-neutral-100">
+      <ScrollView className="flex-1">
         <SafeAreaView className="flex-1 px-4">
           <Typography />
           <Colors />
