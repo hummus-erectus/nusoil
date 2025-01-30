@@ -22,7 +22,7 @@ export const showError = (error: AxiosError) => {
   });
 };
 
-export const showErrorMessage = (message: string = 'Something went wrong ') => {
+export const showErrorMessage = (message = 'Something went wrong ') => {
   showMessage({
     message,
     type: 'danger',

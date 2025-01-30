@@ -1,5 +1,8 @@
+export * from './arrow-left-full';
 export * from './arrow-right';
+export * from './arrow-right-full';
 export * from './caret-down';
+export * from './circle-tick';
 export * from './enter';
 export * from './eye-closed';
 export * from './eye-open';
@@ -17,4 +20,5 @@ export * from './settings';
 export * from './share';
 export * from './style';
 export * from './support';
+export * from './upload';
 export * from './website';
