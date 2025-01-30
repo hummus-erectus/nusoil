@@ -210,107 +210,108 @@ const RangeBasedForm = ({
 }) => (
   <FormCard>
     <View className="gap-4">
+      <Text className="font-lora text-secondary">Parameters</Text>
       <Select
         label="pH Range"
-        value={nutrientData.phRange}
+        value={nutrientData.phRange || ''}
         onSelect={(value) => setNutrientData({ phRange: value.toString() })}
         options={SOIL_TEST_RANGES.ph}
-        placeholder="Select pH range"
+        placeholder="Select..."
       />
       <Select
         label="EC Range"
-        value={nutrientData.ecRange}
+        value={nutrientData.ecRange || ''}
         onSelect={(value) => setNutrientData({ ecRange: value.toString() })}
         options={SOIL_TEST_RANGES.ec}
-        placeholder="Select EC range"
+        placeholder="Select..."
       />
       <Select
         label="OC Range"
-        value={nutrientData.ocRange}
+        value={nutrientData.ocRange || ''}
         onSelect={(value) => setNutrientData({ ocRange: value.toString() })}
         options={SOIL_TEST_RANGES.oc}
-        placeholder="Select OC range"
+        placeholder="Select..."
       />
 
-      <Text className="font-lora text-secondary">MACRO Nutrients</Text>
+      <Text className="font-lora text-secondary">Macro Nutrients</Text>
       <Select
         label="N Range"
-        value={nutrientData.nRange}
+        value={nutrientData.nRange || ''}
         onSelect={(value) => setNutrientData({ nRange: value.toString() })}
         options={SOIL_TEST_RANGES.macro}
-        placeholder="Select N range"
+        placeholder="Select..."
       />
       <Select
         label="P Range"
-        value={nutrientData.pRange}
+        value={nutrientData.pRange || ''}
         onSelect={(value) => setNutrientData({ pRange: value.toString() })}
         options={SOIL_TEST_RANGES.macro}
-        placeholder="Select P range"
+        placeholder="Select..."
       />
       <Select
         label="K Range"
-        value={nutrientData.kRange}
+        value={nutrientData.kRange || ''}
         onSelect={(value) => setNutrientData({ kRange: value.toString() })}
         options={SOIL_TEST_RANGES.macro}
-        placeholder="Select K range"
+        placeholder="Select..."
       />
 
-      <Text className="font-lora text-secondary">MICRO Nutrients</Text>
+      <Text className="font-lora text-secondary">Micro Nutrients</Text>
       <Select
         label="Zn Range"
-        value={nutrientData.znRange}
+        value={nutrientData.znRange || ''}
         onSelect={(value) => setNutrientData({ znRange: value.toString() })}
         options={SOIL_TEST_RANGES.micro}
-        placeholder="Select Zn range"
+        placeholder="Select..."
       />
       <Select
         label="B Range"
-        value={nutrientData.bRange}
+        value={nutrientData.bRange || ''}
         onSelect={(value) => setNutrientData({ bRange: value.toString() })}
         options={SOIL_TEST_RANGES.micro}
-        placeholder="Select B range"
+        placeholder="Select..."
       />
       <Select
         label="Fe Range"
-        value={nutrientData.feRange}
+        value={nutrientData.feRange || ''}
         onSelect={(value) => setNutrientData({ feRange: value.toString() })}
         options={SOIL_TEST_RANGES.micro}
-        placeholder="Select Fe range"
+        placeholder="Select..."
       />
       <Select
         label="Mn Range"
-        value={nutrientData.mnRange}
+        value={nutrientData.mnRange || ''}
         onSelect={(value) => setNutrientData({ mnRange: value.toString() })}
         options={SOIL_TEST_RANGES.micro}
-        placeholder="Select Mn range"
+        placeholder="Select..."
       />
       <Select
         label="Mo Range"
-        value={nutrientData.moRange}
+        value={nutrientData.moRange || ''}
         onSelect={(value) => setNutrientData({ moRange: value.toString() })}
         options={SOIL_TEST_RANGES.micro}
-        placeholder="Select Mo range"
+        placeholder="Select..."
       />
       <Select
         label="Cu Range"
-        value={nutrientData.cuRange}
+        value={nutrientData.cuRange || ''}
         onSelect={(value) => setNutrientData({ cuRange: value.toString() })}
         options={SOIL_TEST_RANGES.micro}
-        placeholder="Select Cu range"
+        placeholder="Select..."
       />
       <Select
         label="Cl Range"
-        value={nutrientData.clRange}
+        value={nutrientData.clRange || ''}
         onSelect={(value) => setNutrientData({ clRange: value.toString() })}
         options={SOIL_TEST_RANGES.micro}
-        placeholder="Select Cl range"
+        placeholder="Select..."
       />
       <Select
         label="Ni Range"
-        value={nutrientData.niRange}
+        value={nutrientData.niRange || ''}
         onSelect={(value) => setNutrientData({ niRange: value.toString() })}
         options={SOIL_TEST_RANGES.micro}
-        placeholder="Select Ni range"
+        placeholder="Select..."
       />
     </View>
   </FormCard>
