@@ -85,7 +85,7 @@ export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
       behavior="padding"
       keyboardVerticalOffset={10}
     >
-      <View className="flex-1 justify-center bg-neutral-100 p-6">
+      <View className="flex-1 justify-center p-6">
         <View className="items-center justify-center">
           <Text
             testID="form-title"

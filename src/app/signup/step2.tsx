@@ -81,7 +81,7 @@ export default function FarmStep() {
       bottomOffset={62}
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View className="flex-1 bg-neutral-100 p-6">
+      <View className="flex-1 p-6">
         <SignupHeader currentStep="farm" />
 
         <Text className="mb-6 text-center font-lora text-3xl text-neutral-700">
