@@ -71,10 +71,10 @@ export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
   };
 
   const handleFormSubmit = React.useCallback<SubmitHandler<FormType>>(
-    (data) => {
+    (data, event) => {
       // Reset signup form data when logging in
       resetSignupForm();
-      onSubmit(data);
+      onSubmit(data, event);
     },
     [onSubmit, resetSignupForm]
   );
