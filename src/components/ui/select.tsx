@@ -216,7 +216,11 @@ export const Select = (props: SelectProps) => {
           />
         </View>
       )}
-      {error && <Text className="mt-1 text-sm text-danger">{error}</Text>}
+      {error && (
+        <Text testID="select-error" className="ml-2 mt-2 text-sm text-danger">
+          {error}
+        </Text>
+      )}
     </View>
   );
 };
