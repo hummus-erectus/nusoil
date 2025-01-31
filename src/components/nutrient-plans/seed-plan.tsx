@@ -15,10 +15,43 @@ const accountOptions = [
   { label: 'Nusa - 1', value: 'Nusa - 1' },
   { label: 'Nusa -2', value: 'Nusa -2' },
   { label: 'Nusa -3', value: 'Nusa -3' },
+  // Add more options as needed
+];
+
+const seedVarietyOptions = [
+  { label: 'Hybrid Corn', value: 'hybrid_corn' },
+  { label: 'Organic Wheat', value: 'organic_wheat' },
+  { label: 'Non-GMO Soybeans', value: 'non_gmo_soybeans' },
+  { label: 'Heirloom Tomato', value: 'heirloom_tomato' },
+  { label: 'Drought-Resistant Sorghum', value: 'drought_sorghum' },
+  // Add more options as needed
+];
+
+const fertilizerOptions = [
+  { label: 'Organic Compost', value: 'organic_compost' },
+  { label: 'Nitrogen-Rich Fertilizer', value: 'nitrogen_fertilizer' },
+  { label: 'Phosphorus Blend', value: 'phosphorus_blend' },
+  { label: 'Slow-Release Granular', value: 'slow_release_granular' },
+  { label: 'Liquid Seaweed Extract', value: 'seaweed_extract' },
+  // Add more options as needed
+];
+
+const currencyOptions = [
+  { label: 'INR (₹)', value: 'inr' },
+  { label: 'USD ($)', value: 'usd' },
+  { label: 'EUR (€)', value: 'eur' },
+  { label: 'GBP (£)', value: 'gbp' },
+  // Add more options as needed
 ];
 
 const SmartRecommendationsForm = () => {
   const [plantingDate, setPlantingDate] = React.useState<Date | undefined>();
+  const [seedVariety, setSeedVariety] = React.useState<
+    string | number | undefined
+  >();
+  const [preferredFertilizer, setPreferredFertilizer] = React.useState<
+    string | number | undefined
+  >();
 
   return (
     <FormCard>
@@ -28,38 +61,82 @@ const SmartRecommendationsForm = () => {
           value={plantingDate}
           onChange={setPlantingDate}
           label="Date of planting"
-          placeholder="Choose planting date"
+          placeholder="Select planting date"
         />
-        <Input label="Duration" placeholder="Select duration" />
-        <Input label="Seed Variety" placeholder="Lorem ipsum dolor sit amet" />
-        <Select label="Preferred Fertilizer" placeholder="Select..." />
-        <Input label="" placeholder="Brand Name/ Company Name" />
-        <Button onPress={() => {}} fullWidth={false} label="Submit" />
+        <View className="flex w-full flex-row items-center">
+          <View className="flex-1">
+            <Input placeholder="0" label="Duration" keyboardType="numeric" />
+          </View>
+          <Text className="ml-4 pt-2 text-sm text-neutral-600">Days</Text>
+        </View>
+        <Select
+          label="Seed Variety"
+          placeholder="Select seed variety"
+          options={seedVarietyOptions}
+          value={seedVariety}
+          onSelect={(value) => setSeedVariety(value)}
+        />
+        <Select
+          label="Preferred Fertilizer"
+          placeholder="Select fertilizer type"
+          options={fertilizerOptions}
+          value={preferredFertilizer}
+          onSelect={(value) => setPreferredFertilizer(value)}
+        />
+        <Input
+          label="Brand Name"
+          placeholder="Enter seed or fertilizer brand"
+        />
+        <Button onPress={() => {}} fullWidth={false} label="Submit!" />
       </View>
     </FormCard>
   );
 };
 
-const LogBookForm = () => (
-  <FormCard>
-    <View className="gap-4">
-      <Text className="font-poppins-semibold">Activity with the Land</Text>
-      <Input
-        label="What are you preparing?"
-        placeholder="Lorem ipsum dolor sit amet"
-      />
-      <Input
-        label="How do you prepare?"
-        placeholder="Lorem ipsum dolor sit amet"
-      />
-      <Input
-        label="When do you prepare?"
-        placeholder="Lorem ipsum dolor sit amet"
-      />
-      <Input label="Enter the cost" placeholder="Lorem ipsum dolor sit amet" />
-    </View>
-  </FormCard>
-);
+const LogBookForm = () => {
+  const [cost, setCost] = React.useState<string>('');
+  const [currency, setCurrency] = React.useState<string | number | undefined>();
+
+  return (
+    <FormCard>
+      <View className="gap-4">
+        <Text className="font-poppins-semibold">Activity with the Land</Text>
+        <Input
+          label="What are you preparing?"
+          placeholder="e.g., Soil preparation, Planting beds, Irrigation setup"
+        />
+        <Input
+          label="How do you prepare?"
+          placeholder="e.g., Tilling, Adding compost, Setting up drip lines"
+        />
+        <Input
+          label="When do you prepare?"
+          placeholder="e.g., Before rainy season, Early spring"
+        />
+        <View className="flex w-full flex-row items-center space-x-2">
+          <View className="flex-1">
+            <Input
+              label="Enter the cost"
+              placeholder="00.00"
+              value={cost}
+              onChangeText={setCost}
+              keyboardType="numeric"
+            />
+          </View>
+          <View className="flex-1">
+            <Select
+              label="Currency"
+              options={currencyOptions}
+              value={currency}
+              onSelect={(value) => setCurrency(value)}
+            />
+          </View>
+        </View>
+        <Button onPress={() => {}} fullWidth={false} label="Submit!" />
+      </View>
+    </FormCard>
+  );
+};
 
 export function SeedPlan() {
   const [seedInputType, setSeedInputType] = React.useState<
@@ -74,7 +151,7 @@ export function SeedPlan() {
       <Select options={accountOptions} label="Select the account" />
       <View>
         <Text className="font-lora text-xl text-secondary">Seed</Text>
-        <View className="gap-2">
+        <View className="mb-6 gap-2">
           <Text>Select an option</Text>
           <View className="mt-2 gap-4">
             <View className="flex-1">
