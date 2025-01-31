@@ -20,6 +20,11 @@
         "FLIPPER_DISABLE": "1"
       }
     },
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "staging": {
       "channel": "staging",
       "distribution": "internal",
