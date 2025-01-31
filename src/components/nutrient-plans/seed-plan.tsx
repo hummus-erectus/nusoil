@@ -1,12 +1,48 @@
 import * as React from 'react';
 
-import { Radio, Select, Text, View } from '@/components/ui';
+import {
+  Button,
+  DateInput,
+  FormCard,
+  Input,
+  Radio,
+  Select,
+  Text,
+  View,
+} from '@/components/ui';
 
 const accountOptions = [
   { label: 'Nusa - 1', value: 'Nusa - 1' },
   { label: 'Nusa -2', value: 'Nusa -2' },
   { label: 'Nusa -3', value: 'Nusa -3' },
 ];
+
+const smartRecommendationsForm = () => (
+  <FormCard>
+    <View className="gap-4">
+      <Text className="font-poppins-semibold">Crop</Text>
+      <Input
+        label="Date of planting"
+        placeholder="Lorem ipsum dolor sit amet"
+      />
+      <DateInput label="Duration" placeholder="Select duration" />
+      <Input label="Seed Variety" placeholder="Lorem ipsum dolor sit amet" />
+      <Select label="Preferred Fertilizer" placeholder="Select..." />
+      <Input label="" placeholder="Brand Name/ Company Name" />
+      <Button onPress={() => {}} fullWidth={false} label="Submit" />
+    </View>
+  </FormCard>
+);
+
+const logBookForm = () => (
+  <FormCard>
+    <View className="gap-4">
+      <Input label="Input 4" placeholder="Lorem ipsum dolor sit amet" />
+      <Input label="Input 5" placeholder="Lorem ipsum dolor sit amet" />
+      <Input label="Input 6" placeholder="Lorem ipsum dolor sit amet" />
+    </View>
+  </FormCard>
+);
 
 export function SeedPlan() {
   const [seedInputType, setSeedInputType] = React.useState<
@@ -42,13 +78,12 @@ export function SeedPlan() {
             </View>
           </View>
         </View>
-        <Text>
-          {seedInputType === 'smart'
-            ? 'SMART Recommendations'
-            : seedInputType === 'log'
-              ? 'Farm Log Book'
-              : ''}
-        </Text>
+
+        {seedInputType === 'smart'
+          ? smartRecommendationsForm()
+          : seedInputType === 'log'
+            ? logBookForm()
+            : ''}
       </View>
     </View>
   );
