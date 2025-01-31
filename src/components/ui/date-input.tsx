@@ -1,30 +1,40 @@
 /* eslint-disable max-lines-per-function */
+// TODO: Implement in all forms
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as React from 'react';
-import type { Control, Path } from 'react-hook-form';
-import { useController } from 'react-hook-form';
-import { Modal, Platform, Pressable, View } from 'react-native';
+import {
+  type Control,
+  type FieldValues,
+  type Path,
+  useController,
+} from 'react-hook-form';
+import { Platform, Pressable, View } from 'react-native';
 import { tv } from 'tailwind-variants';
 
+import colors from './colors';
+import { Calendar as CalendarIcon } from './icons/calendar';
 import { Text } from './text';
 
 const dateInputTv = tv({
   slots: {
     container: 'mb-4',
     label: 'mb-2 text-sm text-neutral-600 dark:text-neutral-100',
+    inputContainer:
+      'flex-row items-center border-b-2 border-neutral-300/50 dark:border-neutral-600/50',
     input:
-      'w-full border-b-2 border-neutral-300/50 bg-transparent px-0 py-3 pl-2 font-poppins-regular text-sm font-medium leading-normal placeholder:text-neutral-400 focus:outline-none dark:border-neutral-600/50 dark:placeholder:text-neutral-500',
+      'flex-1 bg-transparent px-0 py-3 pl-2 font-poppins-regular text-sm font-medium leading-normal placeholder:text-neutral-400 focus:outline-none',
+    button: 'px-3 py-2',
   },
   variants: {
     error: {
       true: {
-        input: 'border-b-2 border-danger/50',
+        inputContainer: 'border-b-2 border-danger/50',
         label: 'text-danger dark:text-danger',
       },
     },
     disabled: {
       true: {
-        input: 'opacity-50',
+        inputContainer: 'opacity-50',
       },
     },
   },
@@ -39,112 +49,84 @@ type DateInputProps = {
   placeholder?: string;
 };
 
-type ControlledDateInputProps<T extends Record<string, any>> = {
-  name: Path<T>;
-  control: Control<T>;
-  rules?: any;
-} & Omit<DateInputProps, 'value' | 'onChange'>;
-
 export const DateInput = React.forwardRef<View, DateInputProps>(
   (props, ref) => {
     const { label, error, disabled, value, onChange, placeholder } = props;
-    const [showPicker, setShowPicker] = React.useState(false);
+    const [show, setShow] = React.useState(false);
+    const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
+      value
+    );
 
-    const styles = dateInputTv({
-      error: Boolean(error),
-      disabled,
-    });
+    const styles = dateInputTv({ error: !!error, disabled });
 
-    const handlePress = () => {
-      if (disabled) return;
-      setShowPicker(true);
-    };
-
-    const handleChange = (event: any, selectedDate?: Date) => {
-      if (Platform.OS === 'android') {
-        setShowPicker(false);
-      }
-
-      if (selectedDate) {
-        onChange?.(selectedDate);
+    const handleChange = (event: any, date?: Date) => {
+      setShow(Platform.OS === 'ios');
+      if (date) {
+        setSelectedDate(date);
+        onChange?.(date);
       }
     };
 
-    const formatDate = (date?: Date) => {
-      if (!date) return '';
-      return date.toLocaleDateString();
+    const showDatePicker = () => {
+      if (!disabled) {
+        setShow(true);
+      }
     };
+
+    const formattedDate = selectedDate
+      ? selectedDate.toLocaleDateString()
+      : placeholder || 'Choose date';
 
     return (
       <View ref={ref} className={styles.container()}>
         {label ? <Text className={styles.label()}>{label}</Text> : null}
-        <Pressable onPress={handlePress}>
-          <View className={styles.input()}>
-            <Text>{value ? formatDate(value) : placeholder}</Text>
-          </View>
-        </Pressable>
+        <View className={styles.inputContainer()}>
+          <Text
+            className={`${styles.input()} ${!selectedDate ? 'text-neutral-400' : ''}`}
+          >
+            {formattedDate}
+          </Text>
+          <Pressable onPress={showDatePicker} className={styles.button()}>
+            <CalendarIcon color={colors.neutral[400]} />
+          </Pressable>
+        </View>
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={selectedDate || new Date()}
+            mode="date"
+            is24Hour={true}
+            onChange={handleChange}
+            disabled={disabled}
+          />
+        )}
         {error ? (
           <Text className="mt-1 text-xs text-danger">{error}</Text>
         ) : null}
-
-        {showPicker &&
-          (Platform.OS === 'ios' ? (
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={showPicker}
-              onRequestClose={() => setShowPicker(false)}
-            >
-              <View className="flex-1 justify-end bg-black/50">
-                <View className="bg-white">
-                  <View className="flex-row justify-end p-2">
-                    <Pressable
-                      onPress={() => setShowPicker(false)}
-                      className="px-4 py-2"
-                    >
-                      <Text>Done</Text>
-                    </Pressable>
-                  </View>
-                  <DateTimePicker
-                    value={value || new Date()}
-                    mode="date"
-                    display="spinner"
-                    onChange={handleChange}
-                  />
-                </View>
-              </View>
-            </Modal>
-          ) : (
-            <DateTimePicker
-              value={value || new Date()}
-              mode="date"
-              display="default"
-              onChange={handleChange}
-            />
-          ))}
       </View>
     );
   }
 );
 
-export const ControlledDateInput = <T extends Record<string, any>>({
+export const ControlledDateInput = <T extends FieldValues>({
   name,
   control,
   rules,
   ...props
 }: ControlledDateInputProps<T>) => {
-  const { field, fieldState } = useController({
+  const {
+    field: { value, onChange },
+  } = useController({
     name,
     control,
     rules,
   });
 
-  return (
-    <DateInput
-      {...props}
-      value={field.value}
-      onChange={field.onChange}
-      error={fieldState.error?.message}
-    />
-  );
+  return <DateInput {...props} value={value} onChange={onChange} />;
 };
+
+type ControlledDateInputProps<T extends FieldValues> = {
+  name: Path<T>;
+  control: Control<T>;
+  rules?: any;
+} & Omit<DateInputProps, 'value' | 'onChange'>;

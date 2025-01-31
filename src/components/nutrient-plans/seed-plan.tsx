@@ -17,29 +17,46 @@ const accountOptions = [
   { label: 'Nusa -3', value: 'Nusa -3' },
 ];
 
-const smartRecommendationsForm = () => (
+const SmartRecommendationsForm = () => {
+  const [plantingDate, setPlantingDate] = React.useState<Date | undefined>();
+
+  return (
+    <FormCard>
+      <View className="gap-4">
+        <Text className="font-poppins-semibold">Crop</Text>
+        <DateInput
+          value={plantingDate}
+          onChange={setPlantingDate}
+          label="Date of planting"
+          placeholder="Choose planting date"
+        />
+        <Input label="Duration" placeholder="Select duration" />
+        <Input label="Seed Variety" placeholder="Lorem ipsum dolor sit amet" />
+        <Select label="Preferred Fertilizer" placeholder="Select..." />
+        <Input label="" placeholder="Brand Name/ Company Name" />
+        <Button onPress={() => {}} fullWidth={false} label="Submit" />
+      </View>
+    </FormCard>
+  );
+};
+
+const LogBookForm = () => (
   <FormCard>
     <View className="gap-4">
-      <Text className="font-poppins-semibold">Crop</Text>
+      <Text className="font-poppins-semibold">Activity with the Land</Text>
       <Input
-        label="Date of planting"
+        label="What are you preparing?"
         placeholder="Lorem ipsum dolor sit amet"
       />
-      <DateInput label="Duration" placeholder="Select duration" />
-      <Input label="Seed Variety" placeholder="Lorem ipsum dolor sit amet" />
-      <Select label="Preferred Fertilizer" placeholder="Select..." />
-      <Input label="" placeholder="Brand Name/ Company Name" />
-      <Button onPress={() => {}} fullWidth={false} label="Submit" />
-    </View>
-  </FormCard>
-);
-
-const logBookForm = () => (
-  <FormCard>
-    <View className="gap-4">
-      <Input label="Input 4" placeholder="Lorem ipsum dolor sit amet" />
-      <Input label="Input 5" placeholder="Lorem ipsum dolor sit amet" />
-      <Input label="Input 6" placeholder="Lorem ipsum dolor sit amet" />
+      <Input
+        label="How do you prepare?"
+        placeholder="Lorem ipsum dolor sit amet"
+      />
+      <Input
+        label="When do you prepare?"
+        placeholder="Lorem ipsum dolor sit amet"
+      />
+      <Input label="Enter the cost" placeholder="Lorem ipsum dolor sit amet" />
     </View>
   </FormCard>
 );
@@ -79,11 +96,13 @@ export function SeedPlan() {
           </View>
         </View>
 
-        {seedInputType === 'smart'
-          ? smartRecommendationsForm()
-          : seedInputType === 'log'
-            ? logBookForm()
-            : ''}
+        {seedInputType === 'smart' ? (
+          <SmartRecommendationsForm />
+        ) : seedInputType === 'log' ? (
+          <LogBookForm />
+        ) : (
+          ''
+        )}
       </View>
     </View>
   );
