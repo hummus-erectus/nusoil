@@ -1,13 +1,7 @@
 import * as React from 'react';
 
-import { Text, View } from '@/components/ui';
+import { BasePlan } from './base-plan';
 
 export function HarvestPlan() {
-  return (
-    <View className="gap-6">
-      <Text className="text-center font-lora text-3xl text-primary">
-        Harvest Plan
-      </Text>
-    </View>
-  );
+  return <BasePlan planType="harvest" showAdvancedFields={true} />;
 }
