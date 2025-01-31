@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const { userName } = useUserStore();
+  const { userName, setSubscriptionPlan } = useUserStore();
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -49,7 +49,8 @@ const WelcomeScreen = () => {
               <Button
                 variant="default"
                 onPress={() => {
-                  router.replace('/mature');
+                  setSubscriptionPlan('Mature');
+                  router.replace('/nutrient-management');
                 }}
                 label="Mature Plan"
                 className="w-52"
@@ -60,10 +61,20 @@ const WelcomeScreen = () => {
               <Button
                 variant="default"
                 onPress={() => {
-                  router.replace('/harvesting');
+                  setSubscriptionPlan('Harvest');
+                  router.replace('/nutrient-management');
                 }}
                 label="Harvesting Plan"
                 className="w-52"
+              />
+              {/* TODO: Remove seed plan button */}
+              <Button
+                variant="ghost"
+                onPress={() => {
+                  setSubscriptionPlan('Seed');
+                  router.replace('/nutrient-management');
+                }}
+                label="Revert to Seed Plan"
               />
             </View>
           </View>
