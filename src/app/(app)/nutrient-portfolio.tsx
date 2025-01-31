@@ -1,21 +1,22 @@
 import * as React from 'react';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import {
-  FocusAwareStatusBar,
-  SafeAreaView,
-  ScrollView,
-  Text,
-} from '@/components/ui';
+import { FocusAwareStatusBar, Text, View } from '@/components/ui';
 
 export default function NutrientPortfolio() {
   return (
     <>
       <FocusAwareStatusBar />
-      <ScrollView className="flex-1">
-        <SafeAreaView className="flex-1 px-4">
-          <Text className="text-2xl font-bold">Nutrient Portfolio</Text>
-        </SafeAreaView>
-      </ScrollView>
+      <KeyboardAwareScrollView
+        bottomOffset={62}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
+        <View className="flex-1 p-6">
+          <View className="mb-6">
+            <Text className="text-neutral-500">Nusa - 1</Text>
+          </View>
+        </View>
+      </KeyboardAwareScrollView>
     </>
   );
 }
