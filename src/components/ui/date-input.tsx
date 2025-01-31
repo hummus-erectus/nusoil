@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-// TODO: Implement in all forms
+// TODO: Implement in all forms, set custom colors
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as React from 'react';
 import {
@@ -18,7 +18,7 @@ import { Text } from './text';
 const dateInputTv = tv({
   slots: {
     container: 'mb-4',
-    label: 'mb-2 text-sm text-neutral-600 dark:text-neutral-100',
+    label: 'mb-4 ml-2 text-sm text-neutral-600 dark:text-neutral-100',
     inputContainer:
       'flex-row items-center border-b-2 border-neutral-300/50 dark:border-neutral-600/50',
     input:
