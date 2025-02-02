@@ -11,7 +11,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { APIProvider } from '@/api';
-import { AppHeader } from '@/components/app-header';
 import { hydrateAuth, loadSelectedTheme } from '@/lib';
 import { useThemeConfig } from '@/lib/use-theme-config';
 
@@ -32,45 +31,25 @@ SplashScreen.setOptions({
 });
 
 export default function RootLayout() {
-  return (
-    <Providers>
-      <Stack
-        screenOptions={{
-          header: (props) => {
-            // Only show header for screens within (app) group
-            const routeName = props.route.name;
-            if (routeName === 'login' || routeName.startsWith('signup')) {
-              return null;
-            }
-            return <AppHeader />;
-          },
-        }}
-      >
-        <Stack.Screen name="(app)" options={{ headerShown: true }} />
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        <Stack.Screen name="signup" options={{ headerShown: false }} />
-        <Stack.Screen name="soil-test" options={{ headerShown: false }} />
-      </Stack>
-    </Providers>
-  );
-}
-
-function Providers({ children }: { children: React.ReactNode }) {
   const theme = useThemeConfig();
+
   return (
-    <GestureHandlerRootView
-      className={`margin-0 bg-neutral-100 ${theme.dark ? 'dark' : ''}`}
-    >
-      <KeyboardProvider>
-        <ThemeProvider value={theme}>
-          <APIProvider>
-            <BottomSheetModalProvider>
-              {children}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={theme}>
+        <BottomSheetModalProvider>
+          <KeyboardProvider>
+            <APIProvider>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(app)" />
+                <Stack.Screen name="login" />
+                <Stack.Screen name="signup" />
+                <Stack.Screen name="soil-test" />
+              </Stack>
               <FlashMessage position="top" />
-            </BottomSheetModalProvider>
-          </APIProvider>
-        </ThemeProvider>
-      </KeyboardProvider>
+            </APIProvider>
+          </KeyboardProvider>
+        </BottomSheetModalProvider>
+      </ThemeProvider>
     </GestureHandlerRootView>
   );
 }
