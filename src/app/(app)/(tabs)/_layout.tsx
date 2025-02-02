@@ -154,6 +154,14 @@ export default function TabsLayout() {
           tabBarButtonTestID: 'settings-tab',
         }}
       />
+
+      {/* Hide help from tabs but keep it in the navigation */}
+      <Tabs.Screen
+        name="help"
+        options={{
+          href: null, // This prevents the tab from showing in the tab bar
+        }}
+      />
     </Tabs>
   );
 }
