@@ -7,11 +7,13 @@ import React, { useCallback, useEffect } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
+import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
 import {
   Clipboard as ClipboardIcon,
   Home as HomeIcon,
   Key as KeyIcon,
+  Logout as LogoutIcon,
   NutrientManagement as NutrientManagementIcon,
   NutrientPortfolio as NutrientPortfolioIcon,
   Profile as ProfileIcon,
@@ -71,6 +73,8 @@ function DrawerItem({ href, label, icon }: DrawerItemProps) {
 }
 
 function CustomDrawerContent(props: any) {
+  const signOut = useAuth.use.signOut();
+
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerContent}>
@@ -111,6 +115,18 @@ function CustomDrawerContent(props: any) {
           href="/(app)/(tabs)/password-policy"
           label="Password Policy"
           icon={<KeyIcon color={colors.neutral[100]} />}
+        />
+        <Button
+          className="mt-12"
+          onPress={signOut}
+          variant="outline"
+          fullWidth={false}
+          label={
+            <View className="flex-row items-center justify-center">
+              <LogoutIcon color="white" />
+              <Text className="ml-4 text-white">Log out</Text>
+            </View>
+          }
         />
       </View>
     </DrawerContentScrollView>
