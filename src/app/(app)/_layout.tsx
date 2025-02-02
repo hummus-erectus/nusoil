@@ -22,6 +22,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingHorizontal: 20,
   },
+  divider: {
+    height: 1,
+    backgroundColor: colors.neutral[200],
+    marginVertical: 10,
+    marginHorizontal: 20,
+  },
 });
 
 function CustomDrawerContent(props: any) {
@@ -46,6 +52,14 @@ function CustomDrawerContent(props: any) {
         <Link href="/(app)/(tabs)/settings" asChild>
           <Pressable style={styles.drawerLabel}>
             <Text>Profile</Text>
+          </Pressable>
+        </Link>
+
+        <View style={styles.divider} />
+
+        <Link href="/(app)/(tabs)/help" asChild>
+          <Pressable style={styles.drawerLabel}>
+            <Text>Help & Support</Text>
           </Pressable>
         </Link>
       </View>
