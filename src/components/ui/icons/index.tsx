@@ -14,6 +14,7 @@ export * from './hamburger-menu';
 export * from './home';
 export * from './key';
 export * from './language';
+export * from './logout';
 export * from './notification-bell';
 export * from './nutrient-management';
 export * from './nutrient-portfolio';
