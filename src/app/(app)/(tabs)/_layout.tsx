@@ -155,11 +155,25 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* Hide help from tabs but keep it in the navigation */}
+      {/* Hide from tabs but keep it in the navigation */}
       <Tabs.Screen
-        name="help"
+        name="privacy-statement"
         options={{
           href: null, // This prevents the tab from showing in the tab bar
+        }}
+      />
+
+      <Tabs.Screen
+        name="terms-of-use"
+        options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="password-policy"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

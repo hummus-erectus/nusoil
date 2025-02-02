@@ -17,10 +17,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Help() {
+export default function PrivacyStatement() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Help & Support</Text>
+      <Text style={styles.title}>Privacy Statement</Text>
     </View>
   );
 }
