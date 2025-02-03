@@ -4,7 +4,7 @@ import Svg, { Path } from 'react-native-svg';
 
 export function Unlock({ color = '#000', ...props }: SvgProps) {
   return (
-    <Svg width={20} height={21} viewBox="0 0 20 21" fill="none" {...props}>
+    <Svg width={24} height={24} viewBox="0 0 20 21" fill="none" {...props}>
       <Path
         d="M14.1666 18.5225H5.83329C2.49996 18.5225 1.66663 17.6891 1.66663 14.3558V12.6891C1.66663 9.35579 2.49996 8.52246 5.83329 8.52246H14.1666C17.5 8.52246 18.3333 9.35579 18.3333 12.6891V14.3558C18.3333 17.6891 17.5 18.5225 14.1666 18.5225Z"
         stroke={color}
