@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable react/no-unstable-nested-components */
+import { Env } from '@env';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { Link, Redirect, SplashScreen } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
@@ -128,6 +129,9 @@ function CustomDrawerContent(props: any) {
             </View>
           }
         />
+        <Text className="mt-2 text-center text-xs text-neutral-400">
+          v{Env?.VERSION ?? '0.0.2'}
+        </Text>
       </View>
     </DrawerContentScrollView>
   );
