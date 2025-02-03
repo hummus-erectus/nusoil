@@ -176,6 +176,27 @@ export default function TabsLayout() {
           href: null,
         }}
       />
+
+      <Tabs.Screen
+        name="add-on-services"
+        options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="marketplace"
+        options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="land-wallet"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }
