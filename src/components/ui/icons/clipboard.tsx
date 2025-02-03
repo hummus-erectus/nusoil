@@ -4,27 +4,29 @@ import Svg, { Path } from 'react-native-svg';
 
 export function Clipboard({ color = '#000', ...props }: SvgProps) {
   return (
-    <Svg width={20} height={21} viewBox="0 0 20 21" fill="none" {...props}>
+    <Svg width={24} height={24} viewBox="0 0 20 21" fill="none" {...props}>
       <Path
-        d="M14.1666 18.5225H5.83329C2.49996 18.5225 1.66663 17.6891 1.66663 14.3558V12.6891C1.66663 9.35579 2.49996 8.52246 5.83329 8.52246H14.1666C17.5 8.52246 18.3333 9.35579 18.3333 12.6891V14.3558C18.3333 17.6891 17.5 18.5225 14.1666 18.5225Z"
+        d="M7.75842 12.4408L9.00842 13.6908L12.3418 10.3574"
         stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       />
       <Path
-        d="M5 8.52311V6.85645C5 4.09811 5.83333 1.85645 10 1.85645C13.75 1.85645 15 3.52311 15 6.02311"
+        d="M8.33329 5.19076H11.6666C13.3333 5.19076 13.3333 4.35742 13.3333 3.52409C13.3333 1.85742 12.5 1.85742 11.6666 1.85742H8.33329C7.49996 1.85742 6.66663 1.85742 6.66663 3.52409C6.66663 5.19076 7.49996 5.19076 8.33329 5.19076Z"
         stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        stroke-width="1.5"
+        stroke-miterlimit="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       />
       <Path
-        d="M9.99996 15.6061C11.1506 15.6061 12.0833 14.6734 12.0833 13.5228C12.0833 12.3722 11.1506 11.4395 9.99996 11.4395C8.84937 11.4395 7.91663 12.3722 7.91663 13.5228C7.91663 14.6734 8.84937 15.6061 9.99996 15.6061Z"
+        d="M13.3333 3.54004C16.1083 3.69004 17.5 4.71504 17.5 8.52337V13.5234C17.5 16.8567 16.6667 18.5234 12.5 18.5234H7.5C3.33333 18.5234 2.5 16.8567 2.5 13.5234V8.52337C2.5 4.72337 3.89167 3.69004 6.66667 3.54004"
         stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        stroke-width="1.5"
+        stroke-miterlimit="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       />
     </Svg>
   );
