@@ -23,6 +23,7 @@ import {
   Wallet as WalletIcon,
 } from '@/components/ui/icons';
 import { useAuth } from '@/lib';
+import { useUserStore } from '@/stores/user-store';
 
 const styles = StyleSheet.create({
   drawerContent: {
@@ -80,6 +81,11 @@ function DrawerItem({ href, label, icon }: DrawerItemProps) {
 
 function CustomDrawerContent(props: any) {
   const signOut = useAuth.use.signOut();
+  const subscriptionPlan = useUserStore((state) => state.subscriptionPlan);
+
+  const showAdvancedFeatures =
+    subscriptionPlan === 'Mature' || subscriptionPlan === 'Harvest';
+  const showHarvestFeatures = subscriptionPlan === 'Harvest';
 
   return (
     <DrawerContentScrollView {...props}>
@@ -99,21 +105,27 @@ function CustomDrawerContent(props: any) {
           label="Nutrient Portfolio"
           icon={<NutrientPortfolioIcon color={colors.neutral[100]} />}
         />
-        <DrawerItem
-          href="/(app)/(tabs)/marketplace"
-          label="Marketplace"
-          icon={<ShopIcon color={colors.neutral[100]} />}
-        />
-        <DrawerItem
-          href="/(app)/(tabs)/land-wallet"
-          label="Land Wallet"
-          icon={<WalletIcon color={colors.neutral[100]} />}
-        />
-        <DrawerItem
-          href="/(app)/(tabs)/add-on-services"
-          label="Add-on Services"
-          icon={<LampOnIcon color={colors.neutral[100]} />}
-        />
+        {showAdvancedFeatures && (
+          <>
+            <DrawerItem
+              href="/(app)/(tabs)/marketplace"
+              label="Marketplace"
+              icon={<ShopIcon color={colors.neutral[100]} />}
+            />
+            <DrawerItem
+              href="/(app)/(tabs)/add-on-services"
+              label="Add-on Services"
+              icon={<LampOnIcon color={colors.neutral[100]} />}
+            />
+          </>
+        )}
+        {showHarvestFeatures && (
+          <DrawerItem
+            href="/(app)/(tabs)/land-wallet"
+            label="Land Wallet"
+            icon={<WalletIcon color={colors.neutral[100]} />}
+          />
+        )}
 
         <View style={styles.divider} />
 
