@@ -12,13 +12,15 @@ import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
 import {
   Clipboard as ClipboardIcon,
-  Home as HomeIcon,
   Key as KeyIcon,
+  LampOn as LampOnIcon,
   Logout as LogoutIcon,
   NutrientManagement as NutrientManagementIcon,
   NutrientPortfolio as NutrientPortfolioIcon,
   Profile as ProfileIcon,
+  Shop as ShopIcon,
   Unlock as UnlockIcon,
+  Wallet as WalletIcon,
 } from '@/components/ui/icons';
 import { useAuth } from '@/lib';
 
@@ -54,7 +56,10 @@ type DrawerRoute =
   | '/(app)/(tabs)/settings'
   | '/(app)/(tabs)/privacy-statement'
   | '/(app)/(tabs)/terms-of-use'
-  | '/(app)/(tabs)/password-policy';
+  | '/(app)/(tabs)/password-policy'
+  | '/(app)/(tabs)/add-on-services'
+  | '/(app)/(tabs)/marketplace'
+  | '/(app)/(tabs)/land-wallet';
 
 interface DrawerItemProps {
   href: DrawerRoute;
@@ -80,9 +85,9 @@ function CustomDrawerContent(props: any) {
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerContent}>
         <DrawerItem
-          href="/(app)/(tabs)"
-          label="Home"
-          icon={<HomeIcon color={colors.neutral[100]} />}
+          href="/(app)/(tabs)/settings"
+          label="Profile"
+          icon={<ProfileIcon color={colors.neutral[100]} />}
         />
         <DrawerItem
           href="/(app)/(tabs)/nutrient-management"
@@ -95,9 +100,19 @@ function CustomDrawerContent(props: any) {
           icon={<NutrientPortfolioIcon color={colors.neutral[100]} />}
         />
         <DrawerItem
-          href="/(app)/(tabs)/settings"
-          label="Profile"
-          icon={<ProfileIcon color={colors.neutral[100]} />}
+          href="/(app)/(tabs)/marketplace"
+          label="Marketplace"
+          icon={<ShopIcon color={colors.neutral[100]} />}
+        />
+        <DrawerItem
+          href="/(app)/(tabs)/land-wallet"
+          label="Land Wallet"
+          icon={<WalletIcon color={colors.neutral[100]} />}
+        />
+        <DrawerItem
+          href="/(app)/(tabs)/add-on-services"
+          label="Add-on Services"
+          icon={<LampOnIcon color={colors.neutral[100]} />}
         />
 
         <View style={styles.divider} />
