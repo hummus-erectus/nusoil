@@ -25,6 +25,8 @@ export function AppHeader() {
             onPress={() => {
               /* TODO: Handle notification press */
             }}
+            hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+            style={{ padding: 8 }}
           >
             <NotificationBellIcon
               color={colors.neutral[100]}
@@ -37,6 +39,8 @@ export function AppHeader() {
           onPress={() => {
             navigation.dispatch(DrawerActions.openDrawer());
           }}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+          style={{ padding: 8 }}
         >
           <HamburgerMenuIcon color={colors.neutral[100]} />
         </Pressable>
