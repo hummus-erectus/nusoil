@@ -102,6 +102,7 @@ export const LoginForm = ({ onSubmit = () => {} }: LoginFormProps) => {
               control={control}
               name="phoneNumber"
               placeholder="Mobile Number"
+              keyboardType="numeric"
             />
 
             <View className="relative">
