@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { FocusAwareStatusBar, Text, View } from '@/components/ui';
+import { Text, View } from '@/components/ui';
 
 export default function NutrientPortfolio() {
   return (
     <>
-      <FocusAwareStatusBar />
       <KeyboardAwareScrollView
         bottomOffset={62}
         contentContainerStyle={{ flexGrow: 1 }}
