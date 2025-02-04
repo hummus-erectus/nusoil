@@ -3,7 +3,7 @@ import * as React from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { HarvestPlan, MaturePlan, SeedPlan } from '@/components/nutrient-plans';
-import { FocusAwareStatusBar, Text, View } from '@/components/ui';
+import { Text, View } from '@/components/ui';
 import { useUserStore } from '@/stores/user-store';
 
 export default function NutrientsManagement() {
@@ -22,7 +22,6 @@ export default function NutrientsManagement() {
 
   return (
     <>
-      <FocusAwareStatusBar />
       <KeyboardAwareScrollView
         bottomOffset={62}
         contentContainerStyle={{ flexGrow: 1 }}

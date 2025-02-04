@@ -10,6 +10,7 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppHeader } from '@/components/app-header';
 import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
+import { FocusAwareStatusBar } from '@/components/ui/focus-aware-status-bar';
 import {
   Clipboard as ClipboardIcon,
   Key as KeyIcon,
@@ -183,28 +184,31 @@ export default function Layout() {
   }
 
   return (
-    <Drawer
-      screenOptions={{
-        drawerStyle: {
-          backgroundColor: colors.primary,
-          width: '80%',
-        },
-        drawerActiveTintColor: colors.primary[600],
-        drawerInactiveTintColor: colors.neutral[600],
-        swipeEnabled: Platform.OS !== 'android', // Disable swipe gesture on Android
-        drawerType: 'front',
-        drawerPosition: 'left',
-        header: () => <AppHeader />,
-      }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-    >
-      <Drawer.Screen
-        name="(tabs)"
-        options={{
-          headerShown: true,
-          title: 'Home',
+    <>
+      <FocusAwareStatusBar />
+      <Drawer
+        screenOptions={{
+          drawerStyle: {
+            backgroundColor: colors.primary,
+            width: '80%',
+          },
+          drawerActiveTintColor: colors.primary[600],
+          drawerInactiveTintColor: colors.neutral[600],
+          swipeEnabled: Platform.OS !== 'android', // Disable swipe gesture on Android
+          drawerType: 'front',
+          drawerPosition: 'left',
+          header: () => <AppHeader />,
         }}
-      />
-    </Drawer>
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+      >
+        <Drawer.Screen
+          name="(tabs)"
+          options={{
+            headerShown: true,
+            title: 'Home',
+          }}
+        />
+      </Drawer>
+    </>
   );
 }
