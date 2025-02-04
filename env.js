@@ -77,7 +77,7 @@ const client = z.object({
   BUNDLE_ID: z.string(),
   PACKAGE: z.string(),
   VERSION: z.string(),
-  API_URL: z.string(),
+  API_URL: z.string().optional(),
 });
 
 const buildTime = z.object({
