@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
-import { router } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { BackHandler, View } from 'react-native';
+import { Alert, BackHandler, View } from 'react-native';
 
 import { Button, colors, FormCard, Text } from '@/components/ui';
 import { CircleTick as CircleTickIcon } from '@/components/ui/icons';
@@ -10,18 +10,37 @@ import { useUserStore } from '@/stores/user-store';
 const WelcomeScreen = () => {
   const [showUpgrade, setShowUpgrade] = useState(false);
   const { userName, setSubscriptionPlan } = useUserStore();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        // Return true to prevent default behavior (going back)
-        return true;
+        // Only show exit confirmation if we're at the root level
+        // (i.e., in the main tabs with no other screens in the stack)
+        if (!navigation.canGoBack()) {
+          Alert.alert(
+            'Exit App',
+            'Are you sure you want to exit?',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => null,
+                style: 'cancel',
+              },
+              { text: 'Yes', onPress: () => BackHandler.exitApp() },
+            ],
+            { cancelable: false }
+          );
+          return true;
+        }
+        // Let the default back behavior happen for normal navigation
+        return false;
       }
     );
 
     return () => backHandler.remove();
-  }, []);
+  }, [navigation]);
 
   const handleUpgrade = () => {
     setShowUpgrade(true);
