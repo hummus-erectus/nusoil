@@ -1,45 +1,175 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable react/no-unstable-nested-components */
-import { Redirect, SplashScreen, Tabs } from 'expo-router';
+import { Env } from '@env';
+import { DrawerContentScrollView } from '@react-navigation/drawer';
+import { Link, Redirect, SplashScreen } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import React, { useCallback, useEffect } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { AppHeader } from '@/components/app-header';
+import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
 import {
-  Home as HomeIcon,
+  Clipboard as ClipboardIcon,
+  Key as KeyIcon,
+  LampOn as LampOnIcon,
+  Logout as LogoutIcon,
   NutrientManagement as NutrientManagementIcon,
   NutrientPortfolio as NutrientPortfolioIcon,
   Profile as ProfileIcon,
+  Shop as ShopIcon,
+  Unlock as UnlockIcon,
+  Wallet as WalletIcon,
 } from '@/components/ui/icons';
 import { useAuth } from '@/lib';
+import { useUserStore } from '@/stores/user-store';
 
 const styles = StyleSheet.create({
-  tabLabel: {
-    textAlign: 'center',
-    fontSize: 10,
-    lineHeight: 12,
-    fontFamily: 'Poppins-Medium',
-    flexWrap: 'wrap',
+  drawerContent: {
+    flex: 1,
+    paddingTop: 20,
+  },
+  drawerItem: {
+    marginVertical: 12,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  drawerText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-regular',
+    color: colors.neutral[100],
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.neutral[200],
+    marginVertical: 10,
+    marginHorizontal: 20,
   },
 });
 
-interface TabLabelProps {
-  color: string;
-  title: string;
+type DrawerRoute =
+  | '/(app)/(tabs)'
+  | '/(app)/(tabs)/nutrient-management'
+  | '/(app)/(tabs)/nutrient-portfolio'
+  | '/(app)/(tabs)/settings'
+  | '/(app)/(tabs)/privacy-statement'
+  | '/(app)/(tabs)/terms-of-use'
+  | '/(app)/(tabs)/password-policy'
+  | '/(app)/(tabs)/add-on-services'
+  | '/(app)/(tabs)/marketplace'
+  | '/(app)/(tabs)/land-wallet';
+
+interface DrawerItemProps {
+  href: DrawerRoute;
+  label: string;
+  icon: React.ReactNode;
 }
 
-const TabLabel: React.FC<TabLabelProps> = ({ color, title }) => (
-  <Text style={[styles.tabLabel, { color }]} numberOfLines={2}>
-    {title}
-  </Text>
-);
+function DrawerItem({ href, label, icon }: DrawerItemProps) {
+  return (
+    <Link href={href} asChild>
+      <Pressable style={styles.drawerItem}>
+        {icon}
+        <Text style={styles.drawerText}>{label}</Text>
+      </Pressable>
+    </Link>
+  );
+}
 
-export default function TabLayout() {
+function CustomDrawerContent(props: any) {
+  const signOut = useAuth.use.signOut();
+  const subscriptionPlan = useUserStore((state) => state.subscriptionPlan);
+
+  const showAdvancedFeatures =
+    subscriptionPlan === 'Mature' || subscriptionPlan === 'Harvest';
+  const showHarvestFeatures = subscriptionPlan === 'Harvest';
+
+  return (
+    <DrawerContentScrollView {...props}>
+      <View style={styles.drawerContent}>
+        <DrawerItem
+          href="/(app)/(tabs)/settings"
+          label="Profile"
+          icon={<ProfileIcon color={colors.neutral[100]} />}
+        />
+        <DrawerItem
+          href="/(app)/(tabs)/nutrient-management"
+          label="Nutrient Management"
+          icon={<NutrientManagementIcon color={colors.neutral[100]} />}
+        />
+        <DrawerItem
+          href="/(app)/(tabs)/nutrient-portfolio"
+          label="Nutrient Portfolio"
+          icon={<NutrientPortfolioIcon color={colors.neutral[100]} />}
+        />
+        {showAdvancedFeatures && (
+          <>
+            <DrawerItem
+              href="/(app)/(tabs)/marketplace"
+              label="Marketplace"
+              icon={<ShopIcon color={colors.neutral[100]} />}
+            />
+            <DrawerItem
+              href="/(app)/(tabs)/add-on-services"
+              label="Add-on Services"
+              icon={<LampOnIcon color={colors.neutral[100]} />}
+            />
+          </>
+        )}
+        {showHarvestFeatures && (
+          <DrawerItem
+            href="/(app)/(tabs)/land-wallet"
+            label="Land Wallet"
+            icon={<WalletIcon color={colors.neutral[100]} />}
+          />
+        )}
+
+        <View style={styles.divider} />
+
+        <DrawerItem
+          href="/(app)/(tabs)/privacy-statement"
+          label="Privacy Statement"
+          icon={<UnlockIcon color={colors.neutral[100]} />}
+        />
+        <DrawerItem
+          href="/(app)/(tabs)/terms-of-use"
+          label="Terms of Use"
+          icon={<ClipboardIcon color={colors.neutral[100]} />}
+        />
+        <DrawerItem
+          href="/(app)/(tabs)/password-policy"
+          label="Password Policy"
+          icon={<KeyIcon color={colors.neutral[100]} />}
+        />
+        <Button
+          className="mt-12"
+          onPress={signOut}
+          variant="outline"
+          fullWidth={false}
+          label={
+            <View className="flex-row items-center justify-center">
+              <LogoutIcon color="white" />
+              <Text className="ml-4 text-white">Log out</Text>
+            </View>
+          }
+        />
+        <Text className="mt-2 text-center text-xs text-neutral-400">
+          v{Env?.VERSION ?? '0.0.2'}
+        </Text>
+      </View>
+    </DrawerContentScrollView>
+  );
+}
+
+export default function Layout() {
   const status = useAuth.use.status();
-  // const [isFirstTime] = useIsFirstTime();
   const hideSplash = useCallback(async () => {
     await SplashScreen.hideAsync();
   }, []);
+
   useEffect(() => {
     if (status !== 'idle') {
       setTimeout(() => {
@@ -48,137 +178,33 @@ export default function TabLayout() {
     }
   }, [hideSplash, status]);
 
-  // if (isFirstTime) {
-  //   return <Redirect href="/onboarding" />;
-  // }
   if (status === 'signOut') {
     return <Redirect href="/login" />;
   }
 
   return (
-    <Tabs
+    <Drawer
       screenOptions={{
-        tabBarStyle: {
-          backgroundColor: colors.neutral[100],
-          borderTopWidth: 0,
-          height: 110,
-          paddingBottom: 0,
-          position: 'relative',
-          elevation: 0,
-          shadowOpacity: 0,
-        },
-        tabBarItemStyle: {
-          borderRadius: 0,
+        drawerStyle: {
           backgroundColor: colors.primary,
-          marginHorizontal: 0,
-          position: 'relative',
-          height: '100%',
-          paddingTop: 0,
-          paddingBottom: 20,
-          flex: 1,
+          width: '80%',
         },
-        tabBarActiveTintColor: colors.primary[600],
-        tabBarInactiveTintColor: 'white',
-        tabBarActiveBackgroundColor: colors.neutral[100],
-        tabBarInactiveBackgroundColor: colors.primary[600],
-        tabBarIconStyle: {
-          marginTop: 8,
-        },
-        tabBarButton: (props) => {
-          const { style, onPress, children } = props;
-          const isActive = props.accessibilityState?.selected;
-          return (
-            <View style={{ flex: 1, position: 'relative' }}>
-              <View
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: isActive
-                    ? colors.primary
-                    : colors.neutral[100],
-                }}
-              />
-              <Pressable
-                onPress={onPress}
-                style={[
-                  style,
-                  {
-                    flex: 1,
-                    alignItems: 'center',
-                    position: 'relative',
-                    zIndex: 1,
-                  },
-                  isActive && {
-                    backgroundColor: colors.neutral[100],
-                    borderBottomLeftRadius: 50,
-                    borderBottomRightRadius: 50,
-                  },
-                  !isActive && {
-                    backgroundColor: colors.primary,
-                    borderTopLeftRadius: 50,
-                    borderTopRightRadius: 50,
-                  },
-                ]}
-              >
-                {children}
-              </Pressable>
-            </View>
-          );
-        },
+        drawerActiveTintColor: colors.primary[600],
+        drawerInactiveTintColor: colors.neutral[600],
+        swipeEnabled: Platform.OS !== 'android', // Disable swipe gesture on Android
+        drawerType: 'front',
+        drawerPosition: 'left',
+        header: () => <AppHeader />,
       }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Tabs.Screen
-        name="index"
+      <Drawer.Screen
+        name="(tabs)"
         options={{
+          headerShown: true,
           title: 'Home',
-          headerShown: false,
-          tabBarIcon: ({ color }) => <HomeIcon color={color} />,
-          tabBarLabel: ({ color }) => <TabLabel color={color} title="Home" />,
-          tabBarButtonTestID: 'home-tab',
         }}
       />
-
-      <Tabs.Screen
-        name="nutrient-management"
-        options={{
-          title: 'Nutrient\nManagement',
-          headerShown: false,
-          tabBarIcon: ({ color }) => <NutrientManagementIcon color={color} />,
-          tabBarLabel: ({ color }) => (
-            <TabLabel color={color} title={`Nutrient\nManagement`} />
-          ),
-          tabBarButtonTestID: 'nutrient-management-tab',
-        }}
-      />
-
-      <Tabs.Screen
-        name="nutrient-portfolio"
-        options={{
-          title: 'Nutrient\nPortfolio',
-          headerShown: false,
-          tabBarIcon: ({ color }) => <NutrientPortfolioIcon color={color} />,
-          tabBarLabel: ({ color }) => (
-            <TabLabel color={color} title={`Nutrient\nPortfolio`} />
-          ),
-          tabBarButtonTestID: 'nutrient-portfolio-tab',
-        }}
-      />
-
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Profile',
-          headerShown: false,
-          tabBarIcon: ({ color }) => <ProfileIcon color={color} />,
-          tabBarLabel: ({ color }) => (
-            <TabLabel color={color} title="Profile" />
-          ),
-          tabBarButtonTestID: 'settings-tab',
-        }}
-      />
-    </Tabs>
+    </Drawer>
   );
 }

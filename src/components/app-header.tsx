@@ -1,3 +1,5 @@
+import { DrawerActions } from '@react-navigation/native';
+import { useNavigation } from 'expo-router';
 import React from 'react';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 
@@ -8,6 +10,8 @@ import {
 } from '@/components/ui/icons';
 
 export function AppHeader() {
+  const navigation = useNavigation();
+
   return (
     <View style={[styles.headerContainer, { backgroundColor: colors.primary }]}>
       <Image
@@ -21,6 +25,8 @@ export function AppHeader() {
             onPress={() => {
               /* TODO: Handle notification press */
             }}
+            hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+            style={{ padding: 8 }}
           >
             <NotificationBellIcon
               color={colors.neutral[100]}
@@ -31,8 +37,10 @@ export function AppHeader() {
 
         <Pressable
           onPress={() => {
-            /* TODO: Handle menu press */
+            navigation.dispatch(DrawerActions.openDrawer());
           }}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+          style={{ padding: 8 }}
         >
           <HamburgerMenuIcon color={colors.neutral[100]} />
         </Pressable>
