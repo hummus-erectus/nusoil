@@ -8,8 +8,8 @@ export interface SelectOption {
 
 export const accountOptions: SelectOption[] = [
   { label: 'Nusa - 1', value: 'Nusa - 1' },
-  { label: 'Nusa -2', value: 'Nusa -2' },
-  { label: 'Nusa -3', value: 'Nusa -3' },
+  { label: 'Nusa - 2', value: 'Nusa - 2' },
+  { label: 'Nusa - 3', value: 'Nusa - 3' },
 ];
 
 export const seedVarietyOptions: SelectOption[] = [
