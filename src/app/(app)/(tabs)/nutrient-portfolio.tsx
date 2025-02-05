@@ -41,12 +41,12 @@ const MOCK_LOCATIONS: Record<string, Location> = {
     longitude: 115.188919,
     name: 'Nusa Dua Farm, Bali',
   },
-  'Nusa -2': {
+  'Nusa - 2': {
     latitude: -7.275973,
     longitude: 112.824579,
     name: 'Surabaya Agricultural Land, East Java',
   },
-  'Nusa -3': {
+  'Nusa - 3': {
     latitude: -0.789275,
     longitude: 131.352979,
     name: 'Manokwari Plantation, West Papua',
