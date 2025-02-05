@@ -12,8 +12,10 @@ export default function Login() {
 
   const onSubmit: LoginFormProps['onSubmit'] = (data) => {
     console.log(data);
+    // Sign the user in
     signIn({ access: 'access-token', refresh: 'refresh-token' });
-    router.push('/');
+    // Replace the login route with the app route so the login screen is removed from navigation history
+    router.replace('/(app)');
   };
   return (
     <>
