@@ -1,26 +1,143 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+/* eslint-disable max-lines-per-function */
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { z } from 'zod';
 
-import colors from '@/components/ui/colors';
+import { accountOptions } from '@/components/nutrient-plans/types';
+import { Button, FormCard, Radio, Select } from '@/components/ui';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.neutral[100],
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: 'Poppins-Bold',
-    color: colors.neutral[500],
-    marginBottom: 20,
-  },
+// Get account values from accountOptions for schema validation
+const accountValues = accountOptions.map((opt) => opt.value.toString());
+const accountSchema = z.enum(accountValues as [string, ...string[]]);
+
+const walletOptionSchema = z.enum([
+  'carbonCredit',
+  'farmingAsAService',
+  'nutrientProfile',
+  'greenScore',
+  'riskScore',
+  'dataMonetization',
+]);
+
+const walletFormSchema = z.object({
+  option: walletOptionSchema,
+  account: accountSchema,
 });
 
+type WalletFormType = z.infer<typeof walletFormSchema>;
+type AccountType = z.infer<typeof accountSchema>;
+
 export default function LandWallet() {
+  const {
+    handleSubmit: handleWalletSubmit,
+    setValue: setWalletValue,
+    watch: watchWallet,
+  } = useForm<WalletFormType>({
+    resolver: zodResolver(walletFormSchema),
+    defaultValues: {
+      option: 'carbonCredit',
+      account: accountOptions[0].value.toString(),
+    },
+  });
+
+  const walletOption = watchWallet('option');
+
+  const onWalletSubmit = (data: WalletFormType) => {
+    console.log('Wallet submitted:', data);
+    // TODO: Implement wallet submission
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Land Wallet</Text>
-    </View>
+    <>
+      <KeyboardAwareScrollView
+        bottomOffset={62}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
+        <View className="flex-1 gap-10 p-6">
+          <Text className="text-center font-lora text-3xl text-primary">
+            Land Wallet
+          </Text>
+          <FormCard>
+            <View className="mt-2 gap-6">
+              <View className="gap-4">
+                <Text className="ml-2 font-poppins-regular text-sm text-neutral-600">
+                  Select an Option
+                </Text>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'carbonCredit'}
+                    onChange={() => setWalletValue('option', 'carbonCredit')}
+                    label="Carbon Credit"
+                    accessibilityLabel="Carbon Credit"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'farmingAsAService'}
+                    onChange={() =>
+                      setWalletValue('option', 'farmingAsAService')
+                    }
+                    label="Farming as a Service"
+                    accessibilityLabel="Farming as a Service"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'nutrientProfile'}
+                    onChange={() => setWalletValue('option', 'nutrientProfile')}
+                    label="Nutrient Profile"
+                    accessibilityLabel="Nutrient Profile"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'greenScore'}
+                    onChange={() => setWalletValue('option', 'greenScore')}
+                    label="Green Score"
+                    accessibilityLabel="Green Score"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'riskScore'}
+                    onChange={() => setWalletValue('option', 'riskScore')}
+                    label="Risk Score"
+                    accessibilityLabel="Risk Score"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'dataMonetization'}
+                    onChange={() =>
+                      setWalletValue('option', 'dataMonetization')
+                    }
+                    label="Data Monetization"
+                    accessibilityLabel="Data Monetization"
+                  />
+                </View>
+              </View>
+              <Select
+                label="Select Account"
+                options={accountOptions}
+                value={watchWallet('account')}
+                onSelect={(value) =>
+                  setWalletValue('account', value.toString() as AccountType)
+                }
+              />
+              <View>
+                <Button
+                  onPress={handleWalletSubmit(onWalletSubmit)}
+                  fullWidth={false}
+                  label="Submit!"
+                />
+              </View>
+            </View>
+          </FormCard>
+        </View>
+      </KeyboardAwareScrollView>
+    </>
   );
 }
