@@ -171,24 +171,28 @@ export default function Marketplace() {
             </Pressable>
             {activeDropdown === 'farmLease' && (
               <FormCard className="mt-2">
-                <View className="mt-2 gap-4">
-                  <Text>Select an option</Text>
-                  <View className="flex-row">
-                    <View className="flex-1">
-                      <Radio
-                        checked={leaseType === 'take'}
-                        onChange={() => setLeaseValue('type', 'take')}
-                        label="Take"
-                        accessibilityLabel="Take"
-                      />
-                    </View>
-                    <View className="flex-1">
-                      <Radio
-                        checked={leaseType === 'give'}
-                        onChange={() => setLeaseValue('type', 'give')}
-                        label="Give"
-                        accessibilityLabel="Give"
-                      />
+                <View className="mt-2 gap-6">
+                  <View className="gap-4">
+                    <Text className="ml-2 font-poppins-regular text-sm text-neutral-600">
+                      Select an option
+                    </Text>
+                    <View className="flex-row">
+                      <View className="flex-1">
+                        <Radio
+                          checked={leaseType === 'take'}
+                          onChange={() => setLeaseValue('type', 'take')}
+                          label="Take"
+                          accessibilityLabel="Take"
+                        />
+                      </View>
+                      <View className="flex-1">
+                        <Radio
+                          checked={leaseType === 'give'}
+                          onChange={() => setLeaseValue('type', 'give')}
+                          label="Give"
+                          accessibilityLabel="Give"
+                        />
+                      </View>
                     </View>
                   </View>
                   <Select
