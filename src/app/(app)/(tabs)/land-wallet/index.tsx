@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { zodResolver } from '@hookform/resolvers/zod';
+import { router } from 'expo-router';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { Text, View } from 'react-native';
@@ -47,7 +48,18 @@ export default function LandWallet() {
 
   const onWalletSubmit = (data: WalletFormType) => {
     console.log('Wallet submitted:', data);
-    // TODO: Implement wallet submission
+    // Get the account name from the selected account value
+    const selectedAccount = accountOptions.find(
+      (opt) => opt.value.toString() === data.account
+    );
+    // Navigate to the balance screen with params
+    router.push({
+      pathname: '/land-wallet/balance',
+      params: {
+        accountName: selectedAccount?.label || '',
+        option: data.option,
+      },
+    });
   };
 
   return (
@@ -62,7 +74,15 @@ export default function LandWallet() {
           </Text>
           <FormCard>
             <View className="mt-2 gap-6">
-              <View className="gap-4">
+              <Select
+                label="Select Account"
+                options={accountOptions}
+                value={watchWallet('account')}
+                onSelect={(value) =>
+                  setWalletValue('account', value.toString() as AccountType)
+                }
+              />
+              <View className="gap-6">
                 <Text className="ml-2 font-poppins-regular text-sm text-neutral-600">
                   Select an Option
                 </Text>
@@ -119,14 +139,7 @@ export default function LandWallet() {
                   />
                 </View>
               </View>
-              <Select
-                label="Select Account"
-                options={accountOptions}
-                value={watchWallet('account')}
-                onSelect={(value) =>
-                  setWalletValue('account', value.toString() as AccountType)
-                }
-              />
+
               <View>
                 <Button
                   onPress={handleWalletSubmit(onWalletSubmit)}
