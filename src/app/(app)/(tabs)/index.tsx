@@ -1,15 +1,15 @@
 /* eslint-disable max-lines-per-function */
 import { router, useNavigation } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, colors, FormCard, Text } from '@/components/ui';
 import { CircleTick as CircleTickIcon } from '@/components/ui/icons';
 import { useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
-  const [showUpgrade, setShowUpgrade] = useState(false);
-  const { userName, setSubscriptionPlan } = useUserStore();
+  const { userName, subscriptionPlan } = useUserStore();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -43,104 +43,61 @@ const WelcomeScreen = () => {
   }, [navigation]);
 
   const handleUpgrade = () => {
-    setShowUpgrade(true);
+    router.push('/upgrade');
   };
 
-  const handleAskLater = () => {
-    router.replace('/nutrient-management');
-  };
+  // const handleAskLater = () => {
+  //   router.replace('/nutrient-management');
+  // };
 
-  if (showUpgrade) {
-    return (
+  return (
+    <KeyboardAwareScrollView
+      bottomOffset={62}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
       <View className="flex-1 justify-center p-6">
         <FormCard>
-          <View className="my-8 gap-10">
+          <View className="my-8 items-center gap-4">
             <Text className="text-center font-lora text-4xl text-primary">
-              Upgrade
+              Welcome
             </Text>
-            <Text className="font-poppins text-center text-base text-neutral-600">
-              Would you like to Upgrade to the Mature or Harvesting Plan?
+            <Text className="text-center font-lora text-2xl text-neutral-700">
+              {userName}!
             </Text>
-            <Text className="font-poppins text-left text-base text-neutral-500">
-              Choose an Upgrade Plan:
+            <CircleTickIcon
+              width={40}
+              height={40}
+              color={colors.secondary}
+              className="my-6"
+            />
+            <Text className="mb-10 text-center font-lora text-lg text-secondary">
+              You have enrolled in the {subscriptionPlan} Plan!
             </Text>
-            <View className="items-center gap-6">
+            <Text className="font-poppins mb-6 text-center text-base text-neutral-600">
+              {subscriptionPlan === 'Seed'
+                ? 'Would you like to Upgrade to the Mature or Harvesting Plan?'
+                : subscriptionPlan === 'Mature'
+                  ? 'Would you like to change your plan? You can upgrade to Harvesting or downgrade to Seed.'
+                  : 'Would you like to change your plan? You can downgrade to Mature or Seed.'}
+            </Text>
+            <View className="gap-6">
               <Button
                 variant="default"
-                onPress={() => {
-                  setSubscriptionPlan('Mature');
-                  router.replace('/nutrient-management');
-                }}
-                label="Mature Plan"
+                onPress={handleUpgrade}
+                label={subscriptionPlan === 'Seed' ? 'Upgrade!' : 'Change Plan'}
                 className="w-52"
               />
-              <Text className="font-poppins text-center text-base text-neutral-500">
-                OR
-              </Text>
-              <Button
-                variant="default"
-                onPress={() => {
-                  setSubscriptionPlan('Harvest');
-                  router.replace('/nutrient-management');
-                }}
-                label="Harvesting Plan"
+              {/* <Button
+                variant="secondary"
+                onPress={handleAskLater}
+                label="Ask me later"
                 className="w-52"
-              />
-              {/* TODO: Remove seed plan button */}
-              <Button
-                variant="ghost"
-                onPress={() => {
-                  setSubscriptionPlan('Seed');
-                  router.replace('/nutrient-management');
-                }}
-                label="Revert to Seed Plan"
-              />
+              /> */}
             </View>
           </View>
         </FormCard>
       </View>
-    );
-  }
-
-  return (
-    <View className="flex-1 justify-center p-6">
-      <FormCard>
-        <View className="my-8 items-center gap-4">
-          <Text className="text-center font-lora text-4xl text-primary">
-            Welcome
-          </Text>
-          <Text className="text-center font-lora text-2xl text-neutral-700">
-            {userName}!
-          </Text>
-          <CircleTickIcon
-            width={40}
-            height={40}
-            color={colors.secondary}
-            className="my-6"
-          />
-          <Text className="mb-10 text-center font-lora text-lg text-secondary">
-            You have enrolled in the Seed Plan!
-          </Text>
-          <Text className="font-poppins mb-6 text-center text-base text-neutral-600">
-            Would you like to Upgrade to the Mature or Harvesting Plan?
-          </Text>
-          <View className="gap-6">
-            <Button
-              variant="default"
-              onPress={handleUpgrade}
-              label="Upgrade!"
-              className="w-52"
-            />
-            <Button
-              variant="secondary"
-              onPress={handleAskLater}
-              label="Ask me later"
-              className="w-52"
-            />
-          </View>
-        </View>
-      </FormCard>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 
