@@ -10,7 +10,6 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppHeader } from '@/components/app-header';
 import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
-import { FocusAwareStatusBar } from '@/components/ui/focus-aware-status-bar';
 import {
   Clipboard as ClipboardIcon,
   Key as KeyIcon,
@@ -185,7 +184,6 @@ export default function Layout() {
 
   return (
     <>
-      <FocusAwareStatusBar />
       <Drawer
         screenOptions={{
           drawerStyle: {
