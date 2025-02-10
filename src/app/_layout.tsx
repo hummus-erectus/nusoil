@@ -40,7 +40,13 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <KeyboardProvider>
             <APIProvider>
-              <Stack screenOptions={{ headerShown: false }}>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  animation: 'fade',
+                  gestureEnabled: true,
+                }}
+              >
                 <Stack.Screen name="(app)" />
                 <Stack.Screen name="login" />
                 <Stack.Screen name="signup" />
