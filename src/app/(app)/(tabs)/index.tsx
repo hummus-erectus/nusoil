@@ -9,7 +9,7 @@ import { CircleTick as CircleTickIcon } from '@/components/ui/icons';
 import { useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
-  const { userName } = useUserStore();
+  const { userName, subscriptionPlan } = useUserStore();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -46,9 +46,9 @@ const WelcomeScreen = () => {
     router.push('/upgrade');
   };
 
-  const handleAskLater = () => {
-    router.replace('/nutrient-management');
-  };
+  // const handleAskLater = () => {
+  //   router.replace('/nutrient-management');
+  // };
 
   return (
     <KeyboardAwareScrollView
@@ -71,24 +71,28 @@ const WelcomeScreen = () => {
               className="my-6"
             />
             <Text className="mb-10 text-center font-lora text-lg text-secondary">
-              You have enrolled in the Seed Plan!
+              You have enrolled in the {subscriptionPlan} Plan!
             </Text>
             <Text className="font-poppins mb-6 text-center text-base text-neutral-600">
-              Would you like to Upgrade to the Mature or Harvesting Plan?
+              {subscriptionPlan === 'Seed'
+                ? 'Would you like to Upgrade to the Mature or Harvesting Plan?'
+                : subscriptionPlan === 'Mature'
+                  ? 'Would you like to change your plan? You can upgrade to Harvesting or downgrade to Seed.'
+                  : 'Would you like to change your plan? You can downgrade to Mature or Seed.'}
             </Text>
             <View className="gap-6">
               <Button
                 variant="default"
                 onPress={handleUpgrade}
-                label="Upgrade!"
+                label={subscriptionPlan === 'Seed' ? 'Upgrade!' : 'Change Plan'}
                 className="w-52"
               />
-              <Button
+              {/* <Button
                 variant="secondary"
                 onPress={handleAskLater}
                 label="Ask me later"
                 className="w-52"
-              />
+              /> */}
             </View>
           </View>
         </FormCard>
