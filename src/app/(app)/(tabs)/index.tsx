@@ -43,7 +43,7 @@ const WelcomeScreen = () => {
   }, [navigation]);
 
   const handleUpgrade = () => {
-    router.replace('/upgrade');
+    router.push('/upgrade');
   };
 
   const handleAskLater = () => {
