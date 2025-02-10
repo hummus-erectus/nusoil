@@ -11,6 +11,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { APIProvider } from '@/api';
+import { FocusAwareStatusBar } from '@/components/ui';
 import { hydrateAuth, loadSelectedTheme } from '@/lib';
 import { useThemeConfig } from '@/lib/use-theme-config';
 
@@ -45,6 +46,7 @@ export default function RootLayout() {
                 <Stack.Screen name="signup" />
                 <Stack.Screen name="soil-test" />
               </Stack>
+              <FocusAwareStatusBar />
               <FlashMessage position="top" />
             </APIProvider>
           </KeyboardProvider>
