@@ -7,9 +7,9 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import colors from '@/components/ui/colors';
 import {
   Home as HomeIcon,
-  NutrientManagement as NutrientManagementIcon,
   NutrientPortfolio as NutrientPortfolioIcon,
-  Profile as ProfileIcon,
+  Shop as ShopIcon,
+  Wallet as WalletIcon,
 } from '@/components/ui/icons';
 
 const styles = StyleSheet.create({
@@ -50,11 +50,11 @@ const CustomTabBarButton: React.FC<CustomTabBarButtonProps> = (props) => {
   let index = 0;
   if (testID === 'home-tab') {
     index = 0;
-  } else if (testID === 'nutrient-management-tab') {
-    index = 1;
   } else if (testID === 'nutrient-portfolio-tab') {
+    index = 1;
+  } else if (testID === 'marketplace-tab') {
     index = 2;
-  } else if (testID === 'settings-tab') {
+  } else if (testID === 'land-wallet-tab') {
     index = 3;
   }
   const isActive = accessibilityState?.selected;
@@ -144,18 +144,6 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name="nutrient-management"
-        options={{
-          title: 'Nutrient\nManagement',
-          tabBarIcon: ({ color }) => <NutrientManagementIcon color={color} />,
-          tabBarLabel: ({ color }) => (
-            <TabLabel color={color} title={`Nutrient\nManagement`} />
-          ),
-          tabBarButtonTestID: 'nutrient-management-tab',
-        }}
-      />
-
-      <Tabs.Screen
         name="nutrient-portfolio"
         options={{
           title: 'Nutrient\nPortfolio',
@@ -168,14 +156,26 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name="settings"
+        name="marketplace"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <ProfileIcon color={color} />,
+          title: 'Marketplace',
+          tabBarIcon: ({ color }) => <ShopIcon color={color} />,
           tabBarLabel: ({ color }) => (
-            <TabLabel color={color} title="Profile" />
+            <TabLabel color={color} title="Marketplace" />
           ),
-          tabBarButtonTestID: 'settings-tab',
+          tabBarButtonTestID: 'marketplace-tab',
+        }}
+      />
+
+      <Tabs.Screen
+        name="land-wallet"
+        options={{
+          title: 'Land\nWallet',
+          tabBarIcon: ({ color }) => <WalletIcon color={color} />,
+          tabBarLabel: ({ color }) => (
+            <TabLabel color={color} title={`Land\nWallet`} />
+          ),
+          tabBarButtonTestID: 'land-wallet-tab',
         }}
       />
 
@@ -183,7 +183,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="privacy-statement"
         options={{
-          href: null, // This prevents the tab from showing in the tab bar
+          href: null,
         }}
       />
 
@@ -209,14 +209,14 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name="marketplace"
+        name="settings"
         options={{
           href: null,
         }}
       />
 
       <Tabs.Screen
-        name="land-wallet"
+        name="nutrient-management"
         options={{
           href: null,
         }}
