@@ -59,7 +59,7 @@ const UpgradeScreen = () => {
                     }
                     onPress={() => {
                       setSubscriptionPlan('Mature');
-                      router.replace('/nutrient-management');
+                      router.replace('/');
                     }}
                     label="Mature Plan"
                     className="w-52"
@@ -77,7 +77,7 @@ const UpgradeScreen = () => {
                   variant="default"
                   onPress={() => {
                     setSubscriptionPlan('Harvest');
-                    router.replace('/nutrient-management');
+                    router.replace('/');
                   }}
                   label="Harvesting Plan"
                   className="w-52"
@@ -96,7 +96,7 @@ const UpgradeScreen = () => {
                     variant="secondary"
                     onPress={() => {
                       setSubscriptionPlan('Seed');
-                      router.replace('/nutrient-management');
+                      router.replace('/');
                     }}
                     label="Seed Plan"
                     className="w-52"
