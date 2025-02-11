@@ -68,12 +68,13 @@ interface DrawerItemProps {
   href: DrawerRoute;
   label: string;
   icon: React.ReactNode;
+  onPress?: () => void;
 }
 
-function DrawerItem({ href, label, icon }: DrawerItemProps) {
+function DrawerItem({ href, label, icon, onPress }: DrawerItemProps) {
   return (
     <Link href={href} asChild>
-      <Pressable style={styles.drawerItem}>
+      <Pressable style={styles.drawerItem} onPress={onPress}>
         {icon}
         <Text style={styles.drawerText}>{label}</Text>
       </Pressable>
@@ -90,6 +91,7 @@ function CustomDrawerContent(props: any) {
   const showHarvestFeatures = subscriptionPlan === 'Harvest';
 
   const handleUpgrade = () => {
+    props.navigation.closeDrawer();
     router.push('/upgrade');
   };
 
@@ -152,6 +154,7 @@ function CustomDrawerContent(props: any) {
         <View style={styles.divider} />
 
         <DrawerItem
+          onPress={() => props.navigation.closeDrawer()}
           href="/settings"
           label="Settings"
           icon={<SettingsIcon color={colors.neutral[100]} />}
