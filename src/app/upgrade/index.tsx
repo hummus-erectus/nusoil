@@ -1,45 +1,62 @@
 /* eslint-disable max-lines-per-function */
 import { router } from 'expo-router';
 import React, { useCallback, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, Animated, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Text } from '@/components/ui';
+import colors from '@/components/ui/colors';
 import { useUserStore } from '@/stores/user-store';
+
+const MINIMUM_LOADING_TIME = 2000; // 2 seconds
 
 const UpgradeScreen = () => {
   const { setSubscriptionPlan, subscriptionPlan } = useUserStore();
   const isNavigatingRef = useRef(false);
   const [isChangingPlan, setIsChangingPlan] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const loadingStartTimeRef = useRef(0);
 
   const handlePlanChange = useCallback(
     (newPlan: 'Seed' | 'Mature' | 'Harvest') => {
       if (isNavigatingRef.current) return;
       isNavigatingRef.current = true;
-      setIsChangingPlan(true);
+      loadingStartTimeRef.current = Date.now();
 
-      // Update state first
-      setSubscriptionPlan(newPlan);
+      // Start fade out animation
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }).start(() => {
+        setIsChangingPlan(true);
+        setSubscriptionPlan(newPlan);
 
-      // Navigate after a minimal delay to allow state to update
-      requestAnimationFrame(() => {
-        router.replace('/');
+        // Calculate remaining time to meet minimum loading duration
+        const elapsedTime = Date.now() - loadingStartTimeRef.current;
+        const remainingTime = Math.max(0, MINIMUM_LOADING_TIME - elapsedTime);
+
+        // Navigate after minimum loading time
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            router.replace('/');
+          });
+        }, remainingTime);
       });
     },
-    [setSubscriptionPlan]
+    [fadeAnim, setSubscriptionPlan]
   );
 
-  // If we're changing plan, render a loading state or empty state
+  // If we're changing plan, render a loading state with spinner
   if (isChangingPlan) {
     return (
-      <View className="flex-1 justify-center p-6">
-        <FormCard>
-          <View className="my-8">
-            <Text className="text-center font-lora text-4xl text-primary">
-              Updating Plan...
-            </Text>
-          </View>
-        </FormCard>
+      <View className="flex-1 items-center justify-center">
+        <View className="items-center gap-4">
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text className="font-poppins text-base text-neutral-600">
+            Updating your plan...
+          </Text>
+        </View>
       </View>
     );
   }
@@ -71,70 +88,71 @@ const UpgradeScreen = () => {
   };
 
   return (
-    <>
-      <KeyboardAwareScrollView
-        bottomOffset={62}
-        contentContainerStyle={{ flexGrow: 1 }}
+    <KeyboardAwareScrollView
+      bottomOffset={62}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <Animated.View
+        className="flex-1 justify-center p-6"
+        style={{ opacity: fadeAnim }}
       >
-        <View className="flex-1 justify-center p-6">
-          <FormCard>
-            <View className="my-8 gap-10">
-              <Text className="text-center font-lora text-4xl text-primary">
-                {getTitle()}
-              </Text>
-              <Text className="font-poppins text-center text-base text-neutral-600">
-                {getDescription()}
-              </Text>
-              <View className="items-center gap-6">
-                {subscriptionPlan !== 'Mature' && (
-                  <>
-                    <Button
-                      variant={
-                        subscriptionPlan === 'Harvest' ? 'secondary' : 'default'
-                      }
-                      onPress={() => handlePlanChange('Mature')}
-                      label="Mature Plan"
-                      className="w-52"
-                    />
-                    {subscriptionPlan !== 'Harvest' && (
-                      <Text className="font-poppins my-2 text-center text-base text-neutral-500">
-                        OR
-                      </Text>
-                    )}
-                  </>
-                )}
-
-                {subscriptionPlan !== 'Harvest' && (
+        <FormCard>
+          <View className="my-8 gap-10">
+            <Text className="text-center font-lora text-4xl text-primary">
+              {getTitle()}
+            </Text>
+            <Text className="font-poppins text-center text-base text-neutral-600">
+              {getDescription()}
+            </Text>
+            <View className="items-center gap-6">
+              {subscriptionPlan !== 'Mature' && (
+                <>
                   <Button
-                    variant="default"
-                    onPress={() => handlePlanChange('Harvest')}
-                    label="Harvesting Plan"
+                    variant={
+                      subscriptionPlan === 'Harvest' ? 'secondary' : 'default'
+                    }
+                    onPress={() => handlePlanChange('Mature')}
+                    label="Mature Plan"
                     className="w-52"
                   />
-                )}
+                  {subscriptionPlan !== 'Harvest' && (
+                    <Text className="font-poppins my-2 text-center text-base text-neutral-500">
+                      OR
+                    </Text>
+                  )}
+                </>
+              )}
 
-                {subscriptionPlan !== 'Seed' && (
-                  <>
-                    {(subscriptionPlan === 'Harvest' ||
-                      subscriptionPlan === 'Mature') && (
-                      <Text className="font-poppins my-2 text-center text-base text-neutral-500">
-                        OR
-                      </Text>
-                    )}
-                    <Button
-                      variant="secondary"
-                      onPress={() => handlePlanChange('Seed')}
-                      label="Seed Plan"
-                      className="w-52"
-                    />
-                  </>
-                )}
-              </View>
+              {subscriptionPlan !== 'Harvest' && (
+                <Button
+                  variant="default"
+                  onPress={() => handlePlanChange('Harvest')}
+                  label="Harvesting Plan"
+                  className="w-52"
+                />
+              )}
+
+              {subscriptionPlan !== 'Seed' && (
+                <>
+                  {(subscriptionPlan === 'Harvest' ||
+                    subscriptionPlan === 'Mature') && (
+                    <Text className="font-poppins my-2 text-center text-base text-neutral-500">
+                      OR
+                    </Text>
+                  )}
+                  <Button
+                    variant="secondary"
+                    onPress={() => handlePlanChange('Seed')}
+                    label="Seed Plan"
+                    className="w-52"
+                  />
+                </>
+              )}
             </View>
-          </FormCard>
-        </View>
-      </KeyboardAwareScrollView>
-    </>
+          </View>
+        </FormCard>
+      </Animated.View>
+    </KeyboardAwareScrollView>
   );
 };
 
