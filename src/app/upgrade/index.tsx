@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
@@ -9,6 +9,40 @@ import { useUserStore } from '@/stores/user-store';
 
 const UpgradeScreen = () => {
   const { setSubscriptionPlan, subscriptionPlan } = useUserStore();
+  const isNavigatingRef = useRef(false);
+  const [isChangingPlan, setIsChangingPlan] = useState(false);
+
+  const handlePlanChange = useCallback(
+    (newPlan: 'Seed' | 'Mature' | 'Harvest') => {
+      if (isNavigatingRef.current) return;
+      isNavigatingRef.current = true;
+      setIsChangingPlan(true);
+
+      // Update state first
+      setSubscriptionPlan(newPlan);
+
+      // Navigate after a minimal delay to allow state to update
+      requestAnimationFrame(() => {
+        router.replace('/');
+      });
+    },
+    [setSubscriptionPlan]
+  );
+
+  // If we're changing plan, render a loading state or empty state
+  if (isChangingPlan) {
+    return (
+      <View className="flex-1 justify-center p-6">
+        <FormCard>
+          <View className="my-8">
+            <Text className="text-center font-lora text-4xl text-primary">
+              Updating Plan...
+            </Text>
+          </View>
+        </FormCard>
+      </View>
+    );
+  }
 
   const getTitle = () => {
     switch (subscriptionPlan) {
@@ -58,10 +92,7 @@ const UpgradeScreen = () => {
                       variant={
                         subscriptionPlan === 'Harvest' ? 'secondary' : 'default'
                       }
-                      onPress={() => {
-                        setSubscriptionPlan('Mature');
-                        router.replace('/');
-                      }}
+                      onPress={() => handlePlanChange('Mature')}
                       label="Mature Plan"
                       className="w-52"
                     />
@@ -76,10 +107,7 @@ const UpgradeScreen = () => {
                 {subscriptionPlan !== 'Harvest' && (
                   <Button
                     variant="default"
-                    onPress={() => {
-                      setSubscriptionPlan('Harvest');
-                      router.replace('/');
-                    }}
+                    onPress={() => handlePlanChange('Harvest')}
                     label="Harvesting Plan"
                     className="w-52"
                   />
@@ -95,10 +123,7 @@ const UpgradeScreen = () => {
                     )}
                     <Button
                       variant="secondary"
-                      onPress={() => {
-                        setSubscriptionPlan('Seed');
-                        router.replace('/');
-                      }}
+                      onPress={() => handlePlanChange('Seed')}
                       label="Seed Plan"
                       className="w-52"
                     />

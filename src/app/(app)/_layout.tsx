@@ -2,9 +2,9 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { Env } from '@env';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { Redirect, router, SplashScreen } from 'expo-router';
+import { Link, Redirect, router, SplashScreen } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
@@ -62,7 +62,8 @@ type DrawerRoute =
   | '/(app)/(tabs)/password-policy'
   | '/(app)/(tabs)/add-on-services'
   | '/(app)/(tabs)/marketplace'
-  | '/(app)/(tabs)/land-wallet';
+  | '/(app)/(tabs)/land-wallet'
+  | '/upgrade';
 
 interface DrawerItemProps {
   href: DrawerRoute;
@@ -72,37 +73,50 @@ interface DrawerItemProps {
 }
 
 function DrawerItem({ href, label, icon, onPress }: DrawerItemProps) {
-  const handlePress = useCallback(() => {
-    // Ensure drawer closes first
-    if (onPress) {
-      onPress();
-    }
-    // Small delay to ensure drawer close animation starts before navigation
-    requestAnimationFrame(() => {
-      router.push(href);
-    });
-  }, [href, onPress]);
-
   return (
-    <Pressable style={styles.drawerItem} onPress={handlePress}>
-      {icon}
-      <Text style={styles.drawerText}>{label}</Text>
-    </Pressable>
+    <Link href={href} asChild>
+      <Pressable style={styles.drawerItem} onPress={onPress}>
+        {icon}
+        <Text style={styles.drawerText}>{label}</Text>
+      </Pressable>
+    </Link>
   );
 }
 
 function CustomDrawerContent(props: any) {
   const signOut = useAuth.use.signOut();
   const subscriptionPlan = useUserStore((state) => state.subscriptionPlan);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const showAdvancedFeatures =
     subscriptionPlan === 'Mature' || subscriptionPlan === 'Harvest';
   const showHarvestFeatures = subscriptionPlan === 'Harvest';
 
-  const handleUpgrade = () => {
+  const handleDrawerItemPress = (href: DrawerRoute) => {
+    if (isNavigating) return;
+    setIsNavigating(true);
+
+    // Close drawer first
     props.navigation.closeDrawer();
-    router.push('/upgrade');
+
+    // Wait for next frame to ensure drawer close animation starts
+    requestAnimationFrame(() => {
+      // Add a minimal delay before navigation
+      setTimeout(() => {
+        router.push(href);
+        // Reset navigation state after navigation
+        setTimeout(() => {
+          setIsNavigating(false);
+        }, 500);
+      }, 100);
+    });
   };
+
+  useEffect(() => {
+    return () => {
+      setIsNavigating(false);
+    };
+  }, []);
 
   return (
     <DrawerContentScrollView {...props}>
@@ -111,17 +125,24 @@ function CustomDrawerContent(props: any) {
           href="/"
           label="Home"
           icon={<HomeIcon color={colors.neutral[100]} />}
+          onPress={() => handleDrawerItemPress('/')}
         />
 
         <DrawerItem
           href="/(app)/(tabs)/nutrient-management"
           label="Nutrient Management"
           icon={<NutrientManagementIcon color={colors.neutral[100]} />}
+          onPress={() =>
+            handleDrawerItemPress('/(app)/(tabs)/nutrient-management')
+          }
         />
         <DrawerItem
           href="/(app)/(tabs)/nutrient-portfolio"
           label="Nutrient Portfolio"
           icon={<NutrientPortfolioIcon color={colors.neutral[100]} />}
+          onPress={() =>
+            handleDrawerItemPress('/(app)/(tabs)/nutrient-portfolio')
+          }
         />
         {showAdvancedFeatures && (
           <>
@@ -129,11 +150,15 @@ function CustomDrawerContent(props: any) {
               href="/(app)/(tabs)/marketplace"
               label="Marketplace"
               icon={<ShopIcon color={colors.neutral[100]} />}
+              onPress={() => handleDrawerItemPress('/(app)/(tabs)/marketplace')}
             />
             <DrawerItem
               href="/(app)/(tabs)/add-on-services"
               label="Add-on Services"
               icon={<LampOnIcon color={colors.neutral[100]} />}
+              onPress={() =>
+                handleDrawerItemPress('/(app)/(tabs)/add-on-services')
+              }
             />
           </>
         )}
@@ -142,6 +167,7 @@ function CustomDrawerContent(props: any) {
             href="/(app)/(tabs)/land-wallet"
             label="Land Wallet"
             icon={<WalletIcon color={colors.neutral[100]} />}
+            onPress={() => handleDrawerItemPress('/(app)/(tabs)/land-wallet')}
           />
         )}
 
@@ -149,7 +175,7 @@ function CustomDrawerContent(props: any) {
           <Button
             variant="ghost"
             fullWidth={false}
-            onPress={handleUpgrade}
+            onPress={() => handleDrawerItemPress('/upgrade')}
             label={
               <View className="flex-row items-center justify-center">
                 <Text className="ml-4 text-white underline">
@@ -172,16 +198,21 @@ function CustomDrawerContent(props: any) {
           href="/(app)/(tabs)/privacy-statement"
           label="Privacy Statement"
           icon={<UnlockIcon color={colors.neutral[100]} />}
+          onPress={() =>
+            handleDrawerItemPress('/(app)/(tabs)/privacy-statement')
+          }
         />
         <DrawerItem
           href="/(app)/(tabs)/terms-of-use"
           label="Terms of Use"
           icon={<ClipboardIcon color={colors.neutral[100]} />}
+          onPress={() => handleDrawerItemPress('/(app)/(tabs)/terms-of-use')}
         />
         <DrawerItem
           href="/(app)/(tabs)/password-policy"
           label="Password Policy"
           icon={<KeyIcon color={colors.neutral[100]} />}
+          onPress={() => handleDrawerItemPress('/(app)/(tabs)/password-policy')}
         />
         <Button
           className="mt-12"
