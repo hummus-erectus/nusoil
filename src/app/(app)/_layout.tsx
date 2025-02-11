@@ -96,22 +96,20 @@ function CustomDrawerContent(props: any) {
     if (isNavigating) return;
     setIsNavigating(true);
 
-    // Close drawer first
+    // Start drawer close animation
     props.navigation.closeDrawer();
 
-    // Wait for next frame to ensure drawer close animation starts
+    // Navigate in the next frame after drawer close starts
     requestAnimationFrame(() => {
-      // Add a minimal delay before navigation
+      router.push(href);
+      // Reset navigation state after a shorter delay
       setTimeout(() => {
-        router.push(href);
-        // Reset navigation state after navigation
-        setTimeout(() => {
-          setIsNavigating(false);
-        }, 500);
-      }, 100);
+        setIsNavigating(false);
+      }, 300);
     });
   };
 
+  // Clean up navigation state when component unmounts
   useEffect(() => {
     return () => {
       setIsNavigating(false);
