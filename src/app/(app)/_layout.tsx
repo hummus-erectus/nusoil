@@ -54,7 +54,7 @@ type DrawerRoute =
   | '/(app)/(tabs)'
   | '/(app)/(tabs)/nutrient-management'
   | '/(app)/(tabs)/nutrient-portfolio'
-  | '/(app)/(tabs)/settings'
+  | '/settings'
   | '/(app)/(tabs)/privacy-statement'
   | '/(app)/(tabs)/terms-of-use'
   | '/(app)/(tabs)/password-policy'
@@ -91,7 +91,7 @@ function CustomDrawerContent(props: any) {
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerContent}>
         <DrawerItem
-          href="/(app)/(tabs)/settings"
+          href="/settings"
           label="Profile"
           icon={<ProfileIcon color={colors.neutral[100]} />}
         />
