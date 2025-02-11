@@ -16,12 +16,7 @@ export const UpgradeOverlay: React.FC<UpgradeOverlayProps> = ({
 }) => {
   return (
     <View className="absolute inset-0 z-[1000] items-center justify-center">
-      <BlurView
-        intensity={15}
-        className="absolute inset-0"
-        experimentalBlurMethod="dimezisBlurView"
-        key={`blur-${Math.random().toString(36).substr(2, 9)}`}
-      />
+      <BlurView className="absolute inset-0" intensity={90} tint="light" />
       <View className="w-4/5 items-center rounded-2xl bg-white/90 p-6 shadow-lg">
         <Text className="mb-4 text-center font-lora text-2xl text-primary">
           Upgrade Required
@@ -31,7 +26,7 @@ export const UpgradeOverlay: React.FC<UpgradeOverlayProps> = ({
             requiredPlan === 'Harvest' ? 'Harvest' : 'Mature and Harvest'
           } plan members. You are currently on the ${currentPlan} plan.`}
         </Text>
-        <Link href="/upgrade" asChild replace>
+        <Link href="/upgrade" asChild>
           <Button variant="default" label="Upgrade Now" />
         </Link>
       </View>
