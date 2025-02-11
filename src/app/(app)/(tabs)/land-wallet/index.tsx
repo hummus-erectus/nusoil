@@ -72,83 +72,75 @@ export default function LandWallet() {
         bottomOffset={62}
         contentContainerStyle={{ flexGrow: 1 }}
       >
-        <View className="flex-1 justify-center p-6">
+        <View className="flex-1 gap-10 p-6">
+          <Text className="text-center font-lora text-3xl text-primary">
+            Land Wallet
+          </Text>
           <FormCard>
-            <View className="my-8 gap-10">
-              <Text className="text-center font-lora text-4xl text-primary">
-                Land Wallet
-              </Text>
-              <Text className="font-poppins text-center text-base text-neutral-600">
-                Choose your wallet option and account
-              </Text>
-
+            <View className="mt-2 gap-6">
+              <Select
+                label="Select Account"
+                options={accountOptions}
+                value={watchWallet('account')}
+                onSelect={(value) =>
+                  setWalletValue('account', value.toString() as AccountType)
+                }
+              />
               <View className="gap-6">
-                <Select
-                  label="Select Account"
-                  options={accountOptions}
-                  value={watchWallet('account')}
-                  onSelect={(value) =>
-                    setWalletValue('account', value.toString() as AccountType)
-                  }
-                />
-                <View className="gap-6">
-                  <Text className="ml-2 font-poppins-regular text-sm text-neutral-600">
-                    Select an Option
-                  </Text>
-                  <View className="flex-1">
-                    <Radio
-                      checked={walletOption === 'carbonCredit'}
-                      onChange={() => setWalletValue('option', 'carbonCredit')}
-                      label="Carbon Credit"
-                      accessibilityLabel="Carbon Credit"
-                    />
-                  </View>
-                  <View className="flex-1">
-                    <Radio
-                      checked={walletOption === 'farmingAsAService'}
-                      onChange={() =>
-                        setWalletValue('option', 'farmingAsAService')
-                      }
-                      label="Farming as a Service"
-                      accessibilityLabel="Farming as a Service"
-                    />
-                  </View>
-                  <View className="flex-1">
-                    <Radio
-                      checked={walletOption === 'nutrientProfile'}
-                      onChange={() =>
-                        setWalletValue('option', 'nutrientProfile')
-                      }
-                      label="Nutrient Profile"
-                      accessibilityLabel="Nutrient Profile"
-                    />
-                  </View>
-                  <View className="flex-1">
-                    <Radio
-                      checked={walletOption === 'greenScore'}
-                      onChange={() => setWalletValue('option', 'greenScore')}
-                      label="Green Score"
-                      accessibilityLabel="Green Score"
-                    />
-                  </View>
-                  <View className="flex-1">
-                    <Radio
-                      checked={walletOption === 'riskScore'}
-                      onChange={() => setWalletValue('option', 'riskScore')}
-                      label="Risk Score"
-                      accessibilityLabel="Risk Score"
-                    />
-                  </View>
-                  <View className="flex-1">
-                    <Radio
-                      checked={walletOption === 'dataMonetization'}
-                      onChange={() =>
-                        setWalletValue('option', 'dataMonetization')
-                      }
-                      label="Data Monetization"
-                      accessibilityLabel="Data Monetization"
-                    />
-                  </View>
+                <Text className="ml-2 font-poppins-regular text-sm text-neutral-600">
+                  Select an Option
+                </Text>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'carbonCredit'}
+                    onChange={() => setWalletValue('option', 'carbonCredit')}
+                    label="Carbon Credit"
+                    accessibilityLabel="Carbon Credit"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'farmingAsAService'}
+                    onChange={() =>
+                      setWalletValue('option', 'farmingAsAService')
+                    }
+                    label="Farming as a Service"
+                    accessibilityLabel="Farming as a Service"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'nutrientProfile'}
+                    onChange={() => setWalletValue('option', 'nutrientProfile')}
+                    label="Nutrient Profile"
+                    accessibilityLabel="Nutrient Profile"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'greenScore'}
+                    onChange={() => setWalletValue('option', 'greenScore')}
+                    label="Green Score"
+                    accessibilityLabel="Green Score"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'riskScore'}
+                    onChange={() => setWalletValue('option', 'riskScore')}
+                    label="Risk Score"
+                    accessibilityLabel="Risk Score"
+                  />
+                </View>
+                <View className="flex-1">
+                  <Radio
+                    checked={walletOption === 'dataMonetization'}
+                    onChange={() =>
+                      setWalletValue('option', 'dataMonetization')
+                    }
+                    label="Data Monetization"
+                    accessibilityLabel="Data Monetization"
+                  />
                 </View>
               </View>
 
