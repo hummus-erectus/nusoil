@@ -45,8 +45,9 @@ export default function RootLayout() {
                 <Stack.Screen name="login" />
                 <Stack.Screen name="signup" />
                 <Stack.Screen name="soil-test" />
+                <Stack.Screen name="upgrade" />
               </Stack>
-              <FocusAwareStatusBar />
+              <FocusAwareStatusBar alwaysShow />
               <FlashMessage position="top" />
             </APIProvider>
           </KeyboardProvider>

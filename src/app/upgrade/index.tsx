@@ -37,77 +37,79 @@ const UpgradeScreen = () => {
   };
 
   return (
-    <KeyboardAwareScrollView
-      bottomOffset={62}
-      contentContainerStyle={{ flexGrow: 1 }}
-    >
-      <View className="flex-1 justify-center p-6">
-        <FormCard>
-          <View className="my-8 gap-10">
-            <Text className="text-center font-lora text-4xl text-primary">
-              {getTitle()}
-            </Text>
-            <Text className="font-poppins text-center text-base text-neutral-600">
-              {getDescription()}
-            </Text>
-            <View className="items-center gap-6">
-              {subscriptionPlan !== 'Mature' && (
-                <>
+    <>
+      <KeyboardAwareScrollView
+        bottomOffset={62}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
+        <View className="flex-1 justify-center p-6">
+          <FormCard>
+            <View className="my-8 gap-10">
+              <Text className="text-center font-lora text-4xl text-primary">
+                {getTitle()}
+              </Text>
+              <Text className="font-poppins text-center text-base text-neutral-600">
+                {getDescription()}
+              </Text>
+              <View className="items-center gap-6">
+                {subscriptionPlan !== 'Mature' && (
+                  <>
+                    <Button
+                      variant={
+                        subscriptionPlan === 'Harvest' ? 'secondary' : 'default'
+                      }
+                      onPress={() => {
+                        setSubscriptionPlan('Mature');
+                        router.replace('/');
+                      }}
+                      label="Mature Plan"
+                      className="w-52"
+                    />
+                    {subscriptionPlan !== 'Harvest' && (
+                      <Text className="font-poppins my-2 text-center text-base text-neutral-500">
+                        OR
+                      </Text>
+                    )}
+                  </>
+                )}
+
+                {subscriptionPlan !== 'Harvest' && (
                   <Button
-                    variant={
-                      subscriptionPlan === 'Harvest' ? 'secondary' : 'default'
-                    }
+                    variant="default"
                     onPress={() => {
-                      setSubscriptionPlan('Mature');
+                      setSubscriptionPlan('Harvest');
                       router.replace('/');
                     }}
-                    label="Mature Plan"
+                    label="Harvesting Plan"
                     className="w-52"
                   />
-                  {subscriptionPlan !== 'Harvest' && (
-                    <Text className="font-poppins my-2 text-center text-base text-neutral-500">
-                      OR
-                    </Text>
-                  )}
-                </>
-              )}
+                )}
 
-              {subscriptionPlan !== 'Harvest' && (
-                <Button
-                  variant="default"
-                  onPress={() => {
-                    setSubscriptionPlan('Harvest');
-                    router.replace('/');
-                  }}
-                  label="Harvesting Plan"
-                  className="w-52"
-                />
-              )}
-
-              {subscriptionPlan !== 'Seed' && (
-                <>
-                  {(subscriptionPlan === 'Harvest' ||
-                    subscriptionPlan === 'Mature') && (
-                    <Text className="font-poppins my-2 text-center text-base text-neutral-500">
-                      OR
-                    </Text>
-                  )}
-                  <Button
-                    variant="secondary"
-                    onPress={() => {
-                      setSubscriptionPlan('Seed');
-                      router.replace('/');
-                    }}
-                    label="Seed Plan"
-                    className="w-52"
-                  />
-                </>
-              )}
+                {subscriptionPlan !== 'Seed' && (
+                  <>
+                    {(subscriptionPlan === 'Harvest' ||
+                      subscriptionPlan === 'Mature') && (
+                      <Text className="font-poppins my-2 text-center text-base text-neutral-500">
+                        OR
+                      </Text>
+                    )}
+                    <Button
+                      variant="secondary"
+                      onPress={() => {
+                        setSubscriptionPlan('Seed');
+                        router.replace('/');
+                      }}
+                      label="Seed Plan"
+                      className="w-52"
+                    />
+                  </>
+                )}
+              </View>
             </View>
-          </View>
-        </FormCard>
-      </View>
-    </KeyboardAwareScrollView>
+          </FormCard>
+        </View>
+      </KeyboardAwareScrollView>
+    </>
   );
 };
 
