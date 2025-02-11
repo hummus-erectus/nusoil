@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { Env } from '@env';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { Link, Redirect, SplashScreen } from 'expo-router';
+import { Link, Redirect, router, SplashScreen } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import React, { useCallback, useEffect } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -89,6 +89,10 @@ function CustomDrawerContent(props: any) {
     subscriptionPlan === 'Mature' || subscriptionPlan === 'Harvest';
   const showHarvestFeatures = subscriptionPlan === 'Harvest';
 
+  const handleUpgrade = () => {
+    router.push('/upgrade');
+  };
+
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerContent}>
@@ -127,6 +131,21 @@ function CustomDrawerContent(props: any) {
             href="/(app)/(tabs)/land-wallet"
             label="Land Wallet"
             icon={<WalletIcon color={colors.neutral[100]} />}
+          />
+        )}
+
+        {(subscriptionPlan === 'Seed' || subscriptionPlan === 'Mature') && (
+          <Button
+            variant="ghost"
+            fullWidth={false}
+            onPress={handleUpgrade}
+            label={
+              <View className="flex-row items-center justify-center">
+                <Text className="ml-4 text-white underline">
+                  Upgrade for more features!
+                </Text>
+              </View>
+            }
           />
         )}
 
