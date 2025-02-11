@@ -18,7 +18,7 @@ import {
   Logout as LogoutIcon,
   NutrientManagement as NutrientManagementIcon,
   NutrientPortfolio as NutrientPortfolioIcon,
-  Profile as ProfileIcon,
+  Settings as SettingsIcon,
   Shop as ShopIcon,
   Unlock as UnlockIcon,
   Wallet as WalletIcon,
@@ -134,8 +134,8 @@ function CustomDrawerContent(props: any) {
 
         <DrawerItem
           href="/settings"
-          label="Profile"
-          icon={<ProfileIcon color={colors.neutral[100]} />}
+          label="Settings"
+          icon={<SettingsIcon color={colors.neutral[100]} />}
         />
         <DrawerItem
           href="/(app)/(tabs)/privacy-statement"
