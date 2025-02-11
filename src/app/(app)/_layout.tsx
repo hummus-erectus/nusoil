@@ -12,6 +12,7 @@ import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
 import {
   Clipboard as ClipboardIcon,
+  Home as HomeIcon,
   Key as KeyIcon,
   LampOn as LampOnIcon,
   Logout as LogoutIcon,
@@ -51,6 +52,7 @@ const styles = StyleSheet.create({
 });
 
 type DrawerRoute =
+  | '/'
   | '/(app)/(tabs)'
   | '/(app)/(tabs)/nutrient-management'
   | '/(app)/(tabs)/nutrient-portfolio'
@@ -91,10 +93,11 @@ function CustomDrawerContent(props: any) {
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerContent}>
         <DrawerItem
-          href="/settings"
-          label="Profile"
-          icon={<ProfileIcon color={colors.neutral[100]} />}
+          href="/"
+          label="Home"
+          icon={<HomeIcon color={colors.neutral[100]} />}
         />
+
         <DrawerItem
           href="/(app)/(tabs)/nutrient-management"
           label="Nutrient Management"
@@ -129,6 +132,11 @@ function CustomDrawerContent(props: any) {
 
         <View style={styles.divider} />
 
+        <DrawerItem
+          href="/settings"
+          label="Profile"
+          icon={<ProfileIcon color={colors.neutral[100]} />}
+        />
         <DrawerItem
           href="/(app)/(tabs)/privacy-statement"
           label="Privacy Statement"
