@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { Env } from '@env';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { Link, Redirect, router, SplashScreen } from 'expo-router';
+import { Redirect, router, SplashScreen } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import React, { useCallback, useEffect } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -72,13 +72,22 @@ interface DrawerItemProps {
 }
 
 function DrawerItem({ href, label, icon, onPress }: DrawerItemProps) {
+  const handlePress = useCallback(() => {
+    // Ensure drawer closes first
+    if (onPress) {
+      onPress();
+    }
+    // Small delay to ensure drawer close animation starts before navigation
+    requestAnimationFrame(() => {
+      router.push(href);
+    });
+  }, [href, onPress]);
+
   return (
-    <Link href={href} asChild>
-      <Pressable style={styles.drawerItem} onPress={onPress}>
-        {icon}
-        <Text style={styles.drawerText}>{label}</Text>
-      </Pressable>
-    </Link>
+    <Pressable style={styles.drawerItem} onPress={handlePress}>
+      {icon}
+      <Text style={styles.drawerText}>{label}</Text>
+    </Pressable>
   );
 }
 
