@@ -10,6 +10,8 @@ import { z } from 'zod';
 import { accountOptions } from '@/components/nutrient-plans/types';
 import { Button, FormCard, Radio, Select } from '@/components/ui';
 import { CaretDown } from '@/components/ui/icons';
+import { UpgradeOverlay } from '@/components/upgrade-overlay';
+import { useUserStore } from '@/stores/user-store';
 
 const financeTypeSchema = z.enum(['credit', 'investment', 'loan', 'grant']);
 const financePurposeSchema = z.enum([
@@ -80,6 +82,9 @@ type FinanceFormType = z.infer<typeof financeFormSchema>;
 type InitiativeFormType = z.infer<typeof initiativeFormSchema>;
 
 export default function Marketplace() {
+  const { subscriptionPlan } = useUserStore();
+  const hasAccess = ['Mature', 'Harvest'].includes(subscriptionPlan);
+
   const [activeDropdown, setActiveDropdown] = React.useState<string | null>(
     null
   );
@@ -150,7 +155,7 @@ export default function Marketplace() {
   };
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <KeyboardAwareScrollView
         bottomOffset={62}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -312,6 +317,11 @@ export default function Marketplace() {
           </View>
         </View>
       </KeyboardAwareScrollView>
-    </>
+
+      {/* Show upgrade overlay if user doesn't have access */}
+      {!hasAccess && (
+        <UpgradeOverlay requiredPlan="Mature" currentPlan={subscriptionPlan} />
+      )}
+    </View>
   );
 }

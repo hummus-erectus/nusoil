@@ -1,14 +1,65 @@
 /* eslint-disable max-lines-per-function */
 import { router } from 'expo-router';
-import React from 'react';
-import { View } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Text } from '@/components/ui';
+import colors from '@/components/ui/colors';
 import { useUserStore } from '@/stores/user-store';
+
+const MINIMUM_LOADING_TIME = 2000; // 2 seconds
 
 const UpgradeScreen = () => {
   const { setSubscriptionPlan, subscriptionPlan } = useUserStore();
+  const isNavigatingRef = useRef(false);
+  const [isChangingPlan, setIsChangingPlan] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const loadingStartTimeRef = useRef(0);
+
+  const handlePlanChange = useCallback(
+    (newPlan: 'Seed' | 'Mature' | 'Harvest') => {
+      if (isNavigatingRef.current) return;
+      isNavigatingRef.current = true;
+      loadingStartTimeRef.current = Date.now();
+
+      // Start fade out animation
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }).start(() => {
+        setIsChangingPlan(true);
+        setSubscriptionPlan(newPlan);
+
+        // Calculate remaining time to meet minimum loading duration
+        const elapsedTime = Date.now() - loadingStartTimeRef.current;
+        const remainingTime = Math.max(0, MINIMUM_LOADING_TIME - elapsedTime);
+
+        // Navigate after minimum loading time
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            router.replace('/');
+          });
+        }, remainingTime);
+      });
+    },
+    [fadeAnim, setSubscriptionPlan]
+  );
+
+  // If we're changing plan, render a loading state with spinner
+  if (isChangingPlan) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <View className="items-center gap-4">
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text className="font-poppins text-base text-neutral-600">
+            Updating your plan...
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   const getTitle = () => {
     switch (subscriptionPlan) {
@@ -41,7 +92,10 @@ const UpgradeScreen = () => {
       bottomOffset={62}
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View className="flex-1 justify-center p-6">
+      <Animated.View
+        className="flex-1 justify-center p-6"
+        style={{ opacity: fadeAnim }}
+      >
         <FormCard>
           <View className="my-8 gap-10">
             <Text className="text-center font-lora text-4xl text-primary">
@@ -57,10 +111,7 @@ const UpgradeScreen = () => {
                     variant={
                       subscriptionPlan === 'Harvest' ? 'secondary' : 'default'
                     }
-                    onPress={() => {
-                      setSubscriptionPlan('Mature');
-                      router.replace('/');
-                    }}
+                    onPress={() => handlePlanChange('Mature')}
                     label="Mature Plan"
                     className="w-52"
                   />
@@ -75,10 +126,7 @@ const UpgradeScreen = () => {
               {subscriptionPlan !== 'Harvest' && (
                 <Button
                   variant="default"
-                  onPress={() => {
-                    setSubscriptionPlan('Harvest');
-                    router.replace('/');
-                  }}
+                  onPress={() => handlePlanChange('Harvest')}
                   label="Harvesting Plan"
                   className="w-52"
                 />
@@ -94,10 +142,7 @@ const UpgradeScreen = () => {
                   )}
                   <Button
                     variant="secondary"
-                    onPress={() => {
-                      setSubscriptionPlan('Seed');
-                      router.replace('/');
-                    }}
+                    onPress={() => handlePlanChange('Seed')}
                     label="Seed Plan"
                     className="w-52"
                   />
@@ -106,7 +151,7 @@ const UpgradeScreen = () => {
             </View>
           </View>
         </FormCard>
-      </View>
+      </Animated.View>
     </KeyboardAwareScrollView>
   );
 };
