@@ -179,28 +179,6 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* Hide from tabs but keep it in the navigation */}
-      <Tabs.Screen
-        name="privacy-statement"
-        options={{
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="terms-of-use"
-        options={{
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="password-policy"
-        options={{
-          href: null,
-        }}
-      />
-
       <Tabs.Screen
         name="add-on-services"
         options={{
