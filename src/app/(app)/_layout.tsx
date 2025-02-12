@@ -11,16 +11,13 @@ import { AppHeader } from '@/components/app-header';
 import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
 import {
-  Clipboard as ClipboardIcon,
   Home as HomeIcon,
-  Key as KeyIcon,
   LampOn as LampOnIcon,
   Logout as LogoutIcon,
   NutrientManagement as NutrientManagementIcon,
   NutrientPortfolio as NutrientPortfolioIcon,
   Settings as SettingsIcon,
   Shop as ShopIcon,
-  Unlock as UnlockIcon,
   Wallet as WalletIcon,
 } from '@/components/ui/icons';
 import { useAuth } from '@/lib';
@@ -57,11 +54,8 @@ type DrawerRoute =
   | '/(app)/(tabs)/nutrient-management'
   | '/(app)/(tabs)/nutrient-portfolio'
   | '/settings'
-  | '/(app)/(tabs)/privacy-statement'
-  | '/(app)/(tabs)/terms-of-use'
-  | '/(app)/(tabs)/password-policy'
-  | '/(app)/(tabs)/add-on-services'
   | '/(app)/(tabs)/marketplace'
+  | '/(app)/(tabs)/add-on-services'
   | '/(app)/(tabs)/land-wallet'
   | '/upgrade';
 
@@ -191,26 +185,6 @@ function CustomDrawerContent(props: any) {
           href="/settings"
           label="Settings"
           icon={<SettingsIcon color={colors.neutral[100]} />}
-        />
-        <DrawerItem
-          href="/(app)/(tabs)/privacy-statement"
-          label="Privacy Statement"
-          icon={<UnlockIcon color={colors.neutral[100]} />}
-          onPress={() =>
-            handleDrawerItemPress('/(app)/(tabs)/privacy-statement')
-          }
-        />
-        <DrawerItem
-          href="/(app)/(tabs)/terms-of-use"
-          label="Terms of Use"
-          icon={<ClipboardIcon color={colors.neutral[100]} />}
-          onPress={() => handleDrawerItemPress('/(app)/(tabs)/terms-of-use')}
-        />
-        <DrawerItem
-          href="/(app)/(tabs)/password-policy"
-          label="Password Policy"
-          icon={<KeyIcon color={colors.neutral[100]} />}
-          onPress={() => handleDrawerItemPress('/(app)/(tabs)/password-policy')}
         />
         <Button
           className="mt-12"
