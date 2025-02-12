@@ -9,6 +9,8 @@ import { z } from 'zod';
 
 import { accountOptions } from '@/components/nutrient-plans/types';
 import { Button, FormCard, Radio, Select } from '@/components/ui';
+import { UpgradeOverlay } from '@/components/upgrade-overlay';
+import { useUserStore } from '@/stores/user-store';
 
 // Get account values from accountOptions for schema validation
 const accountValues = accountOptions.map((opt) => opt.value.toString());
@@ -32,6 +34,9 @@ type WalletFormType = z.infer<typeof walletFormSchema>;
 type AccountType = z.infer<typeof accountSchema>;
 
 export default function LandWallet() {
+  const { subscriptionPlan } = useUserStore();
+  const hasAccess = subscriptionPlan === 'Harvest';
+
   const {
     handleSubmit: handleWalletSubmit,
     setValue: setWalletValue,
@@ -52,18 +57,17 @@ export default function LandWallet() {
     const selectedAccount = accountOptions.find(
       (opt) => opt.value.toString() === data.account
     );
-    // Navigate to the balance screen with params
     router.push({
-      pathname: '/land-wallet/balance',
+      pathname: '/(app)/(tabs)/land-wallet/balance',
       params: {
-        accountName: selectedAccount?.label || '',
+        account: selectedAccount?.label || '',
         option: data.option,
       },
     });
   };
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <KeyboardAwareScrollView
         bottomOffset={62}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -151,6 +155,11 @@ export default function LandWallet() {
           </FormCard>
         </View>
       </KeyboardAwareScrollView>
-    </>
+
+      {/* Show upgrade overlay if user doesn't have access */}
+      {!hasAccess && (
+        <UpgradeOverlay requiredPlan="Harvest" currentPlan={subscriptionPlan} />
+      )}
+    </View>
   );
 }

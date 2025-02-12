@@ -2,9 +2,9 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { Env } from '@env';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { Link, Redirect, SplashScreen } from 'expo-router';
+import { Link, Redirect, router, SplashScreen } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
@@ -12,12 +12,13 @@ import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
 import {
   Clipboard as ClipboardIcon,
+  Home as HomeIcon,
   Key as KeyIcon,
   LampOn as LampOnIcon,
   Logout as LogoutIcon,
   NutrientManagement as NutrientManagementIcon,
   NutrientPortfolio as NutrientPortfolioIcon,
-  Profile as ProfileIcon,
+  Settings as SettingsIcon,
   Shop as ShopIcon,
   Unlock as UnlockIcon,
   Wallet as WalletIcon,
@@ -51,27 +52,30 @@ const styles = StyleSheet.create({
 });
 
 type DrawerRoute =
+  | '/'
   | '/(app)/(tabs)'
   | '/(app)/(tabs)/nutrient-management'
   | '/(app)/(tabs)/nutrient-portfolio'
-  | '/(app)/(tabs)/settings'
+  | '/settings'
   | '/(app)/(tabs)/privacy-statement'
   | '/(app)/(tabs)/terms-of-use'
   | '/(app)/(tabs)/password-policy'
   | '/(app)/(tabs)/add-on-services'
   | '/(app)/(tabs)/marketplace'
-  | '/(app)/(tabs)/land-wallet';
+  | '/(app)/(tabs)/land-wallet'
+  | '/upgrade';
 
 interface DrawerItemProps {
   href: DrawerRoute;
   label: string;
   icon: React.ReactNode;
+  onPress?: () => void;
 }
 
-function DrawerItem({ href, label, icon }: DrawerItemProps) {
+function DrawerItem({ href, label, icon, onPress }: DrawerItemProps) {
   return (
     <Link href={href} asChild>
-      <Pressable style={styles.drawerItem}>
+      <Pressable style={styles.drawerItem} onPress={onPress}>
         {icon}
         <Text style={styles.drawerText}>{label}</Text>
       </Pressable>
@@ -82,28 +86,61 @@ function DrawerItem({ href, label, icon }: DrawerItemProps) {
 function CustomDrawerContent(props: any) {
   const signOut = useAuth.use.signOut();
   const subscriptionPlan = useUserStore((state) => state.subscriptionPlan);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const showAdvancedFeatures =
     subscriptionPlan === 'Mature' || subscriptionPlan === 'Harvest';
   const showHarvestFeatures = subscriptionPlan === 'Harvest';
 
+  const handleDrawerItemPress = (href: DrawerRoute) => {
+    if (isNavigating) return;
+    setIsNavigating(true);
+
+    // Start drawer close animation
+    props.navigation.closeDrawer();
+
+    // Navigate in the next frame after drawer close starts
+    requestAnimationFrame(() => {
+      router.push(href);
+      // Reset navigation state after a shorter delay
+      setTimeout(() => {
+        setIsNavigating(false);
+      }, 300);
+    });
+  };
+
+  // Clean up navigation state when component unmounts
+  useEffect(() => {
+    return () => {
+      setIsNavigating(false);
+    };
+  }, []);
+
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerContent}>
         <DrawerItem
-          href="/(app)/(tabs)/settings"
-          label="Profile"
-          icon={<ProfileIcon color={colors.neutral[100]} />}
+          href="/"
+          label="Home"
+          icon={<HomeIcon color={colors.neutral[100]} />}
+          onPress={() => handleDrawerItemPress('/')}
         />
+
         <DrawerItem
           href="/(app)/(tabs)/nutrient-management"
           label="Nutrient Management"
           icon={<NutrientManagementIcon color={colors.neutral[100]} />}
+          onPress={() =>
+            handleDrawerItemPress('/(app)/(tabs)/nutrient-management')
+          }
         />
         <DrawerItem
           href="/(app)/(tabs)/nutrient-portfolio"
           label="Nutrient Portfolio"
           icon={<NutrientPortfolioIcon color={colors.neutral[100]} />}
+          onPress={() =>
+            handleDrawerItemPress('/(app)/(tabs)/nutrient-portfolio')
+          }
         />
         {showAdvancedFeatures && (
           <>
@@ -111,11 +148,15 @@ function CustomDrawerContent(props: any) {
               href="/(app)/(tabs)/marketplace"
               label="Marketplace"
               icon={<ShopIcon color={colors.neutral[100]} />}
+              onPress={() => handleDrawerItemPress('/(app)/(tabs)/marketplace')}
             />
             <DrawerItem
               href="/(app)/(tabs)/add-on-services"
               label="Add-on Services"
               icon={<LampOnIcon color={colors.neutral[100]} />}
+              onPress={() =>
+                handleDrawerItemPress('/(app)/(tabs)/add-on-services')
+              }
             />
           </>
         )}
@@ -124,25 +165,52 @@ function CustomDrawerContent(props: any) {
             href="/(app)/(tabs)/land-wallet"
             label="Land Wallet"
             icon={<WalletIcon color={colors.neutral[100]} />}
+            onPress={() => handleDrawerItemPress('/(app)/(tabs)/land-wallet')}
+          />
+        )}
+
+        {(subscriptionPlan === 'Seed' || subscriptionPlan === 'Mature') && (
+          <Button
+            variant="ghost"
+            fullWidth={false}
+            onPress={() => handleDrawerItemPress('/upgrade')}
+            label={
+              <View className="flex-row items-center justify-center">
+                <Text className="ml-4 text-white underline">
+                  Upgrade for more features!
+                </Text>
+              </View>
+            }
           />
         )}
 
         <View style={styles.divider} />
 
         <DrawerItem
+          onPress={() => props.navigation.closeDrawer()}
+          href="/settings"
+          label="Settings"
+          icon={<SettingsIcon color={colors.neutral[100]} />}
+        />
+        <DrawerItem
           href="/(app)/(tabs)/privacy-statement"
           label="Privacy Statement"
           icon={<UnlockIcon color={colors.neutral[100]} />}
+          onPress={() =>
+            handleDrawerItemPress('/(app)/(tabs)/privacy-statement')
+          }
         />
         <DrawerItem
           href="/(app)/(tabs)/terms-of-use"
           label="Terms of Use"
           icon={<ClipboardIcon color={colors.neutral[100]} />}
+          onPress={() => handleDrawerItemPress('/(app)/(tabs)/terms-of-use')}
         />
         <DrawerItem
           href="/(app)/(tabs)/password-policy"
           label="Password Policy"
           icon={<KeyIcon color={colors.neutral[100]} />}
+          onPress={() => handleDrawerItemPress('/(app)/(tabs)/password-policy')}
         />
         <Button
           className="mt-12"
