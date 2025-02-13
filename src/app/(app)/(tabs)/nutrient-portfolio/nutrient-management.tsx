@@ -1,9 +1,11 @@
 /* eslint-disable max-lines-per-function */
+import { router } from 'expo-router';
 import * as React from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import {
   Button,
+  colors,
   DateInput,
   FormCard,
   Input,
@@ -12,6 +14,7 @@ import {
   Text,
   View,
 } from '@/components/ui';
+import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
 
 import {
   accountOptions,
@@ -131,18 +134,34 @@ export const LogBookForm: React.FC = () => {
 export default function NutrientsManagement() {
   const [seedInputType, setSeedInputType] = React.useState<InputType>(null);
 
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <KeyboardAwareScrollView
       bottomOffset={62}
       contentContainerStyle={{ flexGrow: 1 }}
     >
       <View className="flex-1 gap-6 p-6">
+        <View className="-ml-10 self-start">
+          <Button
+            variant="ghost"
+            onPress={handleBack}
+            fullWidth={false}
+            label={
+              <View className="flex-row items-center justify-center">
+                <ArrowLeftFullIcon color={colors.neutral[600]} />
+                <Text className="ml-4 text-neutral-600">Back</Text>
+              </View>
+            }
+          />
+        </View>
         <Text className="text-center font-lora text-3xl text-primary">
           Nutrient Management
         </Text>
         <Select options={accountOptions} label="Select the account" />
         <View>
-          <Text className="font-lora text-xl text-secondary">Seed</Text>
           <View className="mb-6 gap-2">
             <Text>Select an option</Text>
             <View className="mt-2 gap-4">
