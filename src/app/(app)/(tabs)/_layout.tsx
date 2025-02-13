@@ -185,13 +185,6 @@ export default function TabsLayout() {
           href: null,
         }}
       />
-
-      <Tabs.Screen
-        name="nutrient-management"
-        options={{
-          href: null,
-        }}
-      />
     </Tabs>
   );
 }
