@@ -1,3 +1,5 @@
+// TODO: Move types to a more generic location (especially accountOptions)
+
 export type PlanType = 'seed' | 'mature' | 'harvest';
 export type InputType = 'smart' | 'log' | null;
 

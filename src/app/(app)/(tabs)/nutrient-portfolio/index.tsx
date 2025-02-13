@@ -1,11 +1,12 @@
 /* eslint-disable max-lines-per-function */
+import { router } from 'expo-router';
 import * as React from 'react';
 import { Linking } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { accountOptions } from '@/components/nutrient-plans/types';
-import { FormCard, Select, Text, View } from '@/components/ui';
-import { useUserStore } from '@/stores/user-store';
+import { accountOptions } from '@/app/(app)/(tabs)/nutrient-portfolio/types';
+import { Button, colors, FormCard, Select, Text, View } from '@/components/ui';
+import { ArrowRightFull as ArrowRightFullIcon } from '@/components/ui/icons';
 
 interface Location {
   latitude: number;
@@ -117,7 +118,6 @@ const MOCK_NUTRIENT_DATA: Record<string, NutrientData> = {
 };
 
 export default function NutrientPortfolio() {
-  const { subscriptionPlan } = useUserStore();
   const [selectedAccount, setSelectedAccount] = React.useState(
     accountOptions[0].value
   );
@@ -127,6 +127,10 @@ export default function NutrientPortfolio() {
   const openInMaps = (lat: number, lng: number) => {
     const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
     Linking.openURL(url);
+  };
+
+  const handleNutrientManagementClick = () => {
+    router.push('/(app)/(tabs)/nutrient-portfolio/nutrient-management');
   };
 
   return (
@@ -139,18 +143,25 @@ export default function NutrientPortfolio() {
           <Text className="text-center font-lora text-3xl text-primary">
             Nutrient Portfolio
           </Text>
-          {subscriptionPlan === 'Seed' ? (
-            <Text className="text-center font-lora text-2xl text-primary">
-              {accountOptions[0].label}
-            </Text>
-          ) : (
-            <Select
-              options={accountOptions}
-              label="Select Account"
-              value={selectedAccount}
-              onSelect={(value) => setSelectedAccount(value)}
-            />
-          )}
+
+          <Button
+            variant="link"
+            label={
+              <View className="flex-row items-center gap-2">
+                <Text className="text-primary">Go to Nutrient Management</Text>
+                <ArrowRightFullIcon color={colors.primary} />
+              </View>
+            }
+            onPress={handleNutrientManagementClick}
+          />
+
+          <Select
+            options={accountOptions}
+            label="Select Account"
+            value={selectedAccount}
+            onSelect={(value) => setSelectedAccount(value)}
+          />
+
           <FormCard>
             <View className="gap-2">
               <Text className="font-poppins-semibold text-lg">
@@ -255,6 +266,13 @@ export default function NutrientPortfolio() {
                 </View>
               )}
             </FormCard>
+          </View>
+          <View>
+            <Button
+              onPress={handleNutrientManagementClick}
+              fullWidth={false}
+              label="Manage Nutrients"
+            />
           </View>
         </View>
       </KeyboardAwareScrollView>
