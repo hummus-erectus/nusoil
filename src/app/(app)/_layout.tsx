@@ -14,7 +14,6 @@ import {
   Home as HomeIcon,
   LampOn as LampOnIcon,
   Logout as LogoutIcon,
-  NutrientManagement as NutrientManagementIcon,
   NutrientPortfolio as NutrientPortfolioIcon,
   Settings as SettingsIcon,
   Shop as ShopIcon,
@@ -51,7 +50,6 @@ const styles = StyleSheet.create({
 type DrawerRoute =
   | '/'
   | '/(app)/(tabs)'
-  | '/(app)/(tabs)/nutrient-management'
   | '/(app)/(tabs)/nutrient-portfolio'
   | '/settings'
   | '/(app)/(tabs)/marketplace'
@@ -120,14 +118,6 @@ function CustomDrawerContent(props: any) {
           onPress={() => handleDrawerItemPress('/')}
         />
 
-        <DrawerItem
-          href="/(app)/(tabs)/nutrient-management"
-          label="Nutrient Management"
-          icon={<NutrientManagementIcon color={colors.neutral[100]} />}
-          onPress={() =>
-            handleDrawerItemPress('/(app)/(tabs)/nutrient-management')
-          }
-        />
         <DrawerItem
           href="/(app)/(tabs)/nutrient-portfolio"
           label="Nutrient Portfolio"
