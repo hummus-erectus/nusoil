@@ -8,7 +8,7 @@ export default function NutrientPortfolioLayout() {
       <Stack.Screen
         name="nutrient-management"
         options={{
-          headerShown: true,
+          headerShown: false,
           title: 'Nutrient Management',
         }}
       />

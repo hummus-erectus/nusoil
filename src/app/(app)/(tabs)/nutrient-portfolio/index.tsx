@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Linking } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { accountOptions } from '@/components/nutrient-plans/types';
+import { accountOptions } from '@/app/(app)/(tabs)/nutrient-portfolio/types';
 import { Button, FormCard, Select, Text, View } from '@/components/ui';
 
 interface Location {

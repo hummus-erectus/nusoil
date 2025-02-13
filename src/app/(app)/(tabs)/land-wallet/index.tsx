@@ -7,7 +7,7 @@ import { Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { z } from 'zod';
 
-import { accountOptions } from '@/components/nutrient-plans/types';
+import { accountOptions } from '@/app/(app)/(tabs)/nutrient-portfolio/types';
 import { Button, FormCard, Radio, Select } from '@/components/ui';
 import { UpgradeOverlay } from '@/components/upgrade-overlay';
 import { useUserStore } from '@/stores/user-store';
