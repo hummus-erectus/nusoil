@@ -9,7 +9,8 @@ interface FarmerData {
   zipCode: string;
 }
 
-interface FarmData {
+interface LandEntry {
+  id: string;
   farmLocationName: string;
   farmCity: string;
   size: number;
@@ -33,6 +34,10 @@ interface FarmData {
   pestDiseaseCost?: string;
   cropYieldAverage?: string;
   income?: string;
+}
+
+interface FarmData {
+  lands: LandEntry[];
 }
 
 interface NutrientData {
@@ -91,29 +96,34 @@ const initialState = {
     zipCode: '',
   },
   farmData: {
-    farmLocationName: '',
-    farmCity: '',
-    size: 0,
-    irrigationType: '',
-    latLong: '',
-    ownershipType: '',
-    yearsOperated: '',
-    leasedAmount: '',
-    rainWater: '',
-    groundWater: '',
-    waterIrrigationType: '',
-    waterDays: '',
-    waterPump: '',
-    tillageType: '',
-    cropsPerYear: '',
-    cropDuration: '',
-    cropType: '',
-    leasedLandCost: '',
-    tillageCost: '',
-    fertilizerCost: '',
-    pestDiseaseCost: '',
-    cropYieldAverage: '',
-    income: '',
+    lands: [
+      {
+        id: '1',
+        farmLocationName: '',
+        farmCity: '',
+        size: 0,
+        irrigationType: '',
+        latLong: '',
+        ownershipType: '',
+        yearsOperated: '',
+        leasedAmount: '',
+        rainWater: '',
+        groundWater: '',
+        waterIrrigationType: '',
+        waterDays: '',
+        waterPump: '',
+        tillageType: '',
+        cropsPerYear: '',
+        cropDuration: '',
+        cropType: '',
+        leasedLandCost: '',
+        tillageCost: '',
+        fertilizerCost: '',
+        pestDiseaseCost: '',
+        cropYieldAverage: '',
+        income: '',
+      },
+    ],
   },
   nutrientData: {
     currentCrops: '',
