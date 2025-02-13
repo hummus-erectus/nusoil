@@ -24,6 +24,11 @@ import {
   seedVarietyOptions,
 } from './types';
 
+// TODO: Implement form submission
+const handleSubmit = () => {
+  router.back();
+};
+
 export const SmartRecommendationsForm: React.FC = () => {
   const [plantingDate, setPlantingDate] = React.useState<Date | undefined>();
   const [seedVariety, setSeedVariety] = React.useState<
@@ -72,7 +77,7 @@ export const SmartRecommendationsForm: React.FC = () => {
           placeholder="e.g., NPK 10-20-10, Organic Matter 5%"
         />
         <Input label="Rate per unit" placeholder="e.g., 50 kg/hectare" />
-        <Button onPress={() => {}} fullWidth={false} label="Submit!" />
+        <Button onPress={handleSubmit} fullWidth={false} label="Submit!" />
       </View>
     </FormCard>
   );
@@ -125,7 +130,7 @@ export const LogBookForm: React.FC = () => {
             />
           </View>
         </View>
-        <Button onPress={() => {}} fullWidth={false} label="Submit!" />
+        <Button onPress={handleSubmit} fullWidth={false} label="Submit!" />
       </View>
     </FormCard>
   );
