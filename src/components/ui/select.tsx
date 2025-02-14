@@ -9,6 +9,7 @@ import Svg, { Path } from 'react-native-svg';
 import { tv } from 'tailwind-variants';
 
 import { CaretDown } from '@/components/ui/icons';
+import { Modal, useModal } from '@/components/ui/modal';
 
 import type { InputControllerType } from './input';
 import { Text } from './text';
@@ -21,8 +22,6 @@ const selectTv = tv({
       'mt-0 flex-row items-center justify-between rounded-full bg-neutral-200 px-6 py-3 dark:bg-neutral-800',
     inputValue:
       'font-poppins-semibold text-base text-neutral-700 dark:text-neutral-100',
-    dropdown:
-      'absolute inset-x-0 top-full z-[100] mt-1 overflow-hidden rounded-3xl bg-white dark:bg-neutral-800',
     option:
       'flex-row items-center justify-between border-b border-neutral-100 px-6 py-3 dark:border-neutral-700',
     optionText:
@@ -49,10 +48,6 @@ const selectTv = tv({
         input: 'opacity-50',
       },
     },
-  },
-  defaultVariants: {
-    error: false,
-    disabled: false,
   },
 });
 
@@ -114,7 +109,7 @@ export const Options = React.forwardRef<
   );
 });
 
-export interface SelectProps {
+interface SelectProps {
   value?: string | number;
   label?: string;
   disabled?: boolean;
@@ -126,120 +121,108 @@ export interface SelectProps {
 }
 
 interface ControlledSelectProps<T extends FieldValues>
-  extends SelectProps,
+  extends Omit<SelectProps, 'value' | 'onSelect'>,
     InputControllerType<T> {}
 
-export const Select = (props: SelectProps) => {
-  const {
-    label,
-    value,
-    error,
-    options = [],
-    placeholder = 'Select...',
-    disabled = false,
-    onSelect,
-    testID,
-  } = props;
+const Select = ({
+  value,
+  label,
+  disabled = false,
+  error,
+  options = [],
+  onSelect,
+  placeholder = 'Select an option',
+  testID,
+}: SelectProps) => {
+  const modal = useModal();
+  const selectedOption = options.find((option) => option.value === value);
+  const styles = selectTv({
+    error: !!error,
+    disabled,
+  });
 
-  const [isOpen, setIsOpen] = React.useState(false);
-
-  // Set default value to first option if available and no value is provided
-  const defaultValue = React.useMemo(() => {
-    if (value !== undefined) return value;
-    return options.length > 0 ? options[0].value : undefined;
-  }, [value, options]);
-
-  const onSelectOption = React.useCallback(
+  const handleSelect = React.useCallback(
     (option: OptionType) => {
       onSelect?.(option.value);
-      setIsOpen(false);
+      modal.dismiss();
     },
-    [onSelect]
-  );
-
-  const styles = React.useMemo(
-    () =>
-      selectTv({
-        error: Boolean(error),
-        disabled,
-      }),
-    [error, disabled]
-  );
-
-  const textValue = React.useMemo(
-    () =>
-      defaultValue !== undefined
-        ? (options?.filter((t) => t.value === defaultValue)?.[0]?.label ??
-          placeholder)
-        : placeholder,
-    [defaultValue, options, placeholder]
+    [modal, onSelect]
   );
 
   return (
-    <View className={styles.container()}>
-      {/* Always show label if provided */}
-      {label && (
-        <Text
-          testID={testID ? `${testID}-label` : undefined}
-          className={styles.label()}
+    <>
+      <View className={styles.container()}>
+        {label && <Text className={styles.label()}>{label}</Text>}
+        <Pressable
+          testID={testID}
+          disabled={disabled}
+          className={styles.input()}
+          onPress={() => modal.present()}
         >
-          {label}
-        </Text>
-      )}
-      <Pressable
-        className={styles.input()}
-        disabled={disabled}
-        onPress={() => setIsOpen(!isOpen)}
-        testID={testID}
-      >
-        <Text className={styles.inputValue()}>{textValue}</Text>
-        <View className="size-4 items-center justify-center">
-          <CaretDown
-            width={16}
-            height={16}
-            style={{
-              transform: [{ rotateX: isOpen ? '180deg' : '0deg' }],
-              transformOrigin: 'center',
-            }}
-            className="text-neutral-700 dark:text-neutral-300"
-          />
+          <Text
+            className={
+              selectedOption ? styles.inputValue() : 'text-neutral-500'
+            }
+          >
+            {selectedOption?.label ?? placeholder}
+          </Text>
+          <CaretDown className="text-neutral-500" />
+        </Pressable>
+        {error && (
+          <Text className="ml-2 mt-1 text-sm text-danger">{error}</Text>
+        )}
+      </View>
+
+      <Modal ref={modal.ref} snapPoints={['50%']} title={label}>
+        <View className="flex-1 px-4">
+          {options.map((option) => (
+            <Pressable
+              key={option.value}
+              className={styles.option()}
+              onPress={() => handleSelect(option)}
+            >
+              <Text
+                className={
+                  option.value === value
+                    ? styles.optionTextSelected()
+                    : styles.optionText()
+                }
+              >
+                {option.label}
+              </Text>
+              {option.value === value && <Check className="text-primary" />}
+            </Pressable>
+          ))}
         </View>
-      </Pressable>
-      {isOpen && (
-        <View className={styles.dropdown()}>
-          <Options
-            ref={undefined}
-            options={options}
-            value={defaultValue}
-            onSelect={onSelectOption}
-            testID={testID}
-          />
-        </View>
-      )}
-      {error && (
-        <Text testID="select-error" className="ml-2 mt-2 text-sm text-danger">
-          {error}
-        </Text>
-      )}
-    </View>
+      </Modal>
+    </>
   );
 };
 
-export function ControlledSelect<T extends FieldValues>(
-  props: ControlledSelectProps<T>
-) {
-  const { name, control, rules, ...selectProps } = props;
+export const ControlledSelect = <T extends FieldValues>({
+  control,
+  name,
+  rules,
+  ...props
+}: ControlledSelectProps<T>) => {
+  const {
+    field: { value, onChange },
+    fieldState: { error },
+  } = useController({
+    control,
+    name,
+    rules,
+  });
 
-  const { field, fieldState } = useController({ control, name, rules });
   return (
     <Select
-      value={field.value}
-      onSelect={field.onChange}
-      {...selectProps}
-      error={fieldState.error?.message}
+      {...props}
+      value={value}
+      error={error?.message}
+      onSelect={onChange}
     />
   );
-}
+};
 
 function Check({ ...props }: SvgProps) {
   return (
@@ -253,3 +236,6 @@ function Check({ ...props }: SvgProps) {
     </Svg>
   );
 }
+
+export { Select };
+export type { ControlledSelectProps, SelectProps };
