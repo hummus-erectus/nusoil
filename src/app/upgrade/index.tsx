@@ -6,6 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Text } from '@/components/ui';
 import colors from '@/components/ui/colors';
+import { useNotifications } from '@/features/notifications/notifications-context';
 import { useUserStore } from '@/stores/user-store';
 
 const MINIMUM_LOADING_TIME = 2000; // 2 seconds
@@ -16,6 +17,7 @@ const UpgradeScreen = () => {
   const [isChangingPlan, setIsChangingPlan] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const loadingStartTimeRef = useRef(0);
+  const { addNotification } = useNotifications();
 
   const handlePlanChange = useCallback(
     (newPlan: 'Seed' | 'Mature' | 'Harvest') => {
@@ -39,12 +41,31 @@ const UpgradeScreen = () => {
         // Navigate after minimum loading time
         setTimeout(() => {
           requestAnimationFrame(() => {
-            router.replace('/');
+            router.dismissAll();
+            router.push('/');
           });
         }, remainingTime);
+
+        addNotification({
+          title: 'Subscription Updated',
+          message:
+            newPlan === 'Seed'
+              ? 'You have reverted to the Seed plan. Basic features are now active.'
+              : newPlan === 'Mature'
+                ? "Congratulations! You've upgraded to the Mature plan with advanced features."
+                : "You've upgraded to the Harvest plan - unlock the full potential of your soil analysis!",
+          type: 'success',
+          read: false,
+          action: {
+            label: 'View subscription details',
+            onPress: () => {
+              router.push('/settings');
+            },
+          },
+        });
       });
     },
-    [fadeAnim, setSubscriptionPlan]
+    [addNotification, fadeAnim, setSubscriptionPlan]
   );
 
   // If we're changing plan, render a loading state with spinner
