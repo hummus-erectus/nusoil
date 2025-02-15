@@ -5,6 +5,7 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { NotificationTest } from '@/components/notification-test';
+import { formatTimeAgo } from '@/features/notifications/utils/time';
 
 import { useNotifications } from './notifications-context';
 import { type Notification } from './types';
@@ -42,7 +43,7 @@ export function NotificationScreen() {
         )}
       </View>
       <Text className="mt-2 text-xs text-gray-500">
-        {new Date(item.timestamp).toLocaleString()}
+        {formatTimeAgo(item.timestamp)}
       </Text>
     </Pressable>
   );
