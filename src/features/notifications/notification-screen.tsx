@@ -4,7 +4,6 @@ import React from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { NotificationTest } from '@/components/notification-test';
 import { formatTimeAgo } from '@/features/notifications/utils/time';
 
 import { useNotifications } from './notifications-context';
@@ -70,7 +69,6 @@ export function NotificationScreen() {
         renderItem={renderNotification}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ flexGrow: 1 }}
-        ListHeaderComponent={<NotificationTest />}
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center p-4">
             <Text className="text-center text-neutral-600">
