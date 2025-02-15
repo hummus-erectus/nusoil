@@ -1,6 +1,7 @@
 /* eslint-disable max-lines-per-function */
+import { TransitionPresets } from '@react-navigation/bottom-tabs';
 import { useNavigationState } from '@react-navigation/native';
-import { Tabs } from 'expo-router';
+import { Tabs as ExpoTabs } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -101,8 +102,9 @@ const CustomTabBarButton: React.FC<CustomTabBarButtonProps> = (props) => {
 
 export default function TabsLayout() {
   return (
-    <Tabs
+    <ExpoTabs
       screenOptions={{
+        ...TransitionPresets.ShiftTransition,
         headerShown: false,
         tabBarStyle: {
           backgroundColor: colors.neutral[100],
@@ -133,7 +135,7 @@ export default function TabsLayout() {
         tabBarButton: (props) => <CustomTabBarButton {...props} />,
       }}
     >
-      <Tabs.Screen
+      <ExpoTabs.Screen
         name="index"
         options={{
           title: 'Home',
@@ -143,7 +145,7 @@ export default function TabsLayout() {
         }}
       />
 
-      <Tabs.Screen
+      <ExpoTabs.Screen
         name="nutrient-portfolio"
         options={{
           title: 'Nutrient\nPortfolio',
@@ -155,7 +157,7 @@ export default function TabsLayout() {
         }}
       />
 
-      <Tabs.Screen
+      <ExpoTabs.Screen
         name="marketplace"
         options={{
           title: 'Marketplace',
@@ -167,7 +169,7 @@ export default function TabsLayout() {
         }}
       />
 
-      <Tabs.Screen
+      <ExpoTabs.Screen
         name="land-wallet"
         options={{
           title: 'Land\nWallet',
@@ -179,12 +181,12 @@ export default function TabsLayout() {
         }}
       />
 
-      <Tabs.Screen
+      <ExpoTabs.Screen
         name="add-on-services"
         options={{
           href: null,
         }}
       />
-    </Tabs>
+    </ExpoTabs>
   );
 }
