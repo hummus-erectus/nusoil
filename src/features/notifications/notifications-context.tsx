@@ -1,4 +1,6 @@
 /* eslint-disable max-lines-per-function */
+
+//TODO: Use a backend notifications API for source of truth
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import React, {
