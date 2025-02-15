@@ -29,3 +29,9 @@ ios/
 
 # windsurf rules
 .windsurfrules
+
+# google service key
+nusoil-d460e-firebase-adminsdk-fbsvc-1b9264bfc5.json
+
+# Firebase configuration
+google-services.json
