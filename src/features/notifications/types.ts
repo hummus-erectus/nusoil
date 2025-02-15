@@ -2,11 +2,11 @@ export interface Notification {
   id: string;
   title: string;
   message: string;
-  timestamp: string;
+  timestamp: number;
   read: boolean;
-  type?: 'success' | 'info' | 'warning' | 'error';
+  type?: 'info' | 'warning' | 'success' | 'error';
   action?: {
-    label?: string;
+    label: string;
     onPress: () => void;
   };
 }
