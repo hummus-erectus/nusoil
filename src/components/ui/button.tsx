@@ -2,7 +2,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import type { PressableProps, View } from 'react-native';
-import { ActivityIndicator, Pressable, Text } from 'react-native';
+import { ActivityIndicator, Animated, Pressable, Text } from 'react-native';
 import type { VariantProps } from 'tailwind-variants';
 import { tv } from 'tailwind-variants';
 
@@ -105,6 +105,22 @@ export const Button = React.forwardRef<View, Props>(
       [variant, disabled, underline, fullWidth]
     );
 
+    const animatedScale = React.useRef(new Animated.Value(1)).current;
+
+    const handlePressIn = React.useCallback(() => {
+      Animated.spring(animatedScale, {
+        toValue: 0.97,
+        useNativeDriver: true,
+      }).start();
+    }, [animatedScale]);
+
+    const handlePressOut = React.useCallback(() => {
+      Animated.spring(animatedScale, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    }, [animatedScale]);
+
     const content = (
       <>
         {loading && (
@@ -127,49 +143,88 @@ export const Button = React.forwardRef<View, Props>(
       </>
     );
 
+    const animatedStyle = {
+      transform: [{ scale: animatedScale }],
+    };
+
     if (variant === 'default') {
       return (
-        <Pressable
-          ref={ref}
-          disabled={disabled || loading}
-          testID={testID}
-          {...props}
-        >
-          <LinearGradient
-            colors={['#003161', '#335A81']}
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.5 }}
+        <Animated.View style={animatedStyle}>
+          <Pressable
+            ref={ref}
+            disabled={disabled || loading}
+            testID={testID}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            {...props}
+          >
+            <LinearGradient
+              colors={['#003161', '#335A81']}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              className={styles.container({ className })}
+              style={{
+                borderRadius: 30,
+                paddingHorizontal: 40,
+                paddingVertical: 16,
+              }}
+            >
+              {content}
+            </LinearGradient>
+          </Pressable>
+        </Animated.View>
+      );
+    }
+
+    // For variants with border (secondary, outline)
+    if (variant === 'secondary' || variant === 'outline') {
+      return (
+        <Animated.View style={animatedStyle}>
+          <Pressable
+            ref={ref}
             className={styles.container({ className })}
+            disabled={disabled || loading}
+            testID={testID}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
             style={{
               borderRadius: 30,
               paddingHorizontal: 40,
               paddingVertical: 16,
             }}
+            {...props}
           >
             {content}
-          </LinearGradient>
-        </Pressable>
+          </Pressable>
+        </Animated.View>
       );
     }
 
+    // Default rendering for other variants
     return (
-      <Pressable
-        ref={ref}
-        disabled={disabled || loading}
-        className={styles.container({ className })}
-        testID={testID}
-        style={
-          variant !== 'icon' &&
-          variant !== 'link' && {
-            borderRadius: 30,
-            paddingHorizontal: 40,
-            paddingVertical: 16,
+      <Animated.View style={animatedStyle}>
+        <Pressable
+          ref={ref}
+          className={styles.container({ className })}
+          disabled={disabled || loading}
+          testID={testID}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={
+            variant !== 'icon' &&
+            variant !== 'link' && {
+              borderRadius: 30,
+              paddingHorizontal: 40,
+              paddingVertical: 16,
+            }
           }
-        }
-        {...props}
-      >
-        {content}
-      </Pressable>
+          {...props}
+        >
+          {content}
+        </Pressable>
+      </Animated.View>
     );
   }
 );
+
+Button.displayName = 'Button';
