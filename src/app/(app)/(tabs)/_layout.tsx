@@ -1,9 +1,8 @@
 /* eslint-disable max-lines-per-function */
 import { TransitionPresets } from '@react-navigation/bottom-tabs';
-import { useNavigationState } from '@react-navigation/native';
 import { Tabs as ExpoTabs } from 'expo-router';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 
 import colors from '@/components/ui/colors';
 import {
@@ -18,87 +17,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 10,
     lineHeight: 12,
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-Regular',
     flexWrap: 'wrap',
+  },
+  tabLabelActive: {
+    fontFamily: 'Poppins-Bold',
   },
 });
 
 interface TabLabelProps {
   color: string;
   title: string;
+  focused?: boolean;
 }
 
-const TabLabel: React.FC<TabLabelProps> = ({ color, title }) => (
-  <Text style={[styles.tabLabel, { color }]} numberOfLines={2}>
+const TabLabel: React.FC<TabLabelProps> = ({ color, title, focused }) => (
+  <Text
+    style={[styles.tabLabel, focused && styles.tabLabelActive, { color }]}
+    numberOfLines={2}
+  >
     {title}
   </Text>
 );
-
-interface CustomTabBarButtonProps {
-  onPress?: (event: any) => void;
-  style?: any;
-  children: React.ReactNode;
-  testID?: string;
-  accessibilityState?: {
-    selected?: boolean;
-  };
-}
-
-const CustomTabBarButton: React.FC<CustomTabBarButtonProps> = (props) => {
-  const { style, onPress, children, testID, accessibilityState } = props;
-  const state = useNavigationState((state) => state);
-  const activeIndex = state.index;
-  let index = 0;
-  if (testID === 'home-tab') {
-    index = 0;
-  } else if (testID === 'nutrient-portfolio-tab') {
-    index = 1;
-  } else if (testID === 'marketplace-tab') {
-    index = 2;
-  } else if (testID === 'land-wallet-tab') {
-    index = 3;
-  }
-  const isActive = accessibilityState?.selected;
-  let extraStyle: any = {};
-  if (isActive) {
-    extraStyle = {
-      backgroundColor: colors.neutral[100],
-      borderBottomLeftRadius: 50,
-      borderBottomRightRadius: 50,
-    };
-  } else {
-    extraStyle = { backgroundColor: colors.primary };
-    if (index === activeIndex + 1) {
-      extraStyle.borderTopLeftRadius = 50;
-    } else if (index === activeIndex - 1) {
-      extraStyle.borderTopRightRadius = 50;
-    }
-  }
-  return (
-    <View style={{ flex: 1, position: 'relative' }}>
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: isActive ? colors.primary : colors.neutral[100],
-        }}
-      />
-      <Pressable
-        onPress={onPress}
-        style={[
-          style,
-          { flex: 1, alignItems: 'center', position: 'relative', zIndex: 1 },
-          extraStyle,
-        ]}
-      >
-        {children}
-      </Pressable>
-    </View>
-  );
-};
 
 export default function TabsLayout() {
   return (
@@ -107,77 +47,105 @@ export default function TabsLayout() {
         ...TransitionPresets.ShiftTransition,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: colors.neutral[100],
+          backgroundColor: 'white',
           borderTopWidth: 0,
-          height: 110,
-          paddingBottom: 0,
-          position: 'relative',
-          elevation: 0,
-          shadowOpacity: 0,
+          height: 80,
+          paddingBottom: 20,
+          ...Platform.select({
+            android: {
+              elevation: 10,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+            },
+            ios: {
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: -2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 6,
+              borderTopWidth: 1,
+              borderTopColor: 'rgba(0,0,0,0.1)',
+            },
+            default: {
+              borderTopWidth: 1,
+              borderTopColor: 'rgba(0,0,0,0.2)',
+            },
+          }),
         },
         tabBarItemStyle: {
-          borderRadius: 0,
-          backgroundColor: colors.primary,
-          marginHorizontal: 0,
-          position: 'relative',
-          height: '100%',
-          paddingTop: 0,
-          paddingBottom: 20,
-          flex: 1,
+          paddingTop: 8,
         },
-        tabBarActiveTintColor: colors.primary[600],
-        tabBarInactiveTintColor: 'white',
-        tabBarActiveBackgroundColor: colors.neutral[100],
-        tabBarInactiveBackgroundColor: colors.primary[600],
-        tabBarIconStyle: {
-          marginTop: 8,
-        },
-        tabBarButton: (props) => <CustomTabBarButton {...props} />,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.primary,
       }}
     >
       <ExpoTabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <HomeIcon color={color} />,
-          tabBarLabel: ({ color }) => <TabLabel color={color} title="Home" />,
-          tabBarButtonTestID: 'home-tab',
+          tabBarIcon: ({ color, focused }) => (
+            <HomeIcon
+              color={color}
+              width={focused ? 28 : 24}
+              height={focused ? 28 : 24}
+            />
+          ),
+          tabBarLabel: ({ color, focused }) => (
+            <TabLabel color={color} title="Home" focused={focused} />
+          ),
         }}
       />
-
       <ExpoTabs.Screen
         name="nutrient-portfolio"
         options={{
-          title: 'Nutrient\nPortfolio',
-          tabBarIcon: ({ color }) => <NutrientPortfolioIcon color={color} />,
-          tabBarLabel: ({ color }) => (
-            <TabLabel color={color} title={`Nutrient\nPortfolio`} />
+          title: 'Nutrient Portfolio',
+          tabBarIcon: ({ color, focused }) => (
+            <NutrientPortfolioIcon
+              color={color}
+              width={focused ? 28 : 24}
+              height={focused ? 28 : 24}
+            />
           ),
-          tabBarButtonTestID: 'nutrient-portfolio-tab',
+          tabBarLabel: ({ color, focused }) => (
+            <TabLabel
+              color={color}
+              title="Nutrient Portfolio"
+              focused={focused}
+            />
+          ),
         }}
       />
-
       <ExpoTabs.Screen
         name="marketplace"
         options={{
           title: 'Marketplace',
-          tabBarIcon: ({ color }) => <ShopIcon color={color} />,
-          tabBarLabel: ({ color }) => (
-            <TabLabel color={color} title="Marketplace" />
+          tabBarIcon: ({ color, focused }) => (
+            <ShopIcon
+              color={color}
+              width={focused ? 28 : 24}
+              height={focused ? 28 : 24}
+            />
           ),
-          tabBarButtonTestID: 'marketplace-tab',
+          tabBarLabel: ({ color, focused }) => (
+            <TabLabel color={color} title="Marketplace" focused={focused} />
+          ),
         }}
       />
-
       <ExpoTabs.Screen
         name="land-wallet"
         options={{
-          title: 'Land\nWallet',
-          tabBarIcon: ({ color }) => <WalletIcon color={color} />,
-          tabBarLabel: ({ color }) => (
-            <TabLabel color={color} title={`Land\nWallet`} />
+          title: 'Land Wallet',
+          tabBarIcon: ({ color, focused }) => (
+            <WalletIcon
+              color={color}
+              width={focused ? 28 : 24}
+              height={focused ? 28 : 24}
+            />
           ),
-          tabBarButtonTestID: 'land-wallet-tab',
+          tabBarLabel: ({ color, focused }) => (
+            <TabLabel color={color} title="Land Wallet" focused={focused} />
+          ),
         }}
       />
 
