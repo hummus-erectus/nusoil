@@ -15,7 +15,7 @@ interface UserState {
 export const useUserStore = create<UserState>((set) => ({
   subscriptionPlan: 'Seed',
   userName: 'Emily Anderson', // Default name for testing
-  email: '',
+  email: 'emily@anderson.com', // Default email for testing
 
   setSubscriptionPlan: (plan) => set({ subscriptionPlan: plan }),
   setUserName: (name) => set({ userName: name }),

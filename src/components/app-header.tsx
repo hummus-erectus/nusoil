@@ -5,8 +5,8 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import colors from '@/components/ui/colors';
 import {
-  HamburgerMenu as HamburgerMenuIcon,
   NotificationBell as NotificationBellIcon,
+  Profile as ProfileIcon,
 } from '@/components/ui/icons';
 import { useNotifications } from '@/features/notifications/notifications-context';
 
@@ -75,7 +75,7 @@ export function AppHeader() {
           hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
           style={{ padding: 8 }}
         >
-          <HamburgerMenuIcon color={colors.neutral[100]} />
+          <ProfileIcon color={colors.neutral[100]} />
         </Pressable>
       </View>
     </View>
