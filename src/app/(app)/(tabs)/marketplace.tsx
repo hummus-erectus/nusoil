@@ -2,7 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Animated from 'react-native-reanimated';
 import { z } from 'zod';
@@ -11,6 +11,7 @@ import { accountOptions } from '@/app/(app)/(tabs)/nutrient-portfolio/types';
 import { Button, FormCard, Radio, Select } from '@/components/ui';
 import { CaretDown } from '@/components/ui/icons';
 import { UpgradeOverlay } from '@/components/upgrade-overlay';
+import { useNotifications } from '@/features/notifications/notifications-context';
 import { useUserStore } from '@/stores/user-store';
 
 const financeTypeSchema = z.enum(['credit', 'investment', 'loan', 'grant']);
@@ -83,11 +84,16 @@ type InitiativeFormType = z.infer<typeof initiativeFormSchema>;
 
 export default function Marketplace() {
   const { subscriptionPlan } = useUserStore();
+  const { addNotification } = useNotifications();
   const hasAccess = ['Mature', 'Harvest'].includes(subscriptionPlan);
-
   const [activeDropdown, setActiveDropdown] = React.useState<string | null>(
     null
   );
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [showSuccess, setShowSuccess] = React.useState(false);
+  const loadingStartTimeRef = React.useRef(0);
+
+  const MINIMUM_LOADING_TIME = 2000; // 2 seconds
 
   const {
     handleSubmit: handleLeaseSubmit,
@@ -127,19 +133,76 @@ export default function Marketplace() {
 
   const leaseType = watchLease('type');
 
-  const onLeaseSubmit = (data: LeaseFormType) => {
-    console.log('Lease submitted:', data);
-    // TODO: Implement lease submission
+  const onLeaseSubmit = (_data: LeaseFormType) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    loadingStartTimeRef.current = Date.now();
+
+    // Simulate request
+    setTimeout(() => {
+      const elapsedTime = Date.now() - loadingStartTimeRef.current;
+      const remainingTime = Math.max(0, MINIMUM_LOADING_TIME - elapsedTime);
+
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setShowSuccess(true);
+        addNotification({
+          title: 'Request Received',
+          message:
+            'Your farm lease request has been received. We will review it and get back to you soon.',
+          type: 'success',
+          read: false,
+        });
+      }, remainingTime);
+    }, 0);
   };
 
-  const onFinanceSubmit = (data: FinanceFormType) => {
-    console.log('Finance submitted:', data);
-    // TODO: Implement finance submission
+  const onFinanceSubmit = (_data: FinanceFormType) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    loadingStartTimeRef.current = Date.now();
+
+    // Simulate request
+    setTimeout(() => {
+      const elapsedTime = Date.now() - loadingStartTimeRef.current;
+      const remainingTime = Math.max(0, MINIMUM_LOADING_TIME - elapsedTime);
+
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setShowSuccess(true);
+        addNotification({
+          title: 'Request Received',
+          message:
+            'Your finance request has been received. We will review it and get back to you soon.',
+          type: 'success',
+          read: false,
+        });
+      }, remainingTime);
+    }, 0);
   };
 
-  const onInitiativeSubmit = (data: InitiativeFormType) => {
-    console.log('Initiative submitted:', data);
-    // TODO: Implement initiative submission
+  const onInitiativeSubmit = (_data: InitiativeFormType) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    loadingStartTimeRef.current = Date.now();
+
+    // Simulate request
+    setTimeout(() => {
+      const elapsedTime = Date.now() - loadingStartTimeRef.current;
+      const remainingTime = Math.max(0, MINIMUM_LOADING_TIME - elapsedTime);
+
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setShowSuccess(true);
+        addNotification({
+          title: 'Request Received',
+          message:
+            'Your initiative request has been received. We will review it and get back to you soon.',
+          type: 'success',
+          read: false,
+        });
+      }, remainingTime);
+    }, 0);
   };
 
   const toggleDropdown = (name: string) => {
@@ -153,6 +216,20 @@ export default function Marketplace() {
       ],
     };
   };
+
+  // If submitting, show loading state
+  if (isSubmitting) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <View className="items-center gap-4">
+          <ActivityIndicator size="large" color="#3498db" />
+          <Text className="font-poppins text-base text-neutral-600">
+            Submitting your request...
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -317,6 +394,25 @@ export default function Marketplace() {
           </View>
         </View>
       </KeyboardAwareScrollView>
+
+      {/* Success Modal */}
+      {showSuccess && (
+        <View className="absolute inset-0 items-center justify-center bg-black/50">
+          <View className="w-4/5 items-center rounded-2xl bg-white p-6 shadow-lg">
+            <Text className="mb-4 text-center font-lora text-2xl text-primary">
+              Request Received
+            </Text>
+            <Text className="mb-6 text-center font-poppins-regular text-base text-neutral-600">
+              We will review your submission and get back to you soon.
+            </Text>
+            <Button
+              variant="default"
+              label="Close"
+              onPress={() => setShowSuccess(false)}
+            />
+          </View>
+        </View>
+      )}
 
       {/* Show upgrade overlay if user doesn't have access */}
       {!hasAccess && (
