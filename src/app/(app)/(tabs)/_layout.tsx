@@ -7,9 +7,13 @@ import { Platform, StyleSheet, Text } from 'react-native';
 import colors from '@/components/ui/colors';
 import {
   Home as HomeIcon,
+  HomeFill as HomeIconFill,
   NutrientPortfolio as NutrientPortfolioIcon,
+  NutrientPortfolioFill as NutrientPortfolioIconFill,
   Shop as ShopIcon,
+  ShopFill as ShopIconFill,
   Wallet as WalletIcon,
+  WalletFill as WalletIconFill,
 } from '@/components/ui/icons';
 
 const styles = StyleSheet.create({
@@ -84,13 +88,12 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <HomeIcon
-              color={color}
-              width={focused ? 28 : 24}
-              height={focused ? 28 : 24}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) =>
+            focused ? (
+              <HomeIconFill color={color} width={28} height={28} />
+            ) : (
+              <HomeIcon color={color} width={24} height={24} />
+            ),
           tabBarLabel: ({ color, focused }) => (
             <TabLabel color={color} title="Home" focused={focused} />
           ),
@@ -100,13 +103,12 @@ export default function TabsLayout() {
         name="nutrient-portfolio"
         options={{
           title: 'Nutrient Portfolio',
-          tabBarIcon: ({ color, focused }) => (
-            <NutrientPortfolioIcon
-              color={color}
-              width={focused ? 28 : 24}
-              height={focused ? 28 : 24}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) =>
+            focused ? (
+              <NutrientPortfolioIconFill color={color} width={28} height={28} />
+            ) : (
+              <NutrientPortfolioIcon color={color} width={24} height={24} />
+            ),
           tabBarLabel: ({ color, focused }) => (
             <TabLabel
               color={color}
@@ -120,13 +122,12 @@ export default function TabsLayout() {
         name="marketplace"
         options={{
           title: 'Marketplace',
-          tabBarIcon: ({ color, focused }) => (
-            <ShopIcon
-              color={color}
-              width={focused ? 28 : 24}
-              height={focused ? 28 : 24}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) =>
+            focused ? (
+              <ShopIconFill color={color} width={28} height={28} />
+            ) : (
+              <ShopIcon color={color} width={24} height={24} />
+            ),
           tabBarLabel: ({ color, focused }) => (
             <TabLabel color={color} title="Marketplace" focused={focused} />
           ),
@@ -136,13 +137,12 @@ export default function TabsLayout() {
         name="land-wallet"
         options={{
           title: 'Land Wallet',
-          tabBarIcon: ({ color, focused }) => (
-            <WalletIcon
-              color={color}
-              width={focused ? 28 : 24}
-              height={focused ? 28 : 24}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) =>
+            focused ? (
+              <WalletIconFill color={color} width={28} height={28} />
+            ) : (
+              <WalletIcon color={color} width={24} height={24} />
+            ),
           tabBarLabel: ({ color, focused }) => (
             <TabLabel color={color} title="Land Wallet" focused={focused} />
           ),
