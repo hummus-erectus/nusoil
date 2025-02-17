@@ -148,13 +148,6 @@ export default function TabsLayout() {
           ),
         }}
       />
-
-      <ExpoTabs.Screen
-        name="add-on-services"
-        options={{
-          href: null,
-        }}
-      />
     </ExpoTabs>
   );
 }
