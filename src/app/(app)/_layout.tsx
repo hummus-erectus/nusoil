@@ -42,15 +42,7 @@ const styles = StyleSheet.create({
   },
 });
 
-type DrawerRoute =
-  | '/'
-  | '/(app)/(tabs)'
-  | '/(app)/(tabs)/nutrient-portfolio'
-  | '/settings'
-  | '/(app)/(tabs)/marketplace'
-  | '/(app)/(tabs)/add-on-services'
-  | '/(app)/(tabs)/land-wallet'
-  | '/upgrade';
+type DrawerRoute = '/(app)/(tabs)' | '/settings' | '/upgrade';
 
 interface DrawerItemProps {
   href: DrawerRoute;
@@ -97,41 +89,51 @@ function CustomDrawerContent(props: any) {
       <View
         style={[
           styles.drawerItem,
-          { flexDirection: 'column', alignItems: 'flex-start', gap: 4 },
+          { flexDirection: 'column', alignItems: 'flex-start', gap: 48 },
         ]}
       >
-        <Text
-          style={[
-            styles.drawerText,
-            { fontSize: 20, fontFamily: 'Poppins-semibold' },
-          ]}
-        >
-          {userName}
-        </Text>
-        <Text
-          style={[
-            styles.drawerText,
-            { fontSize: 14, color: colors.neutral[300] },
-          ]}
-        >
-          {email}
-        </Text>
-        <View className="flex-row items-center">
-          <Text style={[styles.drawerText, { fontSize: 14 }]}>
-            {subscriptionPlan} Plan
+        <View className="gap-2">
+          <Text
+            style={[
+              styles.drawerText,
+              { fontSize: 20, fontFamily: 'Poppins-semibold' },
+            ]}
+          >
+            {userName}
           </Text>
-          {subscriptionPlan !== 'Harvest' && (
+          <Text
+            style={[
+              styles.drawerText,
+              { fontSize: 14, color: colors.neutral[300] },
+            ]}
+          >
+            {email}
+          </Text>
+        </View>
+        <View className="flex-col items-start gap-2">
+          <Text style={[styles.drawerText, { fontSize: 14 }]}>
+            You are currently on the
+          </Text>
+          <View className="flex-row gap-6">
+            <Text
+              style={[styles.drawerText, { fontSize: 14 }]}
+              className="font-bold"
+            >
+              {subscriptionPlan} Plan
+            </Text>
             <Button
-              variant="ghost"
+              variant="link"
               fullWidth={false}
               onPress={() => handleDrawerItemPress('/upgrade')}
               label={
-                <View className="flex-row items-center justify-center">
-                  <Text className="ml-4 text-white underline">Upgrade</Text>
+                <View>
+                  <Text className="text-white underline">
+                    {subscriptionPlan === 'Harvest' ? 'Manage' : 'Upgrade'}
+                  </Text>
                 </View>
               }
             />
-          )}
+          </View>
         </View>
       </View>
 
