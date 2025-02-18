@@ -11,13 +11,8 @@ import { AppHeader } from '@/components/app-header';
 import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
 import {
-  Home as HomeIcon,
-  LampOn as LampOnIcon,
   Logout as LogoutIcon,
-  NutrientPortfolio as NutrientPortfolioIcon,
   Settings as SettingsIcon,
-  Shop as ShopIcon,
-  Wallet as WalletIcon,
 } from '@/components/ui/icons';
 import { useAuth } from '@/lib';
 import { useUserStore } from '@/stores/user-store';
@@ -47,15 +42,7 @@ const styles = StyleSheet.create({
   },
 });
 
-type DrawerRoute =
-  | '/'
-  | '/(app)/(tabs)'
-  | '/(app)/(tabs)/nutrient-portfolio'
-  | '/settings'
-  | '/(app)/(tabs)/marketplace'
-  | '/(app)/(tabs)/add-on-services'
-  | '/(app)/(tabs)/land-wallet'
-  | '/upgrade';
+type DrawerRoute = '/(app)/(tabs)' | '/settings' | '/upgrade';
 
 interface DrawerItemProps {
   href: DrawerRoute;
@@ -78,120 +65,101 @@ function DrawerItem({ href, label, icon, onPress }: DrawerItemProps) {
 function CustomDrawerContent(props: any) {
   const signOut = useAuth.use.signOut();
   const subscriptionPlan = useUserStore((state) => state.subscriptionPlan);
+  const userName = useUserStore((state) => state.userName);
+  const email = useUserStore((state) => state.email);
   const [isNavigating, setIsNavigating] = useState(false);
-
-  const showAdvancedFeatures =
-    subscriptionPlan === 'Mature' || subscriptionPlan === 'Harvest';
-  const showHarvestFeatures = subscriptionPlan === 'Harvest';
 
   const handleDrawerItemPress = (href: DrawerRoute) => {
     if (isNavigating) return;
     setIsNavigating(true);
 
-    // Start drawer close animation
     props.navigation.closeDrawer();
 
-    // Navigate in the next frame after drawer close starts
     requestAnimationFrame(() => {
       router.push(href);
-      // Reset navigation state after a shorter delay
       setTimeout(() => {
         setIsNavigating(false);
       }, 300);
     });
   };
 
-  // Clean up navigation state when component unmounts
-  useEffect(() => {
-    return () => {
-      setIsNavigating(false);
-    };
-  }, []);
-
   return (
-    <DrawerContentScrollView {...props}>
-      <View style={styles.drawerContent}>
-        <DrawerItem
-          href="/"
-          label="Home"
-          icon={<HomeIcon color={colors.neutral[100]} />}
-          onPress={() => handleDrawerItemPress('/')}
-        />
-
-        <DrawerItem
-          href="/(app)/(tabs)/nutrient-portfolio"
-          label="Nutrient Portfolio"
-          icon={<NutrientPortfolioIcon color={colors.neutral[100]} />}
-          onPress={() =>
-            handleDrawerItemPress('/(app)/(tabs)/nutrient-portfolio')
-          }
-        />
-        {showAdvancedFeatures && (
-          <>
-            <DrawerItem
-              href="/(app)/(tabs)/marketplace"
-              label="Marketplace"
-              icon={<ShopIcon color={colors.neutral[100]} />}
-              onPress={() => handleDrawerItemPress('/(app)/(tabs)/marketplace')}
-            />
-            <DrawerItem
-              href="/(app)/(tabs)/add-on-services"
-              label="Add-on Services"
-              icon={<LampOnIcon color={colors.neutral[100]} />}
-              onPress={() =>
-                handleDrawerItemPress('/(app)/(tabs)/add-on-services')
+    <DrawerContentScrollView {...props} style={styles.drawerContent}>
+      {/* Profile Section */}
+      <View
+        style={[
+          styles.drawerItem,
+          { flexDirection: 'column', alignItems: 'flex-start', gap: 48 },
+        ]}
+      >
+        <View className="gap-2">
+          <Text
+            style={[
+              styles.drawerText,
+              { fontSize: 20, fontFamily: 'Poppins-semibold' },
+            ]}
+          >
+            {userName}
+          </Text>
+          <Text
+            style={[
+              styles.drawerText,
+              { fontSize: 14, color: colors.neutral[300] },
+            ]}
+          >
+            {email}
+          </Text>
+        </View>
+        <View className="flex-col items-start gap-2">
+          <Text style={[styles.drawerText, { fontSize: 14 }]}>
+            You are currently on the
+          </Text>
+          <View className="flex-row gap-6">
+            <Text
+              style={[styles.drawerText, { fontSize: 14 }]}
+              className="font-bold"
+            >
+              {subscriptionPlan} Plan
+            </Text>
+            <Button
+              variant="link"
+              fullWidth={false}
+              onPress={() => handleDrawerItemPress('/upgrade')}
+              label={
+                <View>
+                  <Text className="text-white underline">
+                    {subscriptionPlan === 'Harvest' ? 'Manage' : 'Upgrade'}
+                  </Text>
+                </View>
               }
             />
-          </>
-        )}
-        {showHarvestFeatures && (
-          <DrawerItem
-            href="/(app)/(tabs)/land-wallet"
-            label="Land Wallet"
-            icon={<WalletIcon color={colors.neutral[100]} />}
-            onPress={() => handleDrawerItemPress('/(app)/(tabs)/land-wallet')}
-          />
-        )}
-
-        {(subscriptionPlan === 'Seed' || subscriptionPlan === 'Mature') && (
-          <Button
-            variant="ghost"
-            fullWidth={false}
-            onPress={() => handleDrawerItemPress('/upgrade')}
-            label={
-              <View className="flex-row items-center justify-center">
-                <Text className="ml-4 text-white underline">
-                  Upgrade for more features!
-                </Text>
-              </View>
-            }
-          />
-        )}
-
-        <View style={styles.divider} />
-
-        <DrawerItem
-          onPress={() => props.navigation.closeDrawer()}
-          href="/settings"
-          label="Settings"
-          icon={<SettingsIcon color={colors.neutral[100]} />}
-        />
-        <Button
-          className="mt-12"
-          onPress={signOut}
-          variant="outline"
-          fullWidth={false}
-          label={
-            <View className="flex-row items-center justify-center">
-              <LogoutIcon color="white" />
-              <Text className="ml-4 text-white">Log out</Text>
-            </View>
-          }
-        />
-        <Text className="mt-2 text-center text-xs text-neutral-400">
-          v{Env?.VERSION ?? '0.0.2'}
-        </Text>
+          </View>
+        </View>
       </View>
+
+      <View style={styles.divider} />
+
+      <DrawerItem
+        onPress={() => props.navigation.closeDrawer()}
+        href="/settings"
+        label="Settings"
+        icon={<SettingsIcon color={colors.neutral[100]} />}
+      />
+      <Button
+        className="mt-12"
+        onPress={signOut}
+        variant="outline"
+        fullWidth={false}
+        label={
+          <View className="flex-row items-center justify-center">
+            <LogoutIcon color="white" />
+            <Text className="ml-4 text-white">Log out</Text>
+          </View>
+        }
+      />
+      <Text className="mt-2 text-center text-xs text-neutral-400">
+        v{Env?.VERSION ?? '0.0.2'}
+      </Text>
     </DrawerContentScrollView>
   );
 }
