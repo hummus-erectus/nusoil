@@ -55,7 +55,7 @@ export function AppHeader() {
         <View style={styles.headerRight}>
           <Pressable
             onPress={() => {
-              router.push('/(app)/notifications');
+              router.push('/(modals)/notifications');
             }}
             hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
             style={{ padding: 8 }}

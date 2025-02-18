@@ -48,6 +48,13 @@ export default function RootLayout() {
                   <Stack.Screen name="signup" />
                   <Stack.Screen name="soil-test" />
                   <Stack.Screen name="upgrade" />
+                  <Stack.Screen
+                    name="(modals)"
+                    options={{
+                      presentation: 'modal',
+                      animation: 'ios_from_right',
+                    }}
+                  />
                 </Stack>
                 <FocusAwareStatusBar alwaysShow />
                 <FlashMessage position="top" />
