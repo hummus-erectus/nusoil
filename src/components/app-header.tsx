@@ -1,7 +1,15 @@
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation, usePathname, useRouter } from 'expo-router';
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Platform,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import colors from '@/components/ui/colors';
 import {
@@ -88,8 +96,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingBottom: 16,
-    paddingTop: 40,
+    paddingBottom: 8,
+    paddingTop:
+      Platform.OS === 'ios' ? 44 : (StatusBar.currentHeight || 16) + 8,
   },
   logo: {
     width: 100,
