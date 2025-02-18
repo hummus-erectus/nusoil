@@ -1,3 +1,4 @@
+// TODO: Update AppHeader so that logo or header title is displayed during transition to notification screen
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation, usePathname, useRouter } from 'expo-router';
 import React from 'react';
