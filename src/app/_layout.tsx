@@ -52,7 +52,7 @@ export default function RootLayout() {
                     name="(modals)"
                     options={{
                       presentation: 'modal',
-                      animation: 'ios_from_right',
+                      animation: 'fade_from_bottom',
                     }}
                   />
                 </Stack>
