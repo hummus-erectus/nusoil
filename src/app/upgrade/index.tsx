@@ -61,6 +61,8 @@ export default function UpgradeScreen() {
         <PlanCard
           planName="Seed Plan"
           currentPlan={subscriptionPlan === 'Seed'}
+          mainColor="#515151"
+          accentColor="#a4a4a4"
           icon={NutrientPortfolio}
           features={[
             'Register unlimited land accounts',
@@ -71,7 +73,8 @@ export default function UpgradeScreen() {
         <PlanCard
           planName="Mature Plan"
           currentPlan={subscriptionPlan === 'Mature'}
-          backgroundColor="#1900ff"
+          mainColor="#003161"
+          accentColor="#456483"
           price="$xx.xx /mo"
           icon={Shop}
           features={[
@@ -84,7 +87,8 @@ export default function UpgradeScreen() {
         <PlanCard
           planName="Harvest Plan"
           currentPlan={subscriptionPlan === 'Harvest'}
-          backgroundColor="#76008b"
+          mainColor="#6c017f"
+          accentColor="#8b5486"
           price="$xx.xx /mo"
           icon={Wallet}
           features={[

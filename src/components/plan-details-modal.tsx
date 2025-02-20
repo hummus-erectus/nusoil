@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
@@ -19,7 +20,8 @@ import { Text } from './ui/text';
 interface PlanDetailsModalProps {
   planName: string;
   icon: React.ComponentType<SvgProps>;
-  backgroundColor: string;
+  mainColor: string;
+  accentColor: string;
   features: string[];
   price: string;
   currentPlan: boolean;
@@ -76,7 +78,8 @@ export function PlanDetailsModal({
   planName,
   price,
   features,
-  backgroundColor,
+  mainColor,
+  accentColor,
   icon: Icon,
   currentPlan,
   modalRef,
@@ -147,11 +150,15 @@ export function PlanDetailsModal({
         <View className="flex-1 gap-4 p-6">
           <View>
             <View className="mb-8 items-center">
-              <View
-                className="mb-4 rounded-full p-4"
-                style={{ backgroundColor }}
-              >
-                <Icon width={48} height={48} color="white" />
+              <View className="mb-4 rounded-full p-4">
+                <LinearGradient
+                  colors={[mainColor, accentColor]}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={{ borderRadius: 999, padding: 8 }}
+                >
+                  <Icon width={48} height={48} color="white" />
+                </LinearGradient>
               </View>
               <Text className="font-lora text-2xl">{planName}</Text>
               <Text className="font-poppins-bold text-xl">{price}</Text>
