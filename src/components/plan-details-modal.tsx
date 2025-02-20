@@ -183,7 +183,7 @@ export function PlanDetailsModal({
           {showRenewalText && (
             <>
               <View>
-                <Text className="text-center font-poppins-light text-sm text-neutral-300">
+                <Text className="text-center font-poppins-light text-sm">
                   No commitment, cancel at any time at least 24 hours before the
                   renewal date. Plan automatically renews every month unless
                   canceled.
@@ -204,7 +204,7 @@ export function PlanDetailsModal({
 
           <View className="mt-auto">
             <Button
-              fullWidth={false}
+              fullWidth
               variant={currentPlan ? 'secondary' : 'default'}
               label={currentPlan ? 'Current Plan' : 'Select Plan'}
               onPress={handlePlanChange}
