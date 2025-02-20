@@ -73,7 +73,7 @@ export function PlanCard({
               What's included:
             </Text>
             <View className="ml-4">
-              {[]?.map((feature, index) => (
+              {features.map((feature, index) => (
                 <Text key={index} className="font-poppins-semibold">
                   {`\u2022 ${feature}`}
                 </Text>
