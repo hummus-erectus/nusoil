@@ -1,10 +1,11 @@
 /* eslint-disable max-lines-per-function */
 import { router, useNavigation } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Alert, BackHandler, View } from 'react-native';
+import { Alert, BackHandler, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Text } from '@/components/ui';
+import { useLandStore } from '@/stores/land-store';
 import { useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
@@ -55,6 +56,8 @@ const WelcomeScreen = () => {
   // const handleAskLater = () => {
   //   router.replace('/nutrient-management');
   // };
+
+  const MAX_VISIBLE_LANDS = 3;
 
   return (
     <KeyboardAwareScrollView
@@ -108,10 +111,14 @@ const WelcomeScreen = () => {
               </Text>
             ) : (
               <View className="gap-4">
-                {userLands.map((land) => (
-                  <View
+                {userLands.slice(0, MAX_VISIBLE_LANDS).map((land) => (
+                  <TouchableOpacity
                     key={land.id}
                     className="rounded-lg border border-neutral-200 p-4"
+                    onPress={() => {
+                      useLandStore.getState().setSelectedLandId(land.id);
+                      router.push('/(app)/(tabs)/nutrient-portfolio');
+                    }}
                   >
                     <Text className="font-poppins-semibold text-lg">
                       {land.farmLocationName || 'Unnamed Land'}
@@ -122,8 +129,15 @@ const WelcomeScreen = () => {
                     <Text className="font-poppins text-neutral-600">
                       Irrigation: {land.irrigationType || 'Not specified'}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 ))}
+                {userLands.length > MAX_VISIBLE_LANDS && (
+                  <Button
+                    variant="link"
+                    label="See More"
+                    onPress={() => router.push('/(modals)/land-management')}
+                  />
+                )}
               </View>
             )}
           </View>

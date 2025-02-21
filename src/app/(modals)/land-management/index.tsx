@@ -1,53 +1,120 @@
 /* eslint-disable max-lines-per-function */
 import { router } from 'expo-router';
-import React from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import * as React from 'react';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Input, Text } from '@/components/ui';
-import { Trash as TrashIcon } from '@/components/ui/icons';
+import { Key as EditIcon, Trash as TrashIcon } from '@/components/ui/icons';
+import { useLandStore } from '@/stores/land-store';
 import { useUserStore } from '@/stores/user-store';
 
-// const irrigationOptions = [
-//   { label: 'Drip', value: 'Drip' },
-//   { label: 'Sprinkler', value: 'Sprinkler' },
-//   { label: 'Misting', value: 'Misting' },
-//   { label: 'Manual', value: 'Manual' },
-// ];
+interface LandForm {
+  id: string;
+  farmLocationName: string;
+  farmCity: string;
+  size: string;
+  irrigationType: string;
+}
+
+interface UpdateFormParams {
+  form: LandForm | null;
+  setForm: (form: LandForm) => void;
+  field: keyof LandForm;
+  value: string;
+}
 
 export default function LandManagementScreen() {
+  const { lands, setLands, setSelectedLandId } = useLandStore();
   const { userLands, setUserLands } = useUserStore();
-  const { control } = useForm({
-    defaultValues: {
-      lands: userLands,
-    },
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'lands',
-  });
-
-  const handleSave = () => {
-    router.back();
-  };
+  const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [editForm, setEditForm] = React.useState<LandForm | null>(null);
+  const [newForm, setNewForm] = React.useState<LandForm | null>(null);
 
   const handleAddLand = () => {
-    const newLand = {
+    const form = {
+      // TODO: handle on server with uuid?
       id: `land_${Date.now()}`,
       farmLocationName: '',
       farmCity: '',
-      size: 0,
+      size: '',
       irrigationType: '',
     };
-    append(newLand);
-    setUserLands([...userLands, newLand]);
+    setNewForm(form);
   };
 
-  const handleRemoveLand = (index: number) => {
-    remove(index);
-    setUserLands(userLands.filter((_, i) => i !== index));
+  const handleRemoveLand = (id: string) => {
+    // Remove from both stores
+    setLands(lands.filter((land) => land.id !== id));
+    setUserLands(userLands.filter((land) => land.id !== id));
+
+    // Clear any editing state
+    if (editingId === id) {
+      setEditingId(null);
+      setEditForm(null);
+    }
+  };
+
+  const handleStartEdit = (land: (typeof lands)[0]) => {
+    setEditingId(land.id);
+    setEditForm({
+      ...land,
+      size: land.size.toString(),
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditForm(null);
+  };
+
+  const handleUpdateForm = (params: UpdateFormParams) => {
+    const { form, setForm, field, value } = params;
+    if (!form) return;
+    setForm({
+      ...form,
+      [field]: value,
+    });
+  };
+
+  const handleSubmitNew = () => {
+    if (!newForm) return;
+
+    const newLand = {
+      ...newForm,
+      size: parseFloat(newForm.size) || 0,
+    };
+
+    // Update both stores
+    setLands([...lands, newLand]);
+    setUserLands([...userLands, newLand]);
+
+    // Clear the form
+    setNewForm(null);
+  };
+
+  const handleSubmitEdit = () => {
+    if (!editForm || !editingId) return;
+
+    const updatedLand = {
+      ...editForm,
+      size: parseFloat(editForm.size) || 0,
+    };
+
+    // Update both stores
+    setLands(lands.map((land) => (land.id === editingId ? updatedLand : land)));
+    setUserLands(
+      userLands.map((land) => (land.id === editingId ? updatedLand : land))
+    );
+
+    // Clear edit state
+    setEditingId(null);
+    setEditForm(null);
+  };
+
+  const handleViewNutrients = (id: string) => {
+    setSelectedLandId(id);
+    router.push('/(app)/(tabs)/nutrient-portfolio');
   };
 
   return (
@@ -55,61 +122,186 @@ export default function LandManagementScreen() {
       contentContainerStyle={{ flexGrow: 1 }}
       className="flex-1 bg-white p-6"
     >
-      <View className="flex-row items-center justify-between p-6">
-        <Text className="font-lora text-2xl text-primary">Manage Land</Text>
-        <Button variant="link" label="Done" onPress={handleSave} />
-      </View>
+      <View className="gap-6 p-6">
+        <Text className="text-center font-lora text-3xl text-primary">
+          Land Management
+        </Text>
 
-      {fields.map((field, index) => (
-        <FormCard key={field.id} className="mb-6">
-          <View className="mb-4 flex-row items-center justify-between">
-            <Text className="font-lora text-lg">Land {index + 1}</Text>
-            <Button
-              variant="ghost"
-              onPress={() => handleRemoveLand(index)}
-              label={<TrashIcon />}
+        {newForm && (
+          <FormCard>
+            <View className="flex-row items-center justify-between">
+              <Text className="font-poppins-semibold text-lg">New Land</Text>
+            </View>
+
+            <Input
+              label="Farm Location Name"
+              placeholder="Enter farm location name"
+              value={newForm.farmLocationName}
+              onChangeText={(value) =>
+                handleUpdateForm({
+                  form: newForm,
+                  setForm: setNewForm,
+                  field: 'farmLocationName',
+                  value,
+                })
+              }
             />
-          </View>
 
-          <Input
-            placeholder="Location name"
-            value={field.farmLocationName}
-            onChangeText={(text) => {
-              const updated = [...fields];
-              updated[index].farmLocationName = text;
-              setUserLands(updated);
-            }}
+            <Input
+              label="Farm City"
+              placeholder="Enter farm city"
+              value={newForm.farmCity}
+              onChangeText={(value) =>
+                handleUpdateForm({
+                  form: newForm,
+                  setForm: setNewForm,
+                  field: 'farmCity',
+                  value,
+                })
+              }
+            />
+
+            <Input
+              label="Size (acres)"
+              placeholder="Enter farm size"
+              value={newForm.size}
+              keyboardType="numeric"
+              onChangeText={(value) =>
+                handleUpdateForm({
+                  form: newForm,
+                  setForm: setNewForm,
+                  field: 'size',
+                  value,
+                })
+              }
+            />
+
+            <View className="flex-row justify-end gap-2">
+              <Button
+                variant="secondary"
+                label="Cancel"
+                onPress={() => setNewForm(null)}
+              />
+              <Button
+                variant="default"
+                label="Save"
+                onPress={handleSubmitNew}
+              />
+            </View>
+          </FormCard>
+        )}
+
+        {lands.map((land) => (
+          <FormCard key={land.id}>
+            {editingId === land.id && editForm ? (
+              <>
+                <View className="flex-row items-center justify-between">
+                  <Text className="font-poppins-semibold text-lg">
+                    Edit Land
+                  </Text>
+                </View>
+
+                <Input
+                  label="Farm Location Name"
+                  placeholder="Enter farm location name"
+                  value={editForm.farmLocationName}
+                  onChangeText={(value) =>
+                    handleUpdateForm({
+                      form: editForm,
+                      setForm: setEditForm,
+                      field: 'farmLocationName',
+                      value,
+                    })
+                  }
+                />
+
+                <Input
+                  label="Farm City"
+                  placeholder="Enter farm city"
+                  value={editForm.farmCity}
+                  onChangeText={(value) =>
+                    handleUpdateForm({
+                      form: editForm,
+                      setForm: setEditForm,
+                      field: 'farmCity',
+                      value,
+                    })
+                  }
+                />
+
+                <Input
+                  label="Size (acres)"
+                  placeholder="Enter farm size"
+                  value={editForm.size}
+                  keyboardType="numeric"
+                  onChangeText={(value) =>
+                    handleUpdateForm({
+                      form: editForm,
+                      setForm: setEditForm,
+                      field: 'size',
+                      value,
+                    })
+                  }
+                />
+
+                <View className="flex-row justify-end gap-2">
+                  <Button
+                    variant="secondary"
+                    label="Cancel"
+                    onPress={handleCancelEdit}
+                  />
+                  <Button
+                    variant="default"
+                    label="Save"
+                    onPress={handleSubmitEdit}
+                  />
+                </View>
+              </>
+            ) : (
+              <>
+                <View className="flex-row items-center justify-between">
+                  <Text className="font-poppins-semibold text-lg">
+                    {land.farmLocationName || 'Unnamed Land'}
+                  </Text>
+                  <View className="flex-row gap-2">
+                    <Button
+                      variant="icon"
+                      label={<EditIcon />}
+                      onPress={() => handleStartEdit(land)}
+                    />
+                    <Button
+                      variant="icon"
+                      label={<TrashIcon />}
+                      onPress={() => handleRemoveLand(land.id)}
+                    />
+                  </View>
+                </View>
+
+                <Text className="font-poppins text-neutral-600">
+                  {land.farmCity} • {land.size} acres
+                </Text>
+
+                <Text className="font-poppins text-neutral-600">
+                  Irrigation: {land.irrigationType || 'Not specified'}
+                </Text>
+
+                <Button
+                  variant="link"
+                  label="View Nutrient Data"
+                  onPress={() => handleViewNutrients(land.id)}
+                />
+              </>
+            )}
+          </FormCard>
+        ))}
+        {!newForm && (
+          <Button
+            variant="secondary"
+            label="Add New Land"
+            onPress={handleAddLand}
           />
-
-          <Input
-            placeholder="City"
-            value={field.farmCity}
-            onChangeText={(text) => {
-              const updated = [...fields];
-              updated[index].farmCity = text;
-              setUserLands(updated);
-            }}
-          />
-
-          {/* <Select
-            options={irrigationOptions}
-            placeholder="Select irrigation type"
-            onValueChange={(value) => {
-              const updated = [...fields];
-              updated[index].irrigationType = value;
-              setUserLands(updated);
-            }}
-            value={field.irrigationType}
-          /> */}
-        </FormCard>
-      ))}
-
-      <Button
-        variant="default"
-        label="Add New Land"
-        onPress={handleAddLand}
-        className="mt-4"
-      />
+        )}
+      </View>
     </KeyboardAwareScrollView>
   );
 }
