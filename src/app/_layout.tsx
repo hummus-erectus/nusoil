@@ -51,10 +51,11 @@ export default function RootLayout() {
                   <Stack.Screen
                     name="(modals)"
                     options={{
-                      presentation: 'modal',
+                      headerShown: false,
                       animation: 'fade_from_bottom',
                     }}
                   />
+                  <Stack.Screen name="land-management" />
                 </Stack>
                 <FocusAwareStatusBar alwaysShow />
                 <FlashMessage position="top" />
