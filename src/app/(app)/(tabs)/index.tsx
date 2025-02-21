@@ -4,13 +4,19 @@ import React, { useEffect } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, colors, FormCard, Text } from '@/components/ui';
-import { CircleTick as CircleTickIcon } from '@/components/ui/icons';
+import { Button, FormCard, Text } from '@/components/ui';
 import { useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
-  const { userName, subscriptionPlan } = useUserStore();
+  const { userName, subscriptionPlan, userLands } = useUserStore();
   const navigation = useNavigation();
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -55,45 +61,71 @@ const WelcomeScreen = () => {
       bottomOffset={62}
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View className="flex-1 justify-center p-6">
-        <FormCard>
-          <View className="my-8 items-center gap-4">
-            <Text className="text-center font-lora text-4xl text-primary">
-              Welcome
+      <View className="flex-1 gap-6 p-6">
+        <View>
+          <View className="flex-row">
+            <Text className="text-center font-poppins-bold text-lg">
+              {getGreeting()},{' '}
             </Text>
-            <Text className="text-center font-lora text-2xl text-neutral-700">
+            <Text className="text-center font-poppins-bold text-lg">
               {userName}!
             </Text>
-            <CircleTickIcon
-              width={40}
-              height={40}
-              color={colors.secondary}
-              className="my-6"
-            />
-            <Text className="mb-10 text-center font-lora text-lg text-secondary">
-              You have enrolled in the {subscriptionPlan} Plan!
-            </Text>
-            <Text className="font-poppins mb-6 text-center text-base text-neutral-600">
-              {subscriptionPlan === 'Seed'
-                ? 'Would you like to Upgrade to the Mature or Harvesting Plan?'
-                : subscriptionPlan === 'Mature'
-                  ? 'Would you like to change your plan? You can upgrade to Harvesting or downgrade to Seed.'
-                  : 'Would you like to change your plan? You can downgrade to Mature or Seed.'}
-            </Text>
-            <View className="gap-6">
-              <Button
-                variant="default"
-                onPress={handleUpgrade}
-                label={subscriptionPlan === 'Seed' ? 'Upgrade!' : 'Change Plan'}
-                className="w-52"
-              />
-              {/* <Button
-                variant="secondary"
-                onPress={handleAskLater}
-                label="Ask me later"
-                className="w-52"
-              /> */}
+          </View>
+          <View className="flex-row justify-between">
+            <View className="flex-row">
+              <Text className="font-poppins-regular text-neutral-600">
+                You are enrolled in the{' '}
+              </Text>
+              <Text className="font-poppins-semibold text-neutral-600">
+                {subscriptionPlan} Plan
+              </Text>
             </View>
+            <Button
+              variant="link"
+              fullWidth={false}
+              label="Upgrade"
+              onPress={handleUpgrade}
+            />
+          </View>
+        </View>
+
+        <FormCard>
+          <View className="gap-4">
+            <View className="flex-row items-center justify-between">
+              <Text className="font-lora text-xl text-primary">
+                Your Land Accounts
+              </Text>
+              <Button
+                variant="link"
+                label="Manage"
+                onPress={() => router.push('/(modals)/land-management')}
+              />
+            </View>
+
+            {userLands.length === 0 ? (
+              <Text className="font-poppins text-neutral-600">
+                No land accounts registered yet
+              </Text>
+            ) : (
+              <View className="gap-4">
+                {userLands.map((land) => (
+                  <View
+                    key={land.id}
+                    className="rounded-lg border border-neutral-200 p-4"
+                  >
+                    <Text className="font-poppins-semibold text-lg">
+                      {land.farmLocationName || 'Unnamed Land'}
+                    </Text>
+                    <Text className="font-poppins text-neutral-600">
+                      {land.farmCity} • {land.size} acres
+                    </Text>
+                    <Text className="font-poppins text-neutral-600">
+                      Irrigation: {land.irrigationType || 'Not specified'}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </View>
         </FormCard>
       </View>

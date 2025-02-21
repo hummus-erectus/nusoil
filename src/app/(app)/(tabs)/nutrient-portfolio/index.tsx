@@ -75,7 +75,7 @@ const MOCK_NUTRIENT_DATA: Record<string, NutrientData> = {
       cu: 1.8,
     },
   },
-  'Nusa -2': {
+  'Nusa - 2': {
     parameters: {
       ph: 7.2,
       ec: 0.9,
@@ -95,7 +95,7 @@ const MOCK_NUTRIENT_DATA: Record<string, NutrientData> = {
       cu: 1.5,
     },
   },
-  'Nusa -3': {
+  'Nusa - 3': {
     parameters: {
       ph: 5.8,
       ec: 1.5,

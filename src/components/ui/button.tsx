@@ -159,7 +159,7 @@ export const Button = React.forwardRef<View, Props>(
             {...props}
           >
             <LinearGradient
-              colors={['#003161', '#335A81']}
+              colors={['#003161', '#456483']}
               start={{ x: 0, y: 0.5 }}
               end={{ x: 1, y: 0.5 }}
               className={styles.container({ className })}
