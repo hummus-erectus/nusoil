@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Input, Text } from '@/components/ui';
-import { Key as EditIcon, Trash as TrashIcon } from '@/components/ui/icons';
+import { Edit as EditIcon, Trash as TrashIcon } from '@/components/ui/icons';
 import { useLandStore } from '@/stores/land-store';
 import { useUserStore } from '@/stores/user-store';
 
@@ -263,7 +263,7 @@ export default function LandManagementScreen() {
                   <Text className="font-poppins-semibold text-lg">
                     {land.farmLocationName || 'Unnamed Land'}
                   </Text>
-                  <View className="flex-row gap-2">
+                  <View className="flex-row gap-4">
                     <Button
                       variant="icon"
                       label={<EditIcon />}

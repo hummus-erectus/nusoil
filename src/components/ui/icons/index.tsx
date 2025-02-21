@@ -5,6 +5,7 @@ export * from './calendar';
 export * from './caret-down';
 export * from './circle-tick';
 export * from './clipboard';
+export * from './edit';
 export * from './enter';
 export * from './eye-closed';
 export * from './eye-open';
