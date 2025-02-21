@@ -15,9 +15,9 @@ import {
   View,
 } from '@/components/ui';
 import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
+import { useUserStore } from '@/stores/user-store';
 
 import {
-  accountOptions,
   currencyOptions,
   fertilizerOptions,
   type InputType,
@@ -138,6 +138,7 @@ export const LogBookForm: React.FC = () => {
 
 export default function NutrientsManagement() {
   const [seedInputType, setSeedInputType] = React.useState<InputType>(null);
+  const { lands, selectedLandId } = useUserStore();
 
   const handleBack = () => {
     router.back();
@@ -165,7 +166,13 @@ export default function NutrientsManagement() {
         <Text className="text-center font-lora text-3xl text-primary">
           Nutrient Management
         </Text>
-        <Select options={accountOptions} label="Select the account" />
+        {selectedLandId && (
+          <Text className="text-center font-poppins-semibold text-lg text-neutral-600">
+            Managing:{' '}
+            {lands.find((land) => land.id === selectedLandId)
+              ?.farmLocationName || 'Selected Land'}
+          </Text>
+        )}
         <View>
           <View className="mb-6 gap-2">
             <Text>Select an option</Text>

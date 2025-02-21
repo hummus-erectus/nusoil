@@ -4,8 +4,7 @@ import * as React from 'react';
 // import { Linking } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, colors, FormCard, Select, Text, View } from '@/components/ui';
-import { ArrowRightFull as ArrowRightFullIcon } from '@/components/ui/icons';
+import { Button, FormCard, Select, Text, View } from '@/components/ui';
 import { useUserStore } from '@/stores/user-store';
 
 export default function NutrientPortfolio() {
@@ -37,17 +36,6 @@ export default function NutrientPortfolio() {
           <Text className="text-center font-lora text-3xl text-primary">
             Nutrient Portfolio
           </Text>
-
-          <Button
-            variant="link"
-            label={
-              <View className="flex-row items-center gap-2">
-                <Text className="text-primary">Go to Nutrient Management</Text>
-                <ArrowRightFullIcon color={colors.primary} />
-              </View>
-            }
-            onPress={handleNutrientManagementClick}
-          />
 
           <Select
             options={accountOptions}
