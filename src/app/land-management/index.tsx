@@ -1,20 +1,16 @@
 /* eslint-disable max-lines-per-function */
 import { router } from 'expo-router';
 import * as React from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Input, Text } from '@/components/ui';
 import { Edit as EditIcon, Trash as TrashIcon } from '@/components/ui/icons';
-import { useLandStore } from '@/stores/land-store';
+import type { Land } from '@/stores/user-store';
 import { useUserStore } from '@/stores/user-store';
 
-interface LandForm {
-  id: string;
-  farmLocationName: string;
-  farmCity: string;
+interface LandForm extends Omit<Land, 'size'> {
   size: string;
-  irrigationType: string;
 }
 
 interface UpdateFormParams {
@@ -25,15 +21,14 @@ interface UpdateFormParams {
 }
 
 export default function LandManagementScreen() {
-  const { lands, setLands, setSelectedLandId } = useLandStore();
-  const { userLands, setUserLands } = useUserStore();
+  const { lands, setSelectedLandId, addLand, deleteLand, updateLand } =
+    useUserStore();
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [editForm, setEditForm] = React.useState<LandForm | null>(null);
   const [newForm, setNewForm] = React.useState<LandForm | null>(null);
 
   const handleAddLand = () => {
-    const form = {
-      // TODO: handle on server with uuid?
+    const form: LandForm = {
       id: `land_${Date.now()}`,
       farmLocationName: '',
       farmCity: '',
@@ -44,9 +39,7 @@ export default function LandManagementScreen() {
   };
 
   const handleRemoveLand = (id: string) => {
-    // Remove from both stores
-    setLands(lands.filter((land) => land.id !== id));
-    setUserLands(userLands.filter((land) => land.id !== id));
+    deleteLand(id);
 
     // Clear any editing state
     if (editingId === id) {
@@ -55,7 +48,7 @@ export default function LandManagementScreen() {
     }
   };
 
-  const handleStartEdit = (land: (typeof lands)[0]) => {
+  const handleStartEdit = (land: Land) => {
     setEditingId(land.id);
     setEditForm({
       ...land,
@@ -80,32 +73,24 @@ export default function LandManagementScreen() {
   const handleSubmitNew = () => {
     if (!newForm) return;
 
-    const newLand = {
+    const newLand: Land = {
       ...newForm,
       size: parseFloat(newForm.size) || 0,
     };
 
-    // Update both stores
-    setLands([...lands, newLand]);
-    setUserLands([...userLands, newLand]);
-
-    // Clear the form
+    addLand(newLand);
     setNewForm(null);
   };
 
   const handleSubmitEdit = () => {
     if (!editForm || !editingId) return;
 
-    const updatedLand = {
+    const updatedLand: Land = {
       ...editForm,
       size: parseFloat(editForm.size) || 0,
     };
 
-    // Update both stores
-    setLands(lands.map((land) => (land.id === editingId ? updatedLand : land)));
-    setUserLands(
-      userLands.map((land) => (land.id === editingId ? updatedLand : land))
-    );
+    updateLand(editingId, updatedLand);
 
     // Clear edit state
     setEditingId(null);
@@ -115,6 +100,27 @@ export default function LandManagementScreen() {
   const handleViewNutrients = (id: string) => {
     setSelectedLandId(id);
     router.push('/(app)/(tabs)/nutrient-portfolio');
+  };
+
+  const handleDeleteLand = (landId: string) => {
+    const land = lands?.find((l) => l.id === landId);
+    if (!land) return;
+
+    Alert.alert(
+      'Confirm Deletion',
+      `Are you sure you want to delete ${land.farmLocationName || 'this land account'}? This action cannot be undone.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: () => handleRemoveLand(landId),
+          style: 'destructive',
+        },
+      ]
+    );
   };
 
   return (
@@ -191,7 +197,7 @@ export default function LandManagementScreen() {
           </FormCard>
         )}
 
-        {lands.map((land) => (
+        {lands?.map((land) => (
           <FormCard key={land.id}>
             {editingId === land.id && editForm ? (
               <>
@@ -272,7 +278,7 @@ export default function LandManagementScreen() {
                     <Button
                       variant="icon"
                       label={<TrashIcon />}
-                      onPress={() => handleRemoveLand(land.id)}
+                      onPress={() => handleDeleteLand(land.id)}
                     />
                   </View>
                 </View>

@@ -55,6 +55,7 @@ export default function RootLayout() {
                       animation: 'fade_from_bottom',
                     }}
                   />
+                  <Stack.Screen name="land-management" />
                 </Stack>
                 <FocusAwareStatusBar alwaysShow />
                 <FlashMessage position="top" />

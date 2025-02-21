@@ -6,43 +6,17 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, colors, FormCard, Select, Text, View } from '@/components/ui';
 import { ArrowRightFull as ArrowRightFullIcon } from '@/components/ui/icons';
-import { useLandStore } from '@/stores/land-store';
-
-// interface Location {
-//   latitude: number;
-//   longitude: number;
-//   name: string;
-// }
-
-// interface NutrientData {
-//   parameters: {
-//     ph: number;
-//     ec: number;
-//     oc: number;
-//   };
-//   macroNutrients: {
-//     n: number;
-//     p: number;
-//     k: number;
-//   };
-//   microNutrients: {
-//     zn: number;
-//     b: number;
-//     fe: number;
-//     mn: number;
-//     mo: number;
-//     cu: number;
-//   };
-// }
+import { useUserStore } from '@/stores/user-store';
 
 export default function NutrientPortfolio() {
-  const { lands, selectedLandId, setSelectedLandId } = useLandStore();
-  const accountOptions = lands.map((land) => ({
-    label: land.farmLocationName || 'Unnamed Land',
-    value: land.id,
-  }));
+  const { lands, selectedLandId, setSelectedLandId } = useUserStore();
+  const accountOptions =
+    lands?.map((land) => ({
+      label: land.farmLocationName || 'Unnamed Land',
+      value: land.id,
+    })) || [];
 
-  const selectedLand = lands.find((land) => land.id === selectedLandId);
+  const selectedLand = lands?.find((land) => land.id === selectedLandId);
 
   // const openInMaps = (lat: number, lng: number) => {
   //   const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;

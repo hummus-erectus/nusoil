@@ -5,11 +5,11 @@ import { Alert, BackHandler, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Text } from '@/components/ui';
-import { useLandStore } from '@/stores/land-store';
 import { useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
-  const { userName, subscriptionPlan, userLands } = useUserStore();
+  const { userName, subscriptionPlan, lands, setSelectedLandId } =
+    useUserStore();
   const navigation = useNavigation();
 
   const getGreeting = () => {
@@ -52,10 +52,6 @@ const WelcomeScreen = () => {
   const handleUpgrade = () => {
     router.push('/upgrade');
   };
-
-  // const handleAskLater = () => {
-  //   router.replace('/nutrient-management');
-  // };
 
   const MAX_VISIBLE_LANDS = 3;
 
@@ -101,22 +97,22 @@ const WelcomeScreen = () => {
               <Button
                 variant="link"
                 label="Manage"
-                onPress={() => router.push('/(modals)/land-management')}
+                onPress={() => router.push('/land-management')}
               />
             </View>
 
-            {userLands.length === 0 ? (
+            {!lands?.length ? (
               <Text className="font-poppins text-neutral-600">
                 No land accounts registered yet
               </Text>
             ) : (
               <View className="gap-4">
-                {userLands.slice(0, MAX_VISIBLE_LANDS).map((land) => (
+                {lands.slice(0, MAX_VISIBLE_LANDS).map((land) => (
                   <TouchableOpacity
                     key={land.id}
                     className="rounded-lg border border-neutral-200 p-4"
                     onPress={() => {
-                      useLandStore.getState().setSelectedLandId(land.id);
+                      setSelectedLandId(land.id);
                       router.push('/(app)/(tabs)/nutrient-portfolio');
                     }}
                   >
@@ -131,11 +127,11 @@ const WelcomeScreen = () => {
                     </Text>
                   </TouchableOpacity>
                 ))}
-                {userLands.length > MAX_VISIBLE_LANDS && (
+                {lands.length > MAX_VISIBLE_LANDS && (
                   <Button
                     variant="link"
                     label="See More"
-                    onPress={() => router.push('/(modals)/land-management')}
+                    onPress={() => router.push('/land-management')}
                   />
                 )}
               </View>
