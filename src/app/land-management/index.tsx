@@ -4,8 +4,12 @@ import * as React from 'react';
 import { Alert, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, FormCard, Input, Text } from '@/components/ui';
-import { Edit as EditIcon, Trash as TrashIcon } from '@/components/ui/icons';
+import { Button, colors, FormCard, Input, Text } from '@/components/ui';
+import {
+  ArrowLeftFull as ArrowLeftFullIcon,
+  Edit as EditIcon,
+  Trash as TrashIcon,
+} from '@/components/ui/icons';
 import type { Land } from '@/stores/user-store';
 import { useUserStore } from '@/stores/user-store';
 
@@ -123,12 +127,29 @@ export default function LandManagementScreen() {
     );
   };
 
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={{ flexGrow: 1 }}
       className="flex-1 bg-white p-6"
     >
       <View className="gap-6 p-6">
+        <View className="-ml-10 self-start">
+          <Button
+            variant="ghost"
+            onPress={handleBack}
+            fullWidth={false}
+            label={
+              <View className="flex-row items-center justify-center">
+                <ArrowLeftFullIcon color={colors.neutral[600]} />
+                <Text className="ml-4 text-neutral-600">Back</Text>
+              </View>
+            }
+          />
+        </View>
         <Text className="text-center font-lora text-3xl text-primary">
           Land Management
         </Text>
