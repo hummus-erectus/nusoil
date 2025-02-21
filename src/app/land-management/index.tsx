@@ -134,7 +134,7 @@ export default function LandManagementScreen() {
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={{ flexGrow: 1 }}
-      className="flex-1 bg-white p-6"
+      className="flex-1 bg-neutral-100 p-6"
     >
       <View className="gap-6 p-6">
         <View className="-ml-10 self-start">
@@ -203,7 +203,7 @@ export default function LandManagementScreen() {
               }
             />
 
-            <View className="flex-row justify-end gap-2">
+            <View className="flex-row justify-center gap-2">
               <Button
                 variant="secondary"
                 label="Cancel"
@@ -219,7 +219,7 @@ export default function LandManagementScreen() {
         )}
 
         {lands?.map((land) => (
-          <FormCard key={land.id}>
+          <FormCard className="gap-4" key={land.id}>
             {editingId === land.id && editForm ? (
               <>
                 <View className="flex-row items-center justify-between">
@@ -271,16 +271,18 @@ export default function LandManagementScreen() {
                   }
                 />
 
-                <View className="flex-row justify-end gap-2">
+                <View className="flex-row justify-center gap-2">
                   <Button
                     variant="secondary"
                     label="Cancel"
                     onPress={handleCancelEdit}
+                    className="w-32"
                   />
                   <Button
                     variant="default"
                     label="Save"
                     onPress={handleSubmitEdit}
+                    className="w-32"
                   />
                 </View>
               </>
@@ -304,12 +306,8 @@ export default function LandManagementScreen() {
                   </View>
                 </View>
 
-                <Text className="font-poppins text-neutral-600">
+                <Text className="font-poppins mb-2 text-neutral-600">
                   {land.farmCity} • {land.size} acres
-                </Text>
-
-                <Text className="font-poppins text-neutral-600">
-                  Irrigation: {land.irrigationType || 'Not specified'}
                 </Text>
 
                 <Button
