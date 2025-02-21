@@ -122,9 +122,6 @@ const WelcomeScreen = () => {
                     <Text className="font-poppins text-neutral-600">
                       {land.farmCity} • {land.size} acres
                     </Text>
-                    <Text className="font-poppins text-neutral-600">
-                      Irrigation: {land.irrigationType || 'Not specified'}
-                    </Text>
                   </TouchableOpacity>
                 ))}
                 {lands.length > MAX_VISIBLE_LANDS && (
