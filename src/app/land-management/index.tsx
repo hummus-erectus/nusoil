@@ -99,7 +99,7 @@ export default function LandManagementScreen() {
 
   const handleViewNutrients = (id: string) => {
     setSelectedLandId(id);
-    router.push('/(app)/(tabs)/nutrient-portfolio');
+    router.navigate('/(app)/(tabs)/nutrient-portfolio');
   };
 
   const handleDeleteLand = (landId: string) => {
