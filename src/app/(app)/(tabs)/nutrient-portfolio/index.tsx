@@ -5,6 +5,7 @@ import * as React from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Select, Text, View } from '@/components/ui';
+import { Plus as PlusIcon } from '@/components/ui/icons';
 import { useUserStore } from '@/stores/user-store';
 
 export default function NutrientPortfolio() {
@@ -175,17 +176,25 @@ export default function NutrientPortfolio() {
                   </View>
                 </FormCard>
               </View>
-              <View>
-                <Button
-                  onPress={handleNutrientManagementClick}
-                  fullWidth={false}
-                  label="Manage Nutrients"
-                />
-              </View>
             </>
           )}
         </View>
       </KeyboardAwareScrollView>
+      {selectedLand && (
+        <View className="absolute bottom-6 right-6">
+          <Button
+            onPress={handleNutrientManagementClick}
+            variant="default"
+            className="shadow-lg"
+            label={
+              <View className="flex-row items-center gap-2">
+                <Text className="text-white">Update nutrients</Text>
+                <PlusIcon className="-mr-2 mb-0.5" color="white" />
+              </View>
+            }
+          />
+        </View>
+      )}
     </>
   );
 }
