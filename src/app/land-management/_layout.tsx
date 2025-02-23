@@ -22,6 +22,12 @@ export default function LandManagementLayout() {
             title: 'Edit Land',
           }}
         />
+        <Stack.Screen
+          name="add"
+          options={{
+            title: 'Add Land',
+          }}
+        />
       </Stack>
     </>
   );

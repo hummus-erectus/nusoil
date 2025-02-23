@@ -4,105 +4,20 @@ import * as React from 'react';
 import { Alert, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { LandForm } from '@/components/land-form';
 import { Button, colors, FormCard, Text } from '@/components/ui';
 import {
   ArrowLeftFull as ArrowLeftFullIcon,
   Edit as EditIcon,
   Trash as TrashIcon,
 } from '@/components/ui/icons';
-import type { Land } from '@/stores/user-store';
 import { useUserStore } from '@/stores/user-store';
 
-interface LandFormData {
-  id: string;
-  farmLocationName: string;
-  farmCity: string;
-  irrigationType: string;
-  latLong: string;
-  ownershipType: string;
-  yearsOperated: string;
-  leasedAmount: string;
-  rainWater: string;
-  groundWater: string;
-  waterIrrigationType: string;
-  waterDays: string;
-  waterPump: string;
-  tillageType: string;
-  cropsPerYear: string;
-  cropDuration: string;
-  cropType: string;
-  leasedLandCost: string;
-  tillageCost: string;
-  fertilizerCost: string;
-  pestDiseaseCost: string;
-  cropYieldAverage: string;
-  income: string;
-}
-
-interface UpdateFormParams {
-  form: LandFormData | null;
-  setForm: (form: LandFormData) => void;
-  field: keyof LandFormData;
-  value: string;
-}
-
 export default function LandManagementScreen() {
-  const { lands, setSelectedLandId, addLand, deleteLand } = useUserStore();
-  const [newForm, setNewForm] = React.useState<LandFormData | null>(null);
+  const { lands, setSelectedLandId, deleteLand } = useUserStore();
   const navigation = useRouter();
-
-  const handleAddLand = () => {
-    const newLand = {
-      id: `land_${Date.now()}`,
-      farmLocationName: '',
-      farmCity: '',
-      irrigationType: '',
-      latLong: '',
-      ownershipType: '',
-      yearsOperated: '',
-      leasedAmount: '',
-      rainWater: '',
-      groundWater: '',
-      waterIrrigationType: '',
-      waterDays: '',
-      waterPump: '',
-      tillageType: '',
-      cropsPerYear: '',
-      cropDuration: '',
-      cropType: '',
-      leasedLandCost: '',
-      tillageCost: '',
-      fertilizerCost: '',
-      pestDiseaseCost: '',
-      cropYieldAverage: '',
-      income: '',
-    };
-    setNewForm(newLand);
-  };
 
   const handleRemoveLand = (id: string) => {
     deleteLand(id);
-  };
-
-  const handleUpdateForm = (params: UpdateFormParams) => {
-    const { form, setForm, field, value } = params;
-    if (!form) return;
-    setForm({
-      ...form,
-      [field]: value,
-    });
-  };
-
-  const handleSaveNewLand = () => {
-    if (!newForm) return;
-
-    const newLand: Land = {
-      ...newForm,
-    };
-
-    addLand(newLand);
-    setNewForm(null);
   };
 
   const handleViewNutrients = (id: string) => {
@@ -158,39 +73,6 @@ export default function LandManagementScreen() {
           Land Management
         </Text>
 
-        {newForm && (
-          <>
-            <View className="flex-row items-center justify-between">
-              <Text className="font-poppins-semibold text-lg">New Land</Text>
-            </View>
-
-            <LandForm
-              form={newForm}
-              onFieldChange={(field, value) =>
-                handleUpdateForm({
-                  form: newForm,
-                  setForm: setNewForm,
-                  field,
-                  value,
-                })
-              }
-            />
-
-            <View className="flex-row justify-center gap-2">
-              <Button
-                variant="secondary"
-                label="Cancel"
-                onPress={() => setNewForm(null)}
-              />
-              <Button
-                variant="default"
-                label="Save"
-                onPress={handleSaveNewLand}
-              />
-            </View>
-          </>
-        )}
-
         {lands?.map((land) => (
           <FormCard className="gap-4" key={land.id}>
             <View className="flex-row items-center justify-between">
@@ -224,13 +106,11 @@ export default function LandManagementScreen() {
             />
           </FormCard>
         ))}
-        {!newForm && (
-          <Button
-            variant="secondary"
-            label="Add New Land"
-            onPress={handleAddLand}
-          />
-        )}
+        <Button
+          variant="default"
+          label="Add Land"
+          onPress={() => navigation.push('/land-management/add')}
+        />
       </View>
     </KeyboardAwareScrollView>
   );
