@@ -8,11 +8,24 @@ export interface Land {
   farmCity: string;
   size: number;
   irrigationType: string;
-  ownershipType?: string;
-  rainWaterHarvesting?: string;
-  groundWaterSource?: string;
-  waterIrrigationType?: string;
-  waterPumpType?: string;
+  ownershipType: string;
+  yearsOperated: string;
+  leasedAmount: string;
+  rainWaterHarvesting: string;
+  groundWaterSource: string;
+  waterIrrigationType: string;
+  waterDays: string;
+  waterPumpType: string;
+  tillageType: string;
+  cropsPerYear: string;
+  cropDuration: string;
+  cropType: string;
+  leasedLandCost: string;
+  tillageCost: string;
+  fertilizerCost: string;
+  pestDiseaseCost: string;
+  cropYieldAverage: string;
+  income: string;
   nutrientData?: {
     parameters: {
       ph: number;

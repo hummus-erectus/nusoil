@@ -4,7 +4,8 @@ import * as React from 'react';
 import { Alert, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, colors, FormCard, Input, Text } from '@/components/ui';
+import { LandForm } from '@/components/land-form';
+import { Button, colors, FormCard, Text } from '@/components/ui';
 import {
   ArrowLeftFull as ArrowLeftFullIcon,
   Edit as EditIcon,
@@ -13,14 +14,14 @@ import {
 import type { Land } from '@/stores/user-store';
 import { useUserStore } from '@/stores/user-store';
 
-interface LandForm extends Omit<Land, 'size'> {
+interface LandFormData extends Omit<Land, 'size'> {
   size: string;
 }
 
 interface UpdateFormParams {
-  form: LandForm | null;
-  setForm: (form: LandForm) => void;
-  field: keyof LandForm;
+  form: LandFormData | null;
+  setForm: (form: LandFormData) => void;
+  field: keyof LandFormData;
   value: string;
 }
 
@@ -28,18 +29,36 @@ export default function LandManagementScreen() {
   const { lands, setSelectedLandId, addLand, deleteLand, updateLand } =
     useUserStore();
   const [editingId, setEditingId] = React.useState<string | null>(null);
-  const [editForm, setEditForm] = React.useState<LandForm | null>(null);
-  const [newForm, setNewForm] = React.useState<LandForm | null>(null);
+  const [editForm, setEditForm] = React.useState<LandFormData | null>(null);
+  const [newForm, setNewForm] = React.useState<LandFormData | null>(null);
 
   const handleAddLand = () => {
-    const form: LandForm = {
+    const newLand = {
       id: `land_${Date.now()}`,
       farmLocationName: '',
       farmCity: '',
       size: '',
       irrigationType: '',
+      ownershipType: '',
+      yearsOperated: '',
+      leasedAmount: '',
+      rainWaterHarvesting: '',
+      groundWaterSource: '',
+      waterIrrigationType: '',
+      waterDays: '',
+      waterPumpType: '',
+      tillageType: '',
+      cropsPerYear: '',
+      cropDuration: '',
+      cropType: '',
+      leasedLandCost: '',
+      tillageCost: '',
+      fertilizerCost: '',
+      pestDiseaseCost: '',
+      cropYieldAverage: '',
+      income: '',
     };
-    setNewForm(form);
+    setNewForm(newLand);
   };
 
   const handleRemoveLand = (id: string) => {
@@ -160,44 +179,13 @@ export default function LandManagementScreen() {
               <Text className="font-poppins-semibold text-lg">New Land</Text>
             </View>
 
-            <Input
-              label="Farm Location Name"
-              placeholder="Enter farm location name"
-              value={newForm.farmLocationName}
-              onChangeText={(value) =>
+            <LandForm
+              form={newForm}
+              onFieldChange={(field, value) =>
                 handleUpdateForm({
                   form: newForm,
                   setForm: setNewForm,
-                  field: 'farmLocationName',
-                  value,
-                })
-              }
-            />
-
-            <Input
-              label="Farm City"
-              placeholder="Enter farm city"
-              value={newForm.farmCity}
-              onChangeText={(value) =>
-                handleUpdateForm({
-                  form: newForm,
-                  setForm: setNewForm,
-                  field: 'farmCity',
-                  value,
-                })
-              }
-            />
-
-            <Input
-              label="Size (acres)"
-              placeholder="Enter farm size"
-              value={newForm.size}
-              keyboardType="numeric"
-              onChangeText={(value) =>
-                handleUpdateForm({
-                  form: newForm,
-                  setForm: setNewForm,
-                  field: 'size',
+                  field,
                   value,
                 })
               }
@@ -228,44 +216,13 @@ export default function LandManagementScreen() {
                   </Text>
                 </View>
 
-                <Input
-                  label="Farm Location Name"
-                  placeholder="Enter farm location name"
-                  value={editForm.farmLocationName}
-                  onChangeText={(value) =>
+                <LandForm
+                  form={editForm}
+                  onFieldChange={(field, value) =>
                     handleUpdateForm({
                       form: editForm,
                       setForm: setEditForm,
-                      field: 'farmLocationName',
-                      value,
-                    })
-                  }
-                />
-
-                <Input
-                  label="Farm City"
-                  placeholder="Enter farm city"
-                  value={editForm.farmCity}
-                  onChangeText={(value) =>
-                    handleUpdateForm({
-                      form: editForm,
-                      setForm: setEditForm,
-                      field: 'farmCity',
-                      value,
-                    })
-                  }
-                />
-
-                <Input
-                  label="Size (acres)"
-                  placeholder="Enter farm size"
-                  value={editForm.size}
-                  keyboardType="numeric"
-                  onChangeText={(value) =>
-                    handleUpdateForm({
-                      form: editForm,
-                      setForm: setEditForm,
-                      field: 'size',
+                      field,
                       value,
                     })
                   }
