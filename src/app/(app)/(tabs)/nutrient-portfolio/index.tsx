@@ -38,145 +38,166 @@ export default function NutrientPortfolio() {
             Nutrient Portfolio
           </Text>
 
-          <Select
-            options={accountOptions}
-            label="Select Account"
-            value={selectedLandId || ''}
-            onSelect={(value) => setSelectedLandId(value.toString())}
-          />
-          {selectedLand && (
+          {lands && lands.length > 0 ? (
             <>
-              <FormCard>
-                <View className="gap-2">
-                  <Text className="font-poppins-semibold text-lg">
-                    Land Location
-                  </Text>
-                  {selectedLand && (
-                    <>
-                      <Text>{selectedLand.farmLocationName}</Text>
-                      <Text className="font-poppins-light text-sm">
-                        {selectedLand.farmCity}
-                      </Text>
-                      {/* TODO: Add actual coordinates to land data model */}
-                      {/* <Text
-                    className="text-right text-primary underline"
-                    onPress={() =>
-                      openInMaps(location.latitude, location.longitude)
-                    }
-                  >
-                    Open in Maps
-                  </Text> */}
-                    </>
-                  )}
-                </View>
-              </FormCard>
-
-              <View className="gap-4">
-                <Text className="font-lora text-xl text-primary">
-                  Major Nutrient Availability
-                </Text>
-                <FormCard>
-                  <View className="gap-6">
+              <Select
+                options={accountOptions}
+                label="Select Account"
+                value={selectedLandId || ''}
+                onSelect={(value) => setSelectedLandId(value.toString())}
+              />
+              {selectedLand && (
+                <>
+                  <FormCard>
                     <View className="gap-2">
-                      <Text className="font-poppins-semibold">Parameters</Text>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">pH</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.parameters?.ph || 'n/a'}
-                        </Text>
-                      </View>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">EC</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.parameters?.ec || 'n/a'}
-                        </Text>
-                      </View>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">OC</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.parameters?.oc || 'n/a'}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View className="gap-2">
-                      <Text className="font-poppins-semibold">
-                        Macro Nutrients
+                      <Text className="font-poppins-semibold text-lg">
+                        Land Location
                       </Text>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">N</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.macroNutrients?.n ||
-                            'n/a'}
-                        </Text>
-                      </View>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">P</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.macroNutrients?.p ||
-                            'n/a'}
-                        </Text>
-                      </View>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">K</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.macroNutrients?.k ||
-                            'n/a'}
-                        </Text>
-                      </View>
+                      {selectedLand && (
+                        <>
+                          <Text>{selectedLand.farmLocationName}</Text>
+                          <Text className="font-poppins-light text-sm">
+                            {selectedLand.farmCity}
+                          </Text>
+                          {/* TODO: Add actual coordinates to land data model */}
+                          {/* <Text
+                        className="text-right text-primary underline"
+                        onPress={() =>
+                          openInMaps(location.latitude, location.longitude)
+                        }
+                      >
+                        Open in Maps
+                      </Text> */}
+                        </>
+                      )}
                     </View>
+                  </FormCard>
 
-                    <View className="gap-2">
-                      <Text className="font-poppins-semibold">
-                        Micro Nutrients
-                      </Text>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">Zn</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.microNutrients?.zn ||
-                            'n/a'}
-                        </Text>
+                  <View className="gap-4">
+                    <Text className="font-lora text-xl text-primary">
+                      Major Nutrient Availability
+                    </Text>
+                    <FormCard>
+                      <View className="gap-6">
+                        <View className="gap-2">
+                          <Text className="font-poppins-semibold">
+                            Parameters
+                          </Text>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">pH</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.parameters?.ph ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">EC</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.parameters?.ec ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">OC</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.parameters?.oc ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <View className="gap-2">
+                          <Text className="font-poppins-semibold">
+                            Macro Nutrients
+                          </Text>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">N</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.macroNutrients?.n ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">P</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.macroNutrients?.p ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">K</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.macroNutrients?.k ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <View className="gap-2">
+                          <Text className="font-poppins-semibold">
+                            Micro Nutrients
+                          </Text>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">Zn</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.microNutrients?.zn ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">B</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.microNutrients?.b ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">Fe</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.microNutrients?.fe ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">Mn</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.microNutrients?.mn ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">Mo</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.microNutrients?.mo ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">Cu</Text>
+                            <Text>
+                              {selectedLand.nutrientData?.microNutrients?.cu ||
+                                'n/a'}
+                            </Text>
+                          </View>
+                        </View>
                       </View>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">B</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.microNutrients?.b ||
-                            'n/a'}
-                        </Text>
-                      </View>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">Fe</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.microNutrients?.fe ||
-                            'n/a'}
-                        </Text>
-                      </View>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">Mn</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.microNutrients?.mn ||
-                            'n/a'}
-                        </Text>
-                      </View>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">Mo</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.microNutrients?.mo ||
-                            'n/a'}
-                        </Text>
-                      </View>
-                      <View className="flex-row justify-between">
-                        <Text className="font-poppins-light">Cu</Text>
-                        <Text>
-                          {selectedLand.nutrientData?.microNutrients?.cu ||
-                            'n/a'}
-                        </Text>
-                      </View>
-                    </View>
+                    </FormCard>
                   </View>
-                </FormCard>
-              </View>
+                </>
+              )}
             </>
+          ) : (
+            <View className="items-center gap-4">
+              <Text className="text-center">
+                No land accounts found. Please add a land account to view its
+                nutrient portfolio.
+              </Text>
+              <Button
+                onPress={() => router.push('/land-management')}
+                label="Add Land Account"
+                fullWidth={false}
+              />
+            </View>
           )}
         </View>
       </KeyboardAwareScrollView>
