@@ -133,10 +133,10 @@ export default function LandManagementScreen() {
 
   return (
     <KeyboardAwareScrollView
+      bottomOffset={62}
       contentContainerStyle={{ flexGrow: 1 }}
-      className="flex-1 bg-neutral-100 p-6"
     >
-      <View className="gap-6 p-6">
+      <View className="flex-1 gap-6 bg-neutral-100 p-6">
         <View className="-ml-10 self-start">
           <Button
             variant="ghost"
