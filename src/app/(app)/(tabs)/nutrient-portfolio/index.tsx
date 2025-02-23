@@ -73,7 +73,7 @@ export default function NutrientPortfolio() {
                     </View>
                   </FormCard>
 
-                  <View className="gap-4">
+                  <View className="gap-4 pb-20">
                     <Text className="font-lora text-xl text-primary">
                       Major Nutrient Availability
                     </Text>
