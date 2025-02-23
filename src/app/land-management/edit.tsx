@@ -118,14 +118,16 @@ export default function EditLand() {
           />
         </View>
       </KeyboardAwareScrollView>
-      <View className="absolute bottom-6 w-full items-center justify-center">
-        <View className="mt-4 flex-row gap-2">
+      <View className="absolute bottom-6 w-full flex-row items-center justify-center gap-2 px-6">
+        <View className="flex-1">
           <Button
             variant="secondary"
             className="bg-white"
             label="Cancel"
-            onPress={handleBack}
+            onPress={() => router.back()}
           />
+        </View>
+        <View className="flex-1">
           <Button variant="default" label="Save" onPress={handleSave} />
         </View>
       </View>
