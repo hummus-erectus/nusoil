@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -14,8 +14,30 @@ import {
 import type { Land } from '@/stores/user-store';
 import { useUserStore } from '@/stores/user-store';
 
-interface LandFormData extends Omit<Land, 'size'> {
-  size: string;
+interface LandFormData {
+  id: string;
+  farmLocationName: string;
+  farmCity: string;
+  irrigationType: string;
+  latLong: string;
+  ownershipType: string;
+  yearsOperated: string;
+  leasedAmount: string;
+  rainWater: string;
+  groundWater: string;
+  waterIrrigationType: string;
+  waterDays: string;
+  waterPump: string;
+  tillageType: string;
+  cropsPerYear: string;
+  cropDuration: string;
+  cropType: string;
+  leasedLandCost: string;
+  tillageCost: string;
+  fertilizerCost: string;
+  pestDiseaseCost: string;
+  cropYieldAverage: string;
+  income: string;
 }
 
 interface UpdateFormParams {
@@ -26,27 +48,25 @@ interface UpdateFormParams {
 }
 
 export default function LandManagementScreen() {
-  const { lands, setSelectedLandId, addLand, deleteLand, updateLand } =
-    useUserStore();
-  const [editingId, setEditingId] = React.useState<string | null>(null);
-  const [editForm, setEditForm] = React.useState<LandFormData | null>(null);
+  const { lands, setSelectedLandId, addLand, deleteLand } = useUserStore();
   const [newForm, setNewForm] = React.useState<LandFormData | null>(null);
+  const navigation = useRouter();
 
   const handleAddLand = () => {
     const newLand = {
       id: `land_${Date.now()}`,
       farmLocationName: '',
       farmCity: '',
-      size: '',
       irrigationType: '',
+      latLong: '',
       ownershipType: '',
       yearsOperated: '',
       leasedAmount: '',
-      rainWaterHarvesting: '',
-      groundWaterSource: '',
+      rainWater: '',
+      groundWater: '',
       waterIrrigationType: '',
       waterDays: '',
-      waterPumpType: '',
+      waterPump: '',
       tillageType: '',
       cropsPerYear: '',
       cropDuration: '',
@@ -63,25 +83,6 @@ export default function LandManagementScreen() {
 
   const handleRemoveLand = (id: string) => {
     deleteLand(id);
-
-    // Clear any editing state
-    if (editingId === id) {
-      setEditingId(null);
-      setEditForm(null);
-    }
-  };
-
-  const handleStartEdit = (land: Land) => {
-    setEditingId(land.id);
-    setEditForm({
-      ...land,
-      size: land.size.toString(),
-    });
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditForm(null);
   };
 
   const handleUpdateForm = (params: UpdateFormParams) => {
@@ -93,36 +94,20 @@ export default function LandManagementScreen() {
     });
   };
 
-  const handleSubmitNew = () => {
+  const handleSaveNewLand = () => {
     if (!newForm) return;
 
     const newLand: Land = {
       ...newForm,
-      size: parseFloat(newForm.size) || 0,
     };
 
     addLand(newLand);
     setNewForm(null);
   };
 
-  const handleSubmitEdit = () => {
-    if (!editForm || !editingId) return;
-
-    const updatedLand: Land = {
-      ...editForm,
-      size: parseFloat(editForm.size) || 0,
-    };
-
-    updateLand(editingId, updatedLand);
-
-    // Clear edit state
-    setEditingId(null);
-    setEditForm(null);
-  };
-
   const handleViewNutrients = (id: string) => {
     setSelectedLandId(id);
-    router.navigate('/(app)/(tabs)/nutrient-portfolio');
+    navigation.navigate('/(app)/(tabs)/nutrient-portfolio');
   };
 
   const handleDeleteLand = (landId: string) => {
@@ -147,7 +132,7 @@ export default function LandManagementScreen() {
   };
 
   const handleBack = () => {
-    router.back();
+    navigation.back();
   };
 
   return (
@@ -174,7 +159,7 @@ export default function LandManagementScreen() {
         </Text>
 
         {newForm && (
-          <FormCard>
+          <>
             <View className="flex-row items-center justify-between">
               <Text className="font-poppins-semibold text-lg">New Land</Text>
             </View>
@@ -200,80 +185,43 @@ export default function LandManagementScreen() {
               <Button
                 variant="default"
                 label="Save"
-                onPress={handleSubmitNew}
+                onPress={handleSaveNewLand}
               />
             </View>
-          </FormCard>
+          </>
         )}
 
         {lands?.map((land) => (
           <FormCard className="gap-4" key={land.id}>
-            {editingId === land.id && editForm ? (
-              <>
-                <View className="flex-row items-center justify-between">
-                  <Text className="font-poppins-semibold text-lg">
-                    Edit Land
-                  </Text>
-                </View>
-
-                <LandForm
-                  form={editForm}
-                  onFieldChange={(field, value) =>
-                    handleUpdateForm({
-                      form: editForm,
-                      setForm: setEditForm,
-                      field,
-                      value,
-                    })
+            <View className="flex-row items-center justify-between">
+              <Text className="font-poppins-semibold text-lg">
+                {land.farmLocationName || 'Unnamed Land'}
+              </Text>
+              <View className="flex-row gap-4">
+                <Button
+                  variant="icon"
+                  label={<EditIcon />}
+                  onPress={() =>
+                    navigation.push(`/land-management/edit?id=${land.id}`)
                   }
                 />
-
-                <View className="flex-row justify-center gap-2">
-                  <Button
-                    variant="secondary"
-                    label="Cancel"
-                    onPress={handleCancelEdit}
-                    className="w-32"
-                  />
-                  <Button
-                    variant="default"
-                    label="Save"
-                    onPress={handleSubmitEdit}
-                    className="w-32"
-                  />
-                </View>
-              </>
-            ) : (
-              <>
-                <View className="flex-row items-center justify-between">
-                  <Text className="font-poppins-semibold text-lg">
-                    {land.farmLocationName || 'Unnamed Land'}
-                  </Text>
-                  <View className="flex-row gap-4">
-                    <Button
-                      variant="icon"
-                      label={<EditIcon />}
-                      onPress={() => handleStartEdit(land)}
-                    />
-                    <Button
-                      variant="icon"
-                      label={<TrashIcon />}
-                      onPress={() => handleDeleteLand(land.id)}
-                    />
-                  </View>
-                </View>
-
-                <Text className="font-poppins mb-2 text-neutral-600">
-                  {land.farmCity} • {land.size} acres
-                </Text>
-
                 <Button
-                  variant="link"
-                  label="View Nutrient Data"
-                  onPress={() => handleViewNutrients(land.id)}
+                  variant="icon"
+                  label={<TrashIcon />}
+                  onPress={() => handleDeleteLand(land.id)}
                 />
-              </>
-            )}
+              </View>
+            </View>
+
+            <Text className="font-poppins mb-2 text-neutral-600">
+              {land.farmCity}
+            </Text>
+
+            <Button
+              variant="link"
+              label="View Nutrient Data"
+              onPress={() => handleViewNutrients(land.id)}
+            />
           </FormCard>
         ))}
         {!newForm && (

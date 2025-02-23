@@ -16,6 +16,12 @@ export default function LandManagementLayout() {
             title: 'Land Management',
           }}
         />
+        <Stack.Screen
+          name="edit"
+          options={{
+            title: 'Edit Land',
+          }}
+        />
       </Stack>
     </>
   );
