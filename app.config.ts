@@ -49,7 +49,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#003161',
     },
     package: Env.PACKAGE,
-    googleServicesFile: './google-services.json',
+    googleServicesFile:
+      process.env.GOOGLE_SERVICES_JSON || './google-services.json',
   },
   web: {
     favicon: './assets/favicon.png',

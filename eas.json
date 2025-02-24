@@ -17,12 +17,16 @@
       "env": {
         "EXPO_NO_DOTENV": "1",
         "APP_ENV": "production",
-        "FLIPPER_DISABLE": "1"
+        "FLIPPER_DISABLE": "1",
+        "GOOGLE_SERVICES_JSON": "@env:GOOGLE_SERVICES_JSON"
       }
     },
     "preview": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "GOOGLE_SERVICES_JSON": "@env:GOOGLE_SERVICES_JSON"
       }
     },
     "staging": {
