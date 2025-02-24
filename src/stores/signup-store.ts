@@ -13,7 +13,6 @@ interface LandEntry {
   id: string;
   farmLocationName: string;
   farmCity: string;
-  size: number;
   irrigationType?: string;
   latLong?: string;
   ownershipType?: string;
@@ -101,7 +100,6 @@ const initialState = {
         id: '1',
         farmLocationName: '',
         farmCity: '',
-        size: 0,
         irrigationType: '',
         latLong: '',
         ownershipType: '',

@@ -120,7 +120,7 @@ const WelcomeScreen = () => {
                       {land.farmLocationName || 'Unnamed Land'}
                     </Text>
                     <Text className="font-poppins text-neutral-600">
-                      {land.farmCity} • {land.size} acres
+                      {land.farmCity}
                     </Text>
                   </TouchableOpacity>
                 ))}
