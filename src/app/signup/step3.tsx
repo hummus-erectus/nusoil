@@ -322,6 +322,9 @@ export default function NutrientStep() {
   const [soilTestInputType, setSoilTestInputType] = React.useState<
     'value' | 'range'
   >('value');
+  const [hasPerformedSoilTest, setHasPerformedSoilTest] = React.useState(false);
+  const [hasPerformedNutrientTest, setHasPerformedNutrientTest] =
+    React.useState(false);
 
   const handleSubmit = () => {
     // TODO: Implement signup submission
@@ -355,10 +358,11 @@ export default function NutrientStep() {
               <View className="flex-row justify-between gap-4">
                 <View className="flex-1">
                   <Radio
-                    checked={nutrientData.nutrientTestingDone === true}
-                    onChange={() =>
-                      setNutrientData({ nutrientTestingDone: true })
-                    }
+                    checked={hasPerformedNutrientTest === true}
+                    onChange={() => {
+                      setHasPerformedNutrientTest(true);
+                      setNutrientData({ nutrientTestingDone: true });
+                    }}
                     label="Yes"
                     testID="testing-done-yes"
                     accessibilityLabel="Yes, nutrient testing is done"
@@ -366,10 +370,11 @@ export default function NutrientStep() {
                 </View>
                 <View className="flex-1">
                   <Radio
-                    checked={nutrientData.nutrientTestingDone === false}
-                    onChange={() =>
-                      setNutrientData({ nutrientTestingDone: false })
-                    }
+                    checked={hasPerformedNutrientTest === false}
+                    onChange={() => {
+                      setHasPerformedNutrientTest(false);
+                      setNutrientData({ nutrientTestingDone: false });
+                    }}
                     label="No"
                     testID="testing-done-no"
                     accessibilityLabel="No, nutrient testing is not done"
@@ -379,217 +384,239 @@ export default function NutrientStep() {
             </FormCard>
           </View>
 
-          <View className="gap-4">
-            <Text className="text-secondary">How was the testing done?</Text>
-            <FormCard>
+          {hasPerformedNutrientTest && (
+            <>
               <View className="gap-4">
-                <View className="flex-row justify-between gap-4">
-                  <View className="flex-1">
-                    <Radio
-                      checked={nutrientData.testingType === 'soil'}
-                      onChange={() => setNutrientData({ testingType: 'soil' })}
-                      label="Soil based"
-                      testID="testing-type-soil"
-                      accessibilityLabel="Soil based nutrient testing"
-                    />
+                <Text className="text-secondary">
+                  How was the testing done?
+                </Text>
+                <FormCard>
+                  <View className="gap-4">
+                    <View className="flex-row justify-between gap-4">
+                      <View className="flex-1">
+                        <Radio
+                          checked={nutrientData.testingType === 'soil'}
+                          onChange={() =>
+                            setNutrientData({ testingType: 'soil' })
+                          }
+                          label="Soil based"
+                          testID="testing-type-soil"
+                          accessibilityLabel="Soil based nutrient testing"
+                        />
+                      </View>
+                      <View className="flex-1">
+                        <Radio
+                          checked={nutrientData.testingType === 'water'}
+                          onChange={() =>
+                            setNutrientData({ testingType: 'water' })
+                          }
+                          label="Water based"
+                          testID="testing-type-water"
+                          accessibilityLabel="Water based nutrient testing"
+                        />
+                      </View>
+                    </View>
+                    <View className="mt-2 flex-row gap-4">
+                      <View className="flex-1">
+                        <Radio
+                          checked={nutrientData.testingType === 'plant'}
+                          onChange={() =>
+                            setNutrientData({ testingType: 'plant' })
+                          }
+                          label="Plant based"
+                          testID="testing-type-plant"
+                          accessibilityLabel="Plant based nutrient testing"
+                        />
+                      </View>
+                      <View className="flex-1" />
+                    </View>
                   </View>
-                  <View className="flex-1">
-                    <Radio
-                      checked={nutrientData.testingType === 'water'}
-                      onChange={() => setNutrientData({ testingType: 'water' })}
-                      label="Water based"
-                      testID="testing-type-water"
-                      accessibilityLabel="Water based nutrient testing"
-                    />
-                  </View>
-                </View>
-                <View className="mt-2 flex-row gap-4">
-                  <View className="flex-1">
-                    <Radio
-                      checked={nutrientData.testingType === 'plant'}
-                      onChange={() => setNutrientData({ testingType: 'plant' })}
-                      label="Plant based"
-                      testID="testing-type-plant"
-                      accessibilityLabel="Plant based nutrient testing"
-                    />
-                  </View>
-                  <View className="flex-1" />
-                </View>
+                </FormCard>
               </View>
-            </FormCard>
-          </View>
 
-          <View className="gap-4">
-            <Text className="font-lora text-secondary">
-              When was the last nutrient testing done?
-            </Text>
-            <FormCard>
-              <View className="flex-row justify-between gap-4">
-                <View className="flex-1">
-                  <Select
-                    label={DATE_PICKER_OPTIONS.month.label}
-                    value={nutrientData.nutrientTestingMonth || ''}
-                    onSelect={(value) =>
-                      setNutrientData({
-                        nutrientTestingMonth: value.toString(),
-                      })
-                    }
-                    options={DATE_PICKER_OPTIONS.month.options}
-                    placeholder={DATE_PICKER_OPTIONS.month.placeholder}
-                    testID={DATE_PICKER_OPTIONS.month.testID}
-                  />
-                </View>
-                <View className="flex-1">
-                  <Select
-                    label={DATE_PICKER_OPTIONS.year.label}
-                    value={nutrientData.nutrientTestingYear || ''}
-                    onSelect={(value) =>
-                      setNutrientData({ nutrientTestingYear: value.toString() })
-                    }
-                    options={DATE_PICKER_OPTIONS.year.options}
-                    placeholder={DATE_PICKER_OPTIONS.year.placeholder}
-                    testID={DATE_PICKER_OPTIONS.year.testID}
-                  />
-                </View>
+              <View className="gap-4">
+                <Text className="font-lora text-secondary">
+                  When was the last nutrient testing done?
+                </Text>
+                <FormCard>
+                  <View className="flex-row justify-between gap-4">
+                    <View className="flex-1">
+                      <Select
+                        label={DATE_PICKER_OPTIONS.month.label}
+                        value={nutrientData.nutrientTestingMonth || ''}
+                        onSelect={(value) =>
+                          setNutrientData({
+                            nutrientTestingMonth: value.toString(),
+                          })
+                        }
+                        options={DATE_PICKER_OPTIONS.month.options}
+                        placeholder={DATE_PICKER_OPTIONS.month.placeholder}
+                        testID={DATE_PICKER_OPTIONS.month.testID}
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Select
+                        label={DATE_PICKER_OPTIONS.year.label}
+                        value={nutrientData.nutrientTestingYear || ''}
+                        onSelect={(value) =>
+                          setNutrientData({
+                            nutrientTestingYear: value.toString(),
+                          })
+                        }
+                        options={DATE_PICKER_OPTIONS.year.options}
+                        placeholder={DATE_PICKER_OPTIONS.year.placeholder}
+                        testID={DATE_PICKER_OPTIONS.year.testID}
+                      />
+                    </View>
+                  </View>
+                </FormCard>
               </View>
-            </FormCard>
-          </View>
+            </>
+          )}
 
           <View className="my-8 h-px bg-neutral-300" />
 
           <View className="gap-4">
             <Text className="font-lora text-secondary">
-              Have you done soil testing?
+              Have you performed soil testing?
             </Text>
             <FormCard>
               <View className="flex-row justify-between gap-4">
                 <View className="flex-1">
                   <Radio
-                    checked={nutrientData.soilTestingDone === true}
-                    onChange={() => setNutrientData({ soilTestingDone: true })}
+                    checked={hasPerformedSoilTest === true}
+                    onChange={() => setHasPerformedSoilTest(true)}
                     label="Yes"
-                    testID="testing-done-yes"
-                    accessibilityLabel="Yes, soil testing is done"
+                    testID="soil-test-performed-yes"
+                    accessibilityLabel="Yes, I have performed soil testing"
                   />
                 </View>
                 <View className="flex-1">
                   <Radio
-                    checked={nutrientData.soilTestingDone === false}
-                    onChange={() => setNutrientData({ soilTestingDone: false })}
+                    checked={hasPerformedSoilTest === false}
+                    onChange={() => setHasPerformedSoilTest(false)}
                     label="No"
-                    testID="testing-done-no"
-                    accessibilityLabel="No, soil testing is not done"
+                    testID="soil-test-performed-no"
+                    accessibilityLabel="No, I have not performed soil testing"
                   />
                 </View>
               </View>
             </FormCard>
           </View>
 
-          <View className="py-4">
-            <Button
-              // TODO: Check - should the option be disabled (as in Figma doc) if the soil test is done? Can't farmers book anyway?
-              onPress={() => router.push('/soil-test')}
-              fullWidth={false}
-              label="Book a Soil Test"
-              disabled={nutrientData.soilTestingDone === true}
-            />
-          </View>
+          {hasPerformedSoilTest && (
+            <>
+              <View className="gap-4">
+                <Text className="font-lora text-secondary">
+                  When was the last soil testing done?
+                </Text>
+                <FormCard>
+                  {/* TODO: Check: Figma has this as a date picker but for now this matches the nutrient testing date select format */}
+                  <View className="flex-row justify-between gap-4">
+                    <View className="flex-1">
+                      <Select
+                        label={DATE_PICKER_OPTIONS.month.label}
+                        value={nutrientData.soilTestingMonth || ''}
+                        onSelect={(value) =>
+                          setNutrientData({
+                            soilTestingMonth: value.toString(),
+                          })
+                        }
+                        options={DATE_PICKER_OPTIONS.month.options}
+                        placeholder={DATE_PICKER_OPTIONS.month.placeholder}
+                        testID={DATE_PICKER_OPTIONS.month.testID}
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Select
+                        label={DATE_PICKER_OPTIONS.year.label}
+                        value={nutrientData.soilTestingYear || ''}
+                        onSelect={(value) =>
+                          setNutrientData({
+                            soilTestingYear: value.toString(),
+                          })
+                        }
+                        options={DATE_PICKER_OPTIONS.year.options}
+                        placeholder={DATE_PICKER_OPTIONS.year.placeholder}
+                        testID={DATE_PICKER_OPTIONS.year.testID}
+                      />
+                    </View>
+                  </View>
+                </FormCard>
+              </View>
 
-          <View className="gap-4">
-            <Text className="font-lora text-secondary">
-              When was the last soil testing done?
-            </Text>
-            <FormCard>
-              {/* TODO: Check: Figma has this as a date picker but for now this matches the nutrient testing date select format */}
-              <View className="flex-row justify-between gap-4">
-                <View className="flex-1">
+              <View className="gap-4">
+                <Text className="font-lora text-secondary">
+                  How Frequently Do You Do Soil Testing?
+                </Text>
+                <FormCard>
                   <Select
-                    label={DATE_PICKER_OPTIONS.month.label}
-                    value={nutrientData.soilTestingMonth || ''}
+                    value={nutrientData.soilTestingFrequency || ''}
                     onSelect={(value) =>
-                      setNutrientData({ soilTestingMonth: value.toString() })
+                      setNutrientData({
+                        soilTestingFrequency: value.toString(),
+                      })
                     }
-                    options={DATE_PICKER_OPTIONS.month.options}
-                    placeholder={DATE_PICKER_OPTIONS.month.placeholder}
-                    testID={DATE_PICKER_OPTIONS.month.testID}
+                    options={soilTestingFrequencyOptions}
+                    label="Gap Between Soil Tests"
                   />
-                </View>
-                <View className="flex-1">
-                  <Select
-                    label={DATE_PICKER_OPTIONS.year.label}
-                    value={nutrientData.soilTestingYear || ''}
-                    onSelect={(value) =>
-                      setNutrientData({ soilTestingYear: value.toString() })
-                    }
-                    options={DATE_PICKER_OPTIONS.year.options}
-                    placeholder={DATE_PICKER_OPTIONS.year.placeholder}
-                    testID={DATE_PICKER_OPTIONS.year.testID}
-                  />
-                </View>
+                </FormCard>
               </View>
-            </FormCard>
-          </View>
 
-          <View className="gap-4">
-            <Text className="font-lora text-secondary">
-              How Frequently Do You Do Soil Testing?
-            </Text>
-            <FormCard>
-              <Select
-                value={nutrientData.soilTestingFrequency || ''}
-                onSelect={(value) =>
-                  setNutrientData({ soilTestingFrequency: value.toString() })
-                }
-                options={soilTestingFrequencyOptions}
-                label="Gap Between Soil Tests"
-              />
-            </FormCard>
-          </View>
+              <View className="gap-4">
+                <Text className="font-lora text-xl text-secondary">
+                  Soil Test Results
+                </Text>
 
-          <View className="gap-4">
-            <Text className="font-lora text-xl text-secondary">
-              Soil Test Results
-            </Text>
-
-            <View className="gap-2">
-              <Text>Parameters</Text>
-              <View className="width-[80%] mt-2 flex-row justify-between gap-4">
-                <View className="flex-1">
-                  <Radio
-                    checked={soilTestInputType === 'value'}
-                    onChange={() => setSoilTestInputType('value')}
-                    label="Enter Value"
-                    testID="soil-test-input-value"
-                    accessibilityLabel="Enter specific soil test value"
-                  />
+                <View className="gap-2">
+                  <Text>Parameters</Text>
+                  <View className="width-[80%] mt-2 flex-row justify-between gap-4">
+                    <View className="flex-1">
+                      <Radio
+                        checked={soilTestInputType === 'value'}
+                        onChange={() => setSoilTestInputType('value')}
+                        label="Enter Value"
+                        testID="soil-test-input-value"
+                        accessibilityLabel="Enter specific soil test value"
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Radio
+                        checked={soilTestInputType === 'range'}
+                        onChange={() => setSoilTestInputType('range')}
+                        label="Select Range"
+                        testID="soil-test-input-range"
+                        accessibilityLabel="Select a range for soil test value"
+                      />
+                    </View>
+                  </View>
                 </View>
-                <View className="flex-1">
-                  <Radio
-                    checked={soilTestInputType === 'range'}
-                    onChange={() => setSoilTestInputType('range')}
-                    label="Select Range"
-                    testID="soil-test-input-range"
-                    accessibilityLabel="Select a range for soil test value"
-                  />
-                </View>
+
+                <FormCard>
+                  {soilTestInputType === 'value' ? (
+                    <ValueBasedForm
+                      nutrientData={nutrientData}
+                      setNutrientData={setNutrientData}
+                    />
+                  ) : (
+                    <RangeBasedForm
+                      nutrientData={nutrientData}
+                      setNutrientData={setNutrientData}
+                    />
+                  )}
+                </FormCard>
               </View>
+            </>
+          )}
+          {!hasPerformedSoilTest && (
+            <View className="mt-4">
+              <Text className="text-center text-gray-600">
+                After creating your account, you can book a soil test from the{' '}
+                <Text className="font-poppins-bold">Nutrient Portfolio</Text>{' '}
+                page.
+              </Text>
             </View>
-
-            <FormCard>
-              {soilTestInputType === 'value' ? (
-                <ValueBasedForm
-                  nutrientData={nutrientData}
-                  setNutrientData={setNutrientData}
-                />
-              ) : (
-                <RangeBasedForm
-                  nutrientData={nutrientData}
-                  setNutrientData={setNutrientData}
-                />
-              )}
-            </FormCard>
-          </View>
-
+          )}
           <View className="mb-8 mt-4">
             <Button
               onPress={handleSubmit}

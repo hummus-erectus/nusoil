@@ -98,7 +98,6 @@ export default function FarmStep() {
       id: newId,
       farmLocationName: '',
       farmCity: '',
-      size: 0,
       irrigationType: '',
       latLong: '',
       ownershipType: '',
