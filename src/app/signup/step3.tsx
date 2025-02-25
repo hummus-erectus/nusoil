@@ -482,17 +482,14 @@ export default function NutrientStep() {
                   />
                 </View>
               </View>
+              <View className="mt-4">
+                <Text className="text-center text-gray-600">
+                  After creating your account, you can book a soil test from the{' '}
+                  <Text className="font-poppins-bold">Nutrient Portfolio</Text>{' '}
+                  page.
+                </Text>
+              </View>
             </FormCard>
-          </View>
-
-          <View className="py-4">
-            <Button
-              // TODO: Check - should the option be disabled (as in Figma doc) if the soil test is done? Can't farmers book anyway?
-              onPress={() => router.push('/soil-test')}
-              fullWidth={false}
-              label="Book a Soil Test"
-              disabled={nutrientData.soilTestingDone === true}
-            />
           </View>
 
           <View className="gap-4">
