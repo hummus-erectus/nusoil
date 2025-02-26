@@ -1,18 +1,30 @@
 /* eslint-disable max-lines-per-function */
-import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Alert, BackHandler, View } from 'react-native';
+import { router } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  BackHandler,
+  Modal as RNModal,
+  View,
+} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { LandForm } from '@/components/land-form';
 import { Button, colors, Text } from '@/components/ui';
-import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
+import {
+  ArrowLeftFull as ArrowLeftFullIcon,
+  CircleTick,
+} from '@/components/ui/icons';
+import { useNotifications } from '@/features/notifications/notifications-context';
 import { useUserStore } from '@/stores/user-store';
 
 export default function AddLand() {
-  const router = useRouter();
   const { addLand } = useUserStore();
+  const { addNotification } = useNotifications();
   const [hasChanges, setHasChanges] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [saveState, setSaveState] = useState<'loading' | 'success'>('loading');
   const [form, setForm] = useState({
     id: `land_${Date.now()}`,
     farmLocationName: '',
@@ -69,16 +81,61 @@ export default function AddLand() {
     );
 
     return () => backHandler.remove();
-  }, [hasChanges, router]);
+  }, [hasChanges]);
 
-  const handleSave = () => {
-    const newLand = {
-      ...form,
-    };
-    addLand(newLand);
-    setHasChanges(false);
-    router.back();
-  };
+  const handleSave = useCallback(() => {
+    // Show loading modal
+    setModalVisible(true);
+
+    // Simulate API call with a timeout
+    setTimeout(() => {
+      const newLand = {
+        ...form,
+      };
+      addLand(newLand);
+      setHasChanges(false);
+
+      // Show success state
+      setSaveState('success');
+
+      // Add notification
+      addNotification({
+        title: 'Land Added',
+        message: `Your land account for ${form.farmLocationName} has been successfully added.`,
+        type: 'success',
+        read: false,
+        action: {
+          label: 'Manage Land Accounts',
+          onPress: () => {
+            router.replace({
+              pathname: '/land-management',
+            });
+          },
+        },
+      });
+    }, 2000);
+  }, [form, addLand, addNotification]);
+
+  const handleGoToSoilTestForm = useCallback(() => {
+    setModalVisible(false);
+    router.replace({
+      pathname: '/soil-test/form',
+      params: { landId: form.id },
+    });
+  }, [form.id]);
+
+  const handleGoToSoilTestOrder = useCallback(() => {
+    setModalVisible(false);
+    router.replace({
+      pathname: '/soil-test/order',
+      params: { landId: form.id },
+    });
+  }, [form.id]);
+
+  const handleNotNow = useCallback(() => {
+    setModalVisible(false);
+    router.replace('/');
+  }, []);
 
   const handleBack = () => {
     if (hasChanges) {
@@ -143,6 +200,52 @@ export default function AddLand() {
             <Button variant="default" label="Save" onPress={handleSave} />
           </View>
         </View>
+        <RNModal visible={modalVisible} transparent={true} animationType="fade">
+          <View className="flex-1 items-center justify-center bg-black/50">
+            <View className="w-4/5 items-center rounded-2xl bg-white p-6 shadow-lg">
+              {saveState === 'loading' ? (
+                <View className="items-center gap-4">
+                  <ActivityIndicator size="large" color={colors.primary} />
+                  <Text className="font-poppins text-center text-base text-neutral-600">
+                    Saving your land account...
+                  </Text>
+                </View>
+              ) : (
+                <View className="items-center gap-6">
+                  <View className="rounded-full bg-green-100 p-4">
+                    <CircleTick color={'green'} width={64} height={64} />
+                  </View>
+                  <Text className="text-center font-poppins-semibold text-lg">
+                    Your land account has been successfully added!
+                  </Text>
+                  <Text className="font-poppins text-center text-base text-neutral-600">
+                    Would you like to add nutrient information for this land?
+                  </Text>
+                  <View className="w-full gap-2">
+                    <Button
+                      fullWidth
+                      variant="default"
+                      label="Order Soil Test"
+                      onPress={handleGoToSoilTestOrder}
+                    />
+                    <Button
+                      fullWidth
+                      variant="secondary"
+                      label="Add Soil Test Results"
+                      onPress={handleGoToSoilTestForm}
+                    />
+                    <Button
+                      fullWidth
+                      variant="ghost"
+                      label="Not Now"
+                      onPress={handleNotNow}
+                    />
+                  </View>
+                </View>
+              )}
+            </View>
+          </View>
+        </RNModal>
       </View>
     </KeyboardAwareScrollView>
   );
