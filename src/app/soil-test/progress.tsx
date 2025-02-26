@@ -37,7 +37,7 @@ function StepItem({ label, isCompleted }: StepItemProps) {
 const statusMessages: Record<SoilTestStep, string> = {
   // TODO: Replace with actual messages
   agent:
-    'You will be notified when the soil sample is tested and the report uploaded!',
+    'You will be contacted by an agent shortly to schedule your soil test.',
   collected:
     'Your soil sample has been collected and is on its way to our laboratory.',
   lab: 'Your soil sample has arrived at our laboratory and is awaiting analysis.',

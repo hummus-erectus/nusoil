@@ -18,6 +18,10 @@ export default function SoilTest() {
       value: land.id,
     })) || [];
 
+  const selectedLand = lands?.find((land) => land.id === selectedLandId);
+  const hasSoilTestInProgress =
+    selectedLand?.soilTestStatus && selectedLand.soilTestStatus !== 'report';
+
   const handleBack = () => {
     router.back();
   };
@@ -35,6 +39,15 @@ export default function SoilTest() {
     if (selectedLandId) {
       router.push({
         pathname: '/soil-test/order',
+        params: { landId: selectedLandId },
+      });
+    }
+  };
+
+  const handleViewProgress = () => {
+    if (selectedLandId) {
+      router.push({
+        pathname: '/soil-test/progress',
         params: { landId: selectedLandId },
       });
     }
@@ -76,11 +89,25 @@ export default function SoilTest() {
           disabled={!selectedLandId}
           label="Add Soil Test Results"
         />
-        <Button
-          onPress={handleOrderSoilTest}
-          disabled={!selectedLandId}
-          label="Order Soil Test"
-        />
+
+        {hasSoilTestInProgress ? (
+          <View className="rounded-xl bg-white p-6 shadow-sm">
+            <Text className="mb-4 text-center font-poppins-semibold text-xl text-primary">
+              Soil Test in Progress
+            </Text>
+            <Text className="font-poppins mb-6 text-center text-base text-neutral-600">
+              Your soil test for {selectedLand?.farmLocationName} is currently
+              being processed.
+            </Text>
+            <Button onPress={handleViewProgress} label="View Progress" />
+          </View>
+        ) : (
+          <Button
+            onPress={handleOrderSoilTest}
+            disabled={!selectedLandId}
+            label="Order Soil Test"
+          />
+        )}
       </View>
     </KeyboardAwareScrollView>
   );

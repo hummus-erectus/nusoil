@@ -2,9 +2,13 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, Modal as RNModal, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, colors, FocusAwareStatusBar, Text } from '@/components/ui';
-import { CircleTick } from '@/components/ui/icons';
+import {
+  ArrowLeftFull as ArrowLeftFullIcon,
+  CircleTick,
+} from '@/components/ui/icons';
 import { useNotifications } from '@/features/notifications/notifications-context';
 import { useUserStore } from '@/stores/user-store';
 
@@ -18,6 +22,8 @@ export default function SoilTestOrderPage() {
   );
 
   const land = lands?.find((land) => land.id === landId);
+  const hasSoilTestInProgress =
+    land?.soilTestStatus && land.soilTestStatus !== 'report';
 
   const handleOrderSoilTest = useCallback(async () => {
     setModalVisible(true);
@@ -39,7 +45,10 @@ export default function SoilTestOrderPage() {
         action: {
           label: 'View Progress',
           onPress: () => {
-            router.push('/soil-test/progress');
+            router.push({
+              pathname: '/soil-test/progress',
+              params: { landId },
+            });
           },
         },
       });
@@ -50,8 +59,12 @@ export default function SoilTestOrderPage() {
 
   const handleDismiss = useCallback(() => {
     setModalVisible(false);
-    router.push('/soil-test/progress');
-  }, []);
+    // Navigate to the progress page
+    router.push({
+      pathname: '/soil-test/progress',
+      params: { landId },
+    });
+  }, [landId]);
 
   if (!landId || !land) {
     return (
@@ -72,11 +85,39 @@ export default function SoilTestOrderPage() {
     );
   }
 
+  if (hasSoilTestInProgress) {
+    // If there's an active soil test, redirect to the progress page instead of nutrient portfolio
+    router.replace({
+      pathname: '/soil-test/progress',
+      params: { landId },
+    });
+    return null;
+  }
+
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
-    <>
-      <FocusAwareStatusBar />
-      <View className="flex-1 p-6">
-        <Text className="mb-6 text-center font-lora text-3xl text-primary">
+    <KeyboardAwareScrollView
+      bottomOffset={62}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <View className="flex-1 gap-6 p-6">
+        <View className="-ml-10 self-start">
+          <Button
+            variant="ghost"
+            onPress={handleBack}
+            fullWidth={false}
+            label={
+              <View className="flex-row items-center justify-center">
+                <ArrowLeftFullIcon color={colors.neutral[600]} />
+                <Text className="ml-4 text-neutral-600">Back</Text>
+              </View>
+            }
+          />
+        </View>
+        <Text className="text-center font-lora text-3xl text-primary">
           Order Soil Test
         </Text>
 
@@ -127,6 +168,6 @@ export default function SoilTestOrderPage() {
           </View>
         </RNModal>
       </View>
-    </>
+    </KeyboardAwareScrollView>
   );
 }
