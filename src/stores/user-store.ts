@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 
 export type SubscriptionPlan = 'Seed' | 'Mature' | 'Harvest';
+export type SoilTestStatus =
+  | 'agent'
+  | 'collected'
+  | 'lab'
+  | 'tested'
+  | 'report'
+  | null;
 
 export interface Land {
   id: string;
@@ -26,26 +33,37 @@ export interface Land {
   pestDiseaseCost: string;
   cropYieldAverage: string;
   income: string;
-  nutrientData?: {
-    parameters: {
-      ph: number;
-      ec: number;
-      oc: number;
-    };
-    macroNutrients: {
-      n: number;
-      p: number;
-      k: number;
-    };
-    microNutrients: {
-      zn: number;
-      b: number;
-      fe: number;
-      mn: number;
-      mo: number;
-      cu: number;
-    };
+  soilTests?: SoilTest[];
+  soilTestStatus?: SoilTestStatus;
+}
+
+export interface SoilTest {
+  id: string;
+  testMonth: string;
+  testYear: string;
+  frequency: string;
+  testingType: 'value' | 'range';
+  parameters: {
+    ph: string;
+    ec: string;
+    oc: string;
   };
+  macroNutrients: {
+    n: string;
+    p: string;
+    k: string;
+  };
+  microNutrients: {
+    zn: string;
+    b: string;
+    fe: string;
+    mn: string;
+    mo: string;
+    cu: string;
+    cl: string;
+    ni: string;
+  };
+  createdAt: string;
 }
 
 interface UserState {
@@ -64,6 +82,7 @@ interface UserState {
   setLands: (lands: Land[]) => void;
   addLand: (land: Land) => void;
   updateLand: (id: string, updates: Partial<Land>) => void;
+  addSoilTest: (landId: string, soilTest: SoilTest) => void;
   deleteLand: (id: string) => void;
   setSelectedLandId: (id: string | null) => void;
 }
@@ -91,6 +110,17 @@ export const useUserStore = create<UserState>((set) => ({
     set((state) => ({
       lands: state.lands.map((land) =>
         land.id === id ? { ...land, ...updates } : land
+      ),
+    })),
+  addSoilTest: (landId, soilTest) =>
+    set((state) => ({
+      lands: state.lands.map((land) =>
+        land.id === landId
+          ? {
+              ...land,
+              soilTests: [...(land.soilTests || []), soilTest],
+            }
+          : land
       ),
     })),
   deleteLand: (id) =>
