@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Modal as RNModal, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
@@ -25,46 +25,62 @@ export default function SoilTestOrderPage() {
   const hasSoilTestInProgress =
     land?.soilTestStatus && land.soilTestStatus !== 'report';
 
-  const handleOrderSoilTest = useCallback(async () => {
+  // Redirect to progress page if a soil test is already in progress
+  useEffect(() => {
+    if (hasSoilTestInProgress && landId) {
+      router.replace({
+        pathname: '/soil-test/progress',
+        params: { landId },
+      });
+    }
+  }, [hasSoilTestInProgress, landId]);
+
+  const handleOrderSoilTest = useCallback(() => {
     setModalVisible(true);
-    setOrderState('loading');
 
-    // Simulate API call with a timeout
+    // Simulate API call with a timeout, but don't update land status yet
     setTimeout(() => {
-      // Update the land with soil test status
-      updateLand(landId, {
-        soilTestStatus: 'agent', // First stage of soil test process
-      });
-
-      // Add notification
-      addNotification({
-        title: 'Soil Test Ordered',
-        message: `Your soil test for ${land?.farmLocationName} has been successfully ordered. You will be notified when the soil sample is collected.`,
-        type: 'success',
-        read: false,
-        action: {
-          label: 'View Progress',
-          onPress: () => {
-            router.push({
-              pathname: '/soil-test/progress',
-              params: { landId },
-            });
-          },
-        },
-      });
-
       setOrderState('success');
-    }, 3000);
-  }, [landId, land, updateLand, addNotification]);
+    }, 2000);
+  }, []);
 
   const handleDismiss = useCallback(() => {
+    // First update the land status
+    updateLand(landId, {
+      soilTestStatus: 'agent', // First stage of soil test process
+    });
+
+    // Close the modal
     setModalVisible(false);
-    // Navigate to the progress page
-    router.push({
+
+    // Add notification
+    addNotification({
+      title: 'Soil Test Ordered',
+      message: `Your soil test for ${land?.farmLocationName} has been successfully ordered. You will be notified when the soil sample is collected.`,
+      type: 'success',
+      read: false,
+      action: {
+        label: 'View Progress',
+        onPress: () => {
+          router.replace({
+            pathname: '/soil-test/progress',
+            params: { landId },
+          });
+        },
+      },
+    });
+
+    // Replace the current route with progress page
+    // This prevents going back to the order page
+    router.replace({
       pathname: '/soil-test/progress',
       params: { landId },
     });
-  }, [landId]);
+  }, [landId, land, updateLand, addNotification]);
+
+  const handleBack = () => {
+    router.back();
+  };
 
   if (!landId || !land) {
     return (
@@ -84,19 +100,6 @@ export default function SoilTestOrderPage() {
       </>
     );
   }
-
-  if (hasSoilTestInProgress) {
-    // If there's an active soil test, redirect to the progress page instead of nutrient portfolio
-    router.replace({
-      pathname: '/soil-test/progress',
-      params: { landId },
-    });
-    return null;
-  }
-
-  const handleBack = () => {
-    router.back();
-  };
 
   return (
     <KeyboardAwareScrollView
