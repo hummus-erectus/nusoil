@@ -55,6 +55,10 @@ const WelcomeScreen = () => {
 
   const MAX_VISIBLE_LANDS = 3;
 
+  const needsSoilTesting = lands.some(
+    (land) => !land.soilTests || land.soilTests.length === 0
+  );
+
   return (
     <KeyboardAwareScrollView
       bottomOffset={62}
@@ -135,6 +139,19 @@ const WelcomeScreen = () => {
             )}
           </View>
         </FormCard>
+        {needsSoilTesting && (
+          <View className="mt-4">
+            <Text className="font-poppins text-neutral-600">
+              Some of your land accounts haven't had soil testing performed yet.{' '}
+              <Text
+                className="font-poppins-semibold text-primary"
+                onPress={() => router.push('/soil-test')}
+              >
+                Order a soil test now
+              </Text>
+            </Text>
+          </View>
+        )}
       </View>
     </KeyboardAwareScrollView>
   );

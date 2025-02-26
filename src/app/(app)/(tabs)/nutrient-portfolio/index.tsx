@@ -6,7 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, FormCard, Select, Text, View } from '@/components/ui';
 import { Plus as PlusIcon } from '@/components/ui/icons';
-import { useUserStore } from '@/stores/user-store';
+import { type Land, type SoilTest, useUserStore } from '@/stores/user-store';
 
 export default function NutrientPortfolio() {
   const { lands, selectedLandId, setSelectedLandId } = useUserStore();
@@ -17,6 +17,22 @@ export default function NutrientPortfolio() {
     })) || [];
 
   const selectedLand = lands?.find((land) => land.id === selectedLandId);
+
+  // Get the latest soil test data
+  const getLatestSoilTest = (land: Land) => {
+    if (!land.soilTests || land.soilTests.length === 0) return null;
+    return land.soilTests.reduce(
+      (latest, current) => {
+        if (!latest) return current;
+        return new Date(current.createdAt) > new Date(latest.createdAt)
+          ? current
+          : latest;
+      },
+      null as SoilTest | null
+    );
+  };
+
+  const latestSoilTest = selectedLand ? getLatestSoilTest(selectedLand) : null;
 
   // const openInMaps = (lat: number, lng: number) => {
   //   const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
@@ -86,22 +102,19 @@ export default function NutrientPortfolio() {
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">pH</Text>
                             <Text>
-                              {selectedLand.nutrientData?.parameters?.ph ||
-                                'n/a'}
+                              {latestSoilTest?.parameters?.ph || 'n/a'}
                             </Text>
                           </View>
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">EC</Text>
                             <Text>
-                              {selectedLand.nutrientData?.parameters?.ec ||
-                                'n/a'}
+                              {latestSoilTest?.parameters?.ec || 'n/a'}
                             </Text>
                           </View>
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">OC</Text>
                             <Text>
-                              {selectedLand.nutrientData?.parameters?.oc ||
-                                'n/a'}
+                              {latestSoilTest?.parameters?.oc || 'n/a'}
                             </Text>
                           </View>
                         </View>
@@ -113,22 +126,19 @@ export default function NutrientPortfolio() {
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">N</Text>
                             <Text>
-                              {selectedLand.nutrientData?.macroNutrients?.n ||
-                                'n/a'}
+                              {latestSoilTest?.macroNutrients?.n || 'n/a'}
                             </Text>
                           </View>
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">P</Text>
                             <Text>
-                              {selectedLand.nutrientData?.macroNutrients?.p ||
-                                'n/a'}
+                              {latestSoilTest?.macroNutrients?.p || 'n/a'}
                             </Text>
                           </View>
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">K</Text>
                             <Text>
-                              {selectedLand.nutrientData?.macroNutrients?.k ||
-                                'n/a'}
+                              {latestSoilTest?.macroNutrients?.k || 'n/a'}
                             </Text>
                           </View>
                         </View>
@@ -140,43 +150,49 @@ export default function NutrientPortfolio() {
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">Zn</Text>
                             <Text>
-                              {selectedLand.nutrientData?.microNutrients?.zn ||
-                                'n/a'}
+                              {latestSoilTest?.microNutrients?.zn || 'n/a'}
                             </Text>
                           </View>
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">B</Text>
                             <Text>
-                              {selectedLand.nutrientData?.microNutrients?.b ||
-                                'n/a'}
+                              {latestSoilTest?.microNutrients?.b || 'n/a'}
                             </Text>
                           </View>
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">Fe</Text>
                             <Text>
-                              {selectedLand.nutrientData?.microNutrients?.fe ||
-                                'n/a'}
+                              {latestSoilTest?.microNutrients?.fe || 'n/a'}
                             </Text>
                           </View>
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">Mn</Text>
                             <Text>
-                              {selectedLand.nutrientData?.microNutrients?.mn ||
-                                'n/a'}
+                              {latestSoilTest?.microNutrients?.mn || 'n/a'}
                             </Text>
                           </View>
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">Mo</Text>
                             <Text>
-                              {selectedLand.nutrientData?.microNutrients?.mo ||
-                                'n/a'}
+                              {latestSoilTest?.microNutrients?.mo || 'n/a'}
                             </Text>
                           </View>
                           <View className="flex-row justify-between">
                             <Text className="font-poppins-light">Cu</Text>
                             <Text>
-                              {selectedLand.nutrientData?.microNutrients?.cu ||
-                                'n/a'}
+                              {latestSoilTest?.microNutrients?.cu || 'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">Cl</Text>
+                            <Text>
+                              {latestSoilTest?.microNutrients?.cl || 'n/a'}
+                            </Text>
+                          </View>
+                          <View className="flex-row justify-between">
+                            <Text className="font-poppins-light">Ni</Text>
+                            <Text>
+                              {latestSoilTest?.microNutrients?.ni || 'n/a'}
                             </Text>
                           </View>
                         </View>

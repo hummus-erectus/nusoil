@@ -7,6 +7,20 @@ export default function SoilTestLayout() {
       screenOptions={{
         headerShown: false,
       }}
-    />
+    >
+      <Stack.Screen name="index" options={{ title: 'Soil Test' }} />
+      <Stack.Screen
+        name="form"
+        options={{
+          title: 'Soil Test Form',
+        }}
+      />
+      <Stack.Screen
+        name="order"
+        options={{
+          title: 'Order Soil Test',
+        }}
+      />
+    </Stack>
   );
 }
