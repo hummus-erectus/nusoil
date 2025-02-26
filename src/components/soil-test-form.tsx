@@ -505,7 +505,8 @@ const RangeBasedForm = ({
 );
 
 export default function SoilTestForm({ landId }: { landId: string }) {
-  const { addSoilTest } = useUserStore();
+  const { addSoilTest, lands } = useUserStore();
+  const land = lands?.find((land) => land.id === landId);
   const [soilTestData, setSoilTestData] = React.useState<SoilTestFormData>({
     id: Date.now().toString(),
     testingType: 'value',
@@ -609,7 +610,7 @@ export default function SoilTestForm({ landId }: { landId: string }) {
       contentContainerStyle={{ flexGrow: 1 }}
     >
       <View className="flex-1 gap-6 p-6">
-        <View className="self-start">
+        <View className="-ml-10 self-start">
           <Button
             variant="ghost"
             onPress={handleBack}
@@ -622,9 +623,17 @@ export default function SoilTestForm({ landId }: { landId: string }) {
             }
           />
         </View>
-        <Text className="mb-6 text-center font-lora text-3xl text-primary">
+        <Text className="text-center font-lora text-3xl text-primary">
           Soil Test Details
         </Text>
+        {land && (
+          <Text className="text-center font-lora text-xl text-primary">
+            Account:{' '}
+            <Text className="font-poppins-bold text-xl">
+              {land.farmLocationName}
+            </Text>
+          </Text>
+        )}
 
         <View className="gap-6">
           <View className="gap-4">
