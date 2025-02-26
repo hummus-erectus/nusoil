@@ -46,7 +46,7 @@ const cropTypeOptions = [
   { label: 'Multi Crop', value: 'Multi Crop' },
 ];
 
-const irragationOptions = [
+const irrigationOptions = [
   { label: 'Drip Irrigation', value: 'Drip Irrigation' },
   { label: 'Sprinkler Irrigation', value: 'Sprinkler Irrigation' },
   { label: 'Flood Irrigation', value: 'Flood Irrigation' },
@@ -181,7 +181,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
         <FormCard className="gap-4">
           <Select
             label="Irrigation Type"
-            options={irragationOptions}
+            options={irrigationOptions}
             value={form.irrigationType}
             onSelect={(v) => onFieldChange('irrigationType', String(v))}
           />

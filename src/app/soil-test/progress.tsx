@@ -1,6 +1,7 @@
 // TODO: This page is currently only accessible from the signup step 3 page by clicking the 'Book Soil Test' button.
 // User should be able to check progress from elsewhere in the app.
 
+import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -8,6 +9,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SoilTestHeader } from '@/components/soil-test-header';
 import type { SoilTestStep } from '@/components/soil-test-progress';
 import { Text } from '@/components/ui';
+import { useUserStore } from '@/stores/user-store';
 
 interface StepItemProps {
   label: string;
@@ -46,8 +48,16 @@ const statusMessages: Record<SoilTestStep, string> = {
 };
 
 export default function SoilTestTracking() {
-  // TODO: get current step from state
-  const currentStep = 'agent';
+  const { landId } = useLocalSearchParams<{ landId: string }>();
+  const { lands } = useUserStore();
+
+  // Find the land with the given ID, or use the first land with a soil test status if no ID is provided
+  const land = landId
+    ? lands?.find((l) => l.id === landId)
+    : lands?.find((l) => l.soilTestStatus);
+
+  // Get the current step from the land's soil test status, or default to 'agent'
+  const currentStep = (land?.soilTestStatus || 'agent') as SoilTestStep;
 
   const steps = [
     { id: 'agent', label: 'Soil Test Agent Notified' },
@@ -66,6 +76,15 @@ export default function SoilTestTracking() {
     >
       <View className="flex-1 p-6">
         <SoilTestHeader currentStep={currentStep as SoilTestStep} />
+
+        {land && (
+          <Text className="my-4 text-center font-lora text-xl text-primary">
+            Land Account:{' '}
+            <Text className="font-poppins-bold text-xl">
+              {land.farmLocationName}
+            </Text>
+          </Text>
+        )}
 
         <View className="mt-6 gap-6">
           {steps.map((step, index) => (

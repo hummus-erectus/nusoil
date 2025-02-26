@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 
 export type SubscriptionPlan = 'Seed' | 'Mature' | 'Harvest';
+export type SoilTestStatus =
+  | 'agent'
+  | 'collected'
+  | 'lab'
+  | 'tested'
+  | 'report'
+  | null;
 
 export interface Land {
   id: string;
@@ -27,6 +34,7 @@ export interface Land {
   cropYieldAverage: string;
   income: string;
   soilTests?: SoilTest[];
+  soilTestStatus?: SoilTestStatus;
 }
 
 export interface SoilTest {
