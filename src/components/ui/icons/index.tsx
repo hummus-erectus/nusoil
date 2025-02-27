@@ -36,4 +36,5 @@ export * from './unlock';
 export * from './upload';
 export * from './wallet';
 export * from './wallet-fill';
+export * from './warning';
 export * from './website';
