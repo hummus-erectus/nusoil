@@ -4,6 +4,7 @@ import type { FieldValues } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 import { View } from 'react-native';
 import { Pressable, type PressableProps } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import type { SvgProps } from 'react-native-svg';
 import Svg, { Path } from 'react-native-svg';
 import { tv } from 'tailwind-variants';
@@ -174,7 +175,7 @@ const Select = ({
       </View>
 
       <Modal ref={modal.ref} snapPoints={['50%']} title={label}>
-        <View className="flex-1 px-4">
+        <ScrollView className="flex-1 px-4">
           {options.map((option) => (
             <Pressable
               key={option.value}
@@ -193,7 +194,7 @@ const Select = ({
               {option.value === value && <Check className="text-primary" />}
             </Pressable>
           ))}
-        </View>
+        </ScrollView>
       </Modal>
     </>
   );
