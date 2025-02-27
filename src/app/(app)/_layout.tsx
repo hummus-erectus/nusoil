@@ -11,7 +11,11 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppHeader } from '@/components/app-header';
 import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
-import { Settings as SettingsIcon } from '@/components/ui/icons';
+import {
+  NutrientPortfolio as NutrientPortfolioIcon,
+  Plus as PlusIcon,
+  Settings as SettingsIcon,
+} from '@/components/ui/icons';
 import { useAuth } from '@/lib';
 import { useUserStore } from '@/stores/user-store';
 
@@ -42,10 +46,15 @@ const styles = StyleSheet.create({
   },
 });
 
-type DrawerRoute = '/(app)/(tabs)' | '/settings' | '/upgrade';
+type DrawerRoute =
+  | '/(app)/(tabs)'
+  | '/settings'
+  | '/upgrade'
+  | '/land-management'
+  | '/land-management/add';
 
 interface DrawerItemProps {
-  href: DrawerRoute;
+  href: DrawerRoute | string;
   label: string;
   icon: React.ReactNode;
   onPress?: () => void;
@@ -53,7 +62,7 @@ interface DrawerItemProps {
 
 function DrawerItem({ href, label, icon, onPress }: DrawerItemProps) {
   return (
-    <Link href={href} asChild>
+    <Link href={href as any} asChild>
       <Pressable style={styles.drawerItem} onPress={onPress}>
         {icon}
         <Text style={styles.drawerText}>{label}</Text>
@@ -66,7 +75,10 @@ function CustomDrawerContent(props: any) {
   const subscriptionPlan = useUserStore((state) => state.subscriptionPlan);
   const userName = useUserStore((state) => state.userName);
   const email = useUserStore((state) => state.email);
+  const lands = useUserStore((state) => state.lands);
+  const setSelectedLandId = useUserStore((state) => state.setSelectedLandId);
   const [isNavigating, setIsNavigating] = useState(false);
+  const MAX_DISPLAYED_LANDS = 5;
 
   const handleDrawerItemPress = (href: DrawerRoute) => {
     if (isNavigating) return;
@@ -75,7 +87,22 @@ function CustomDrawerContent(props: any) {
     props.navigation.closeDrawer();
 
     requestAnimationFrame(() => {
-      router.push(href);
+      router.push(href as any);
+      setTimeout(() => {
+        setIsNavigating(false);
+      }, 300);
+    });
+  };
+
+  const handleLandPress = (landId: string) => {
+    if (isNavigating) return;
+    setIsNavigating(true);
+
+    props.navigation.closeDrawer();
+    setSelectedLandId(landId);
+
+    requestAnimationFrame(() => {
+      router.push('/(app)/(tabs)/nutrient-portfolio' as any);
       setTimeout(() => {
         setIsNavigating(false);
       }, 300);
@@ -146,6 +173,125 @@ function CustomDrawerContent(props: any) {
         </View>
 
         <View style={styles.divider} />
+
+        {/* Land Accounts List */}
+        {lands.length > 0 ? (
+          <View className="mt-2">
+            <Text
+              style={[
+                styles.drawerText,
+                {
+                  fontSize: 16,
+                  fontFamily: 'Poppins-semibold',
+                  marginLeft: 20,
+                  marginBottom: 6,
+                },
+              ]}
+            >
+              My Land Accounts
+            </Text>
+
+            {lands.slice(0, MAX_DISPLAYED_LANDS).map((land) => (
+              <Pressable
+                key={land.id}
+                style={styles.drawerItem}
+                onPress={() => handleLandPress(land.id)}
+              >
+                <NutrientPortfolioIcon color={colors.neutral[100]} />
+                <Text
+                  style={styles.drawerText}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {land.farmLocationName || 'Unnamed Land'}
+                </Text>
+              </Pressable>
+            ))}
+
+            {lands.length > MAX_DISPLAYED_LANDS && (
+              <View className="ml-20 mt-1">
+                <Button
+                  variant="link"
+                  fullWidth={false}
+                  onPress={() =>
+                    handleDrawerItemPress('/land-management' as any)
+                  }
+                  label={
+                    <View>
+                      <Text className="text-white underline">
+                        View all ({lands.length})
+                      </Text>
+                    </View>
+                  }
+                />
+              </View>
+            )}
+
+            <Pressable
+              style={[styles.drawerItem, { marginTop: 6 }]}
+              onPress={() =>
+                handleDrawerItemPress('/land-management/add' as any)
+              }
+            >
+              <PlusIcon color={colors.neutral[100]} />
+              <Text style={styles.drawerText}>Add Land Account</Text>
+            </Pressable>
+
+            <View style={styles.divider} />
+          </View>
+        ) : (
+          <View className="mb-4 mt-2">
+            <Text
+              style={[
+                styles.drawerText,
+                {
+                  fontSize: 16,
+                  fontFamily: 'Poppins-semibold',
+                  marginLeft: 20,
+                  marginBottom: 6,
+                },
+              ]}
+            >
+              Land Accounts
+            </Text>
+
+            <View
+              style={[
+                styles.drawerItem,
+                { flexDirection: 'column', alignItems: 'flex-start' },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.drawerText,
+                  {
+                    fontSize: 14,
+                    color: colors.neutral[300],
+                    marginBottom: 12,
+                  },
+                ]}
+              >
+                You haven't added any land accounts yet.
+              </Text>
+
+              <Button
+                variant="outline"
+                fullWidth={false}
+                onPress={() =>
+                  handleDrawerItemPress('/land-management/add' as any)
+                }
+                label={
+                  <View className="flex-row items-center">
+                    <PlusIcon color={colors.neutral[100]} />
+                    <Text className="ml-2 text-white">Add Your First Land</Text>
+                  </View>
+                }
+              />
+            </View>
+
+            <View style={styles.divider} />
+          </View>
+        )}
       </View>
 
       <DrawerItem
