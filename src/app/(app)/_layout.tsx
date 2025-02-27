@@ -1,6 +1,7 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable react/no-unstable-nested-components */
-import { Env } from '@env';
+
+// import { Env } from '@env';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { Link, Redirect, router, SplashScreen } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
@@ -10,10 +11,7 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppHeader } from '@/components/app-header';
 import { Button } from '@/components/ui';
 import colors from '@/components/ui/colors';
-import {
-  Logout as LogoutIcon,
-  Settings as SettingsIcon,
-} from '@/components/ui/icons';
+import { Settings as SettingsIcon } from '@/components/ui/icons';
 import { useAuth } from '@/lib';
 import { useUserStore } from '@/stores/user-store';
 
@@ -21,6 +19,8 @@ const styles = StyleSheet.create({
   drawerContent: {
     flex: 1,
     paddingTop: 20,
+    height: '100%',
+    position: 'relative',
   },
   drawerItem: {
     marginVertical: 12,
@@ -63,7 +63,6 @@ function DrawerItem({ href, label, icon, onPress }: DrawerItemProps) {
 }
 
 function CustomDrawerContent(props: any) {
-  const signOut = useAuth.use.signOut();
   const subscriptionPlan = useUserStore((state) => state.subscriptionPlan);
   const userName = useUserStore((state) => state.userName);
   const email = useUserStore((state) => state.email);
@@ -84,60 +83,70 @@ function CustomDrawerContent(props: any) {
   };
 
   return (
-    <DrawerContentScrollView {...props} style={styles.drawerContent}>
-      {/* Profile Section */}
-      <View
-        style={[
-          styles.drawerItem,
-          { flexDirection: 'column', alignItems: 'flex-start', gap: 48 },
-        ]}
-      >
-        <View className="gap-2">
-          <Text
-            style={[
-              styles.drawerText,
-              { fontSize: 20, fontFamily: 'Poppins-semibold' },
-            ]}
-          >
-            {userName}
-          </Text>
-          <Text
-            style={[
-              styles.drawerText,
-              { fontSize: 14, color: colors.neutral[300] },
-            ]}
-          >
-            {email}
-          </Text>
-        </View>
-        <View className="flex-col items-start gap-2">
-          <Text style={[styles.drawerText, { fontSize: 14 }]}>
-            You are currently on the
-          </Text>
-          <View className="flex-row gap-6">
+    <DrawerContentScrollView
+      {...props}
+      contentContainerStyle={{
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        paddingBottom: 40,
+      }}
+    >
+      <View>
+        {/* Profile Section */}
+        <View
+          style={[
+            styles.drawerItem,
+            { flexDirection: 'column', alignItems: 'flex-start', gap: 48 },
+          ]}
+        >
+          <View className="gap-2">
             <Text
-              style={[styles.drawerText, { fontSize: 14 }]}
-              className="font-bold"
+              style={[
+                styles.drawerText,
+                { fontSize: 20, fontFamily: 'Poppins-semibold' },
+              ]}
             >
-              {subscriptionPlan} Plan
+              {userName}
             </Text>
-            <Button
-              variant="link"
-              fullWidth={false}
-              onPress={() => handleDrawerItemPress('/upgrade')}
-              label={
-                <View>
-                  <Text className="text-white underline">
-                    {subscriptionPlan === 'Harvest' ? 'Manage' : 'Upgrade'}
-                  </Text>
-                </View>
-              }
-            />
+            <Text
+              style={[
+                styles.drawerText,
+                { fontSize: 14, color: colors.neutral[300] },
+              ]}
+            >
+              {email}
+            </Text>
+          </View>
+          <View className="flex-col items-start gap-2">
+            <Text style={[styles.drawerText, { fontSize: 14 }]}>
+              You are currently on the
+            </Text>
+            <View className="flex-row gap-6">
+              <Text
+                style={[styles.drawerText, { fontSize: 14 }]}
+                className="font-bold"
+              >
+                {subscriptionPlan} Plan
+              </Text>
+              <Button
+                variant="link"
+                fullWidth={false}
+                onPress={() => handleDrawerItemPress('/upgrade')}
+                label={
+                  <View>
+                    <Text className="text-white underline">
+                      {subscriptionPlan === 'Harvest' ? 'Manage' : 'Upgrade'}
+                    </Text>
+                  </View>
+                }
+              />
+            </View>
           </View>
         </View>
-      </View>
 
-      <View style={styles.divider} />
+        <View style={styles.divider} />
+      </View>
 
       <DrawerItem
         onPress={() => props.navigation.closeDrawer()}
@@ -145,21 +154,10 @@ function CustomDrawerContent(props: any) {
         label="Settings"
         icon={<SettingsIcon color={colors.neutral[100]} />}
       />
-      <Button
-        className="mt-12"
-        onPress={signOut}
-        variant="outline"
-        fullWidth={false}
-        label={
-          <View className="flex-row items-center justify-center">
-            <LogoutIcon color="white" />
-            <Text className="ml-4 text-white">Log out</Text>
-          </View>
-        }
-      />
-      <Text className="mt-2 text-center text-xs text-neutral-400">
+
+      {/* <Text className="mt-2 text-center text-xs text-neutral-400">
         v{Env?.VERSION ?? '0.0.2'}
-      </Text>
+      </Text> */}
     </DrawerContentScrollView>
   );
 }
