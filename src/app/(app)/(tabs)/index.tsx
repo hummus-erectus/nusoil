@@ -4,8 +4,9 @@ import React, { useEffect } from 'react';
 import { Alert, BackHandler, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, FormCard, Text } from '@/components/ui';
-import { useUserStore } from '@/stores/user-store';
+import { Button, colors, FormCard, Text } from '@/components/ui';
+import { Warning as WarningIcon } from '@/components/ui/icons';
+import { type Land, useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
   const { userName, subscriptionPlan, lands, setSelectedLandId } =
@@ -56,8 +57,14 @@ const WelcomeScreen = () => {
   const MAX_VISIBLE_LANDS = 3;
 
   const needsSoilTesting = lands.some(
-    (land) => !land.soilTests || land.soilTests.length === 0
+    (land) =>
+      (!land.soilTests || land.soilTests.length === 0) &&
+      (!land.soilTestStatus || land.soilTestStatus === 'report')
   );
+
+  const landNeedsSoilTesting = (land: Land) =>
+    (!land.soilTests || land.soilTests.length === 0) &&
+    (!land.soilTestStatus || land.soilTestStatus === 'report');
 
   return (
     <KeyboardAwareScrollView
@@ -114,18 +121,29 @@ const WelcomeScreen = () => {
                 {lands.slice(0, MAX_VISIBLE_LANDS).map((land) => (
                   <TouchableOpacity
                     key={land.id}
-                    className="rounded-lg border border-neutral-200 p-4"
+                    className="flex-row items-center justify-between rounded-lg border border-neutral-200 p-4"
                     onPress={() => {
                       setSelectedLandId(land.id);
                       router.push('/(app)/(tabs)/nutrient-portfolio');
                     }}
                   >
-                    <Text className="font-poppins-semibold text-lg">
-                      {land.farmLocationName || 'Unnamed Land'}
-                    </Text>
-                    <Text className="font-poppins text-neutral-600">
-                      {land.farmCity}
-                    </Text>
+                    <View>
+                      <View>
+                        <Text className="font-poppins-semibold text-lg">
+                          {land.farmLocationName || 'Unnamed Land'}
+                        </Text>
+                      </View>
+                      <Text className="font-poppins text-neutral-600">
+                        {land.farmCity}
+                      </Text>
+                    </View>
+                    {landNeedsSoilTesting(land) && (
+                      <WarningIcon
+                        color={colors.danger}
+                        width={24}
+                        height={24}
+                      />
+                    )}
                   </TouchableOpacity>
                 ))}
                 {lands.length > MAX_VISIBLE_LANDS && (
@@ -138,20 +156,24 @@ const WelcomeScreen = () => {
               </View>
             )}
           </View>
+          {needsSoilTesting && (
+            <View className="mt-4 flex-row items-center">
+              <WarningIcon color="#FF0000" width={20} height={20} />
+              <View className="ml-4 flex-1">
+                <Text className="font-poppins text-neutral-600">
+                  Some of your land accounts haven't had soil testing performed
+                  yet.{' '}
+                  <Text
+                    className="font-poppins-semibold text-primary"
+                    onPress={() => router.push('/soil-test')}
+                  >
+                    Order a soil test now
+                  </Text>
+                </Text>
+              </View>
+            </View>
+          )}
         </FormCard>
-        {needsSoilTesting && (
-          <View className="mt-4">
-            <Text className="font-poppins text-neutral-600">
-              Some of your land accounts haven't had soil testing performed yet.{' '}
-              <Text
-                className="font-poppins-semibold text-primary"
-                onPress={() => router.push('/soil-test')}
-              >
-                Order a soil test now
-              </Text>
-            </Text>
-          </View>
-        )}
       </View>
     </KeyboardAwareScrollView>
   );
