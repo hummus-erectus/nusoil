@@ -601,7 +601,10 @@ export default function SoilTestForm({ landId }: { landId: string }) {
 
     console.log('completeTest', completeTest);
     addSoilTest(landId, completeTest);
-    router.back();
+    router.replace({
+      pathname: '/(app)/(tabs)/nutrient-portfolio',
+      params: { landId },
+    });
   };
 
   return (

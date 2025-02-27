@@ -1,6 +1,7 @@
 /* eslint-disable max-lines-per-function */
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
+import { useEffect } from 'react';
 // import { Linking } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
@@ -62,6 +63,14 @@ export default function NutrientPortfolio() {
       });
     }
   };
+
+  const { landId } = useLocalSearchParams<{ landId?: string }>();
+
+  useEffect(() => {
+    if (landId) {
+      setSelectedLandId(landId);
+    }
+  }, [landId, setSelectedLandId]);
 
   return (
     <>
