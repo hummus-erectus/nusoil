@@ -72,11 +72,13 @@ interface UserState {
   email: string;
   lands: Land[];
   selectedLandId: string | null;
+  hasSkippedOnboarding: boolean;
 
   // User actions
   setSubscriptionPlan: (plan: SubscriptionPlan) => void;
   setUserName: (name: string) => void;
   setEmail: (email: string) => void;
+  setHasSkippedOnboarding: (value: boolean) => void;
 
   // Land management
   setLands: (lands: Land[]) => void;
@@ -94,11 +96,13 @@ export const useUserStore = create<UserState>((set) => ({
   email: 'emily@anderson.com',
   lands: [],
   selectedLandId: null,
+  hasSkippedOnboarding: false,
 
   // User actions
   setSubscriptionPlan: (plan) => set({ subscriptionPlan: plan }),
   setUserName: (name) => set({ userName: name }),
   setEmail: (email) => set({ email: email }),
+  setHasSkippedOnboarding: (value) => set({ hasSkippedOnboarding: value }),
 
   // Land management
   setLands: (lands) => set({ lands }),

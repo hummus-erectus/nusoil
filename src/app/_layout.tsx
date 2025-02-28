@@ -13,6 +13,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { APIProvider } from '@/api';
 import { FocusAwareStatusBar } from '@/components/ui';
 import { NotificationsProvider } from '@/features/notifications/notifications-context';
+import { OnboardingProvider } from '@/features/onboarding';
 import { hydrateAuth, loadSelectedTheme } from '@/lib';
 import { useThemeConfig } from '@/lib/use-theme-config';
 
@@ -42,23 +43,26 @@ export default function RootLayout() {
           <KeyboardProvider>
             <APIProvider>
               <NotificationsProvider>
-                <Stack screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="(app)" />
-                  <Stack.Screen name="login" />
-                  <Stack.Screen name="signup" />
-                  <Stack.Screen name="soil-test" />
-                  <Stack.Screen name="upgrade" />
-                  <Stack.Screen
-                    name="(modals)"
-                    options={{
-                      headerShown: false,
-                      animation: 'fade_from_bottom',
-                    }}
-                  />
-                  <Stack.Screen name="land-management" />
-                </Stack>
-                <FocusAwareStatusBar alwaysShow />
-                <FlashMessage position="top" />
+                <OnboardingProvider>
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="(app)" />
+                    <Stack.Screen name="login" />
+                    <Stack.Screen name="signup" />
+                    <Stack.Screen name="soil-test" />
+                    <Stack.Screen name="upgrade" />
+                    <Stack.Screen
+                      name="(modals)"
+                      options={{
+                        headerShown: false,
+                        animation: 'fade_from_bottom',
+                      }}
+                    />
+                    <Stack.Screen name="land-management" />
+                    <Stack.Screen name="onboarding" />
+                  </Stack>
+                  <FocusAwareStatusBar alwaysShow />
+                  <FlashMessage position="top" />
+                </OnboardingProvider>
               </NotificationsProvider>
             </APIProvider>
           </KeyboardProvider>
