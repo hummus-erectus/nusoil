@@ -56,7 +56,6 @@ export default function RootLayout() {
                     }}
                   />
                   <Stack.Screen name="land-management" />
-                  <Stack.Screen name="onboarding" />
                 </Stack>
                 <FocusAwareStatusBar alwaysShow />
                 <FlashMessage position="top" />

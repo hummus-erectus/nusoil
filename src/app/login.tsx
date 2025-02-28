@@ -9,23 +9,20 @@ import { useUserStore } from '@/stores/user-store';
 export default function Login() {
   const router = useRouter();
   const signIn = useAuth.use.signIn();
-  const { lands } = useUserStore();
+  const { resetHasCompletedOnboarding } = useUserStore();
 
   const onSubmit: LoginFormProps['onSubmit'] = (data) => {
     // Log the personal data
     console.log('Login data:', data);
 
+    // Reset onboarding flag on login
+    resetHasCompletedOnboarding();
+
     // Sign the user in
     signIn({ access: 'access-token', refresh: 'refresh-token' });
 
-    // Check if user has registered lands
-    if (lands.length === 0) {
-      // Redirect to onboarding if no lands are registered
-      router.replace('/onboarding');
-    } else {
-      // Otherwise, go to the main app
-      router.replace('/');
-    }
+    // Navigate to the app entry point which will handle routing logic
+    router.replace('/');
   };
 
   return (

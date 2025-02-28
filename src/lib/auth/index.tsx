@@ -40,6 +40,9 @@ const _useAuth = create<AuthState>((set, get) => ({
 
 export const useAuth = createSelectors(_useAuth);
 
-export const signOut = () => _useAuth.getState().signOut();
+export const signOut = () => {
+  _useAuth.getState().signOut();
+  // We'll handle resetting the onboarding flag in the app component
+};
 export const signIn = (token: TokenType) => _useAuth.getState().signIn(token);
 export const hydrateAuth = () => _useAuth.getState().hydrate();

@@ -20,7 +20,7 @@ import { useNotifications } from '@/features/notifications/notifications-context
 import { useUserStore } from '@/stores/user-store';
 
 export default function AddLand() {
-  const { addLand } = useUserStore();
+  const { addLand, setHasCompletedOnboarding } = useUserStore();
   const { addNotification } = useNotifications();
   const [hasChanges, setHasChanges] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -98,6 +98,9 @@ export default function AddLand() {
       addLand(newLand);
       setHasChanges(false);
 
+      // Mark onboarding as completed
+      setHasCompletedOnboarding(true);
+
       // Show success state
       setSaveState('success');
 
@@ -117,7 +120,7 @@ export default function AddLand() {
         },
       });
     }, 2000);
-  }, [form, addLand, addNotification]);
+  }, [form, addLand, addNotification, setHasCompletedOnboarding]);
 
   const handleGoToSoilTestForm = useCallback(() => {
     setModalVisible(false);

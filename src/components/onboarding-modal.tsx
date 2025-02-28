@@ -1,30 +1,16 @@
 /* eslint-disable max-lines-per-function */
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import React, { useEffect } from 'react';
-import { BackHandler, View } from 'react-native';
+import React from 'react';
+import { Modal, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, Text } from '@/components/ui';
-import { FocusAwareStatusBar } from '@/components/ui';
+import { Button, FormCard, Text } from '@/components/ui';
 import { NutrientPortfolio } from '@/components/ui/icons';
 import { useUserStore } from '@/stores/user-store';
 
-export default function OnboardingScreen() {
+export function OnboardingModal() {
   const { setHasCompletedOnboarding } = useUserStore();
-
-  // Prevent going back to login screen
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      () => {
-        // Prevent going back - user must either add land or skip
-        return true;
-      }
-    );
-
-    return () => backHandler.remove();
-  }, []);
 
   const handleAddLand = () => {
     setHasCompletedOnboarding(true);
@@ -33,18 +19,15 @@ export default function OnboardingScreen() {
 
   const handleSkip = () => {
     setHasCompletedOnboarding(true);
-    // Just navigate to home screen
-    router.replace('/(app)');
   };
 
   return (
-    <>
-      <FocusAwareStatusBar />
+    <Modal visible={true} animationType="slide" transparent={true}>
       <KeyboardAwareScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-        <View className="flex-1 justify-between p-6">
+        <View className="flex-1 justify-between bg-neutral-100 p-6">
           <View className="flex-1 justify-center gap-6">
             <View className="mt-10 items-center">
               <Text className="mb-4 text-center font-lora text-3xl text-primary">
@@ -65,7 +48,7 @@ export default function OnboardingScreen() {
               </Text>
             </View>
 
-            <View className="mb-6 rounded-lg bg-neutral-50 p-6">
+            <FormCard className="mb-6">
               <Text className="mb-4 font-poppins-semibold text-xl text-primary">
                 Let's set up your first land account
               </Text>
@@ -85,7 +68,7 @@ export default function OnboardingScreen() {
               <Text className="mb-2 text-neutral-700">
                 • Improve crop yields with data-driven insights
               </Text>
-            </View>
+            </FormCard>
           </View>
 
           <View className="mb-10 gap-4">
@@ -98,6 +81,6 @@ export default function OnboardingScreen() {
           </View>
         </View>
       </KeyboardAwareScrollView>
-    </>
+    </Modal>
   );
 }
