@@ -1,6 +1,7 @@
+/* eslint-disable max-lines-per-function */
 /* eslint-disable react/react-in-jsx-scope */
 import { Env } from '@env';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 
 import { Item } from '@/components/settings/item';
@@ -13,6 +14,13 @@ import { translate, useAuth } from '@/lib';
 
 export default function Settings() {
   const signOut = useAuth.use.signOut();
+  const router = useRouter();
+
+  const handleSignOut = () => {
+    signOut();
+    router.replace('/login');
+  };
+
   const { colorScheme } = useColorScheme();
   const iconColor =
     colorScheme === 'dark' ? colors.neutral[400] : colors.neutral[500];
@@ -71,7 +79,7 @@ export default function Settings() {
 
           <View className="my-8">
             <ItemsContainer>
-              <Item text="settings.logout" onPress={signOut} />
+              <Item text="settings.logout" onPress={handleSignOut} />
             </ItemsContainer>
           </View>
         </View>
