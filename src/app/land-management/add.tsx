@@ -17,13 +17,11 @@ import {
   CircleTick,
 } from '@/components/ui/icons';
 import { useNotifications } from '@/features/notifications/notifications-context';
-import { useOnboarding } from '@/features/onboarding';
 import { useUserStore } from '@/stores/user-store';
 
 export default function AddLand() {
   const { addLand } = useUserStore();
   const { addNotification } = useNotifications();
-  const { isOnboarding, completeOnboarding } = useOnboarding();
   const [hasChanges, setHasChanges] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [saveState, setSaveState] = useState<'loading' | 'success'>('loading');
@@ -89,6 +87,9 @@ export default function AddLand() {
     // Show loading modal
     setModalVisible(true);
 
+    // Log the form data
+    console.log('Land management form data:', form);
+
     // Simulate API call with a timeout
     setTimeout(() => {
       const newLand = {
@@ -115,13 +116,8 @@ export default function AddLand() {
           },
         },
       });
-
-      // If this was part of onboarding, mark onboarding as complete
-      if (isOnboarding) {
-        completeOnboarding();
-      }
     }, 2000);
-  }, [form, addLand, addNotification, isOnboarding, completeOnboarding]);
+  }, [form, addLand, addNotification]);
 
   const handleGoToSoilTestForm = useCallback(() => {
     setModalVisible(false);

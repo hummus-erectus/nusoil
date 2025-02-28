@@ -1,22 +1,20 @@
 /* eslint-disable max-lines-per-function */
+import { router } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { Button, Text } from '@/components/ui';
 import { FocusAwareStatusBar } from '@/components/ui';
-import { useOnboarding } from '@/features/onboarding';
 
 export default function OnboardingScreen() {
-  const { skipOnboarding, navigateToAddLand } = useOnboarding();
-
   const handleAddLand = () => {
-    navigateToAddLand();
+    router.push('/land-management/add');
   };
 
   const handleSkip = () => {
-    // The skipOnboarding function will handle navigation to home screen and persist the skipped state
-    skipOnboarding();
+    // Just navigate to home screen
+    router.replace('/(app)');
   };
 
   return (

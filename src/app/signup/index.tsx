@@ -12,7 +12,6 @@ import {
   CircleTick as CircleTickIcon,
 } from '@/components/ui/icons';
 import { useSignupStore } from '@/stores/signup-store';
-import { useUserStore } from '@/stores/user-store';
 
 const countryOptions = [
   { label: 'India', value: 'IN' },
@@ -24,7 +23,6 @@ const countryOptions = [
 export default function Signup() {
   const [step, setStep] = useState<'splash' | 'form' | 'success'>('splash');
   const { farmerData, setFarmerData, resetSignupForm } = useSignupStore();
-  const { setUserName, setEmail } = useUserStore();
   const [formPassword, setFormPassword] = useState('');
   const [formEmail, setFormEmail] = useState('');
 
@@ -33,11 +31,20 @@ export default function Signup() {
   };
 
   const handleFormSubmit = () => {
-    // In a real app, we would create the user account in the backend here
+    // Collect all the signup data
+    const signupData = {
+      name: farmerData.name,
+      email: formEmail,
+      password: formPassword,
+      nationalId: farmerData.nationalId,
+      streetAddress: farmerData.streetAddress,
+      state: farmerData.state,
+      country: farmerData.country,
+      zipCode: farmerData.zipCode,
+    };
 
-    // Save the user data to the user store
-    setUserName(farmerData.name);
-    setEmail(formEmail);
+    // Log the data that would be sent to the server
+    console.log('Signup data to be sent to server:', signupData);
 
     // Show success screen
     setStep('success');
