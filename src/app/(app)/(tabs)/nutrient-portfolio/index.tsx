@@ -69,8 +69,10 @@ export default function NutrientPortfolio() {
   useEffect(() => {
     if (landId) {
       setSelectedLandId(landId);
+    } else if (lands && lands.length === 1) {
+      setSelectedLandId(lands[0].id);
     }
-  }, [landId, setSelectedLandId]);
+  }, [landId, setSelectedLandId, lands]);
 
   return (
     <>
@@ -85,12 +87,23 @@ export default function NutrientPortfolio() {
 
           {lands && lands.length > 0 ? (
             <>
-              <Select
-                options={accountOptions}
-                label="Select Account"
-                value={selectedLandId || ''}
-                onSelect={(value) => setSelectedLandId(value.toString())}
-              />
+              {lands.length === 1 ? (
+                <View className="gap-2">
+                  <Text className="font-poppins-semibold text-lg text-primary">
+                    Account
+                  </Text>
+                  <Text className="text-lg text-neutral-600">
+                    {lands[0].farmLocationName || 'Unnamed Land'}
+                  </Text>
+                </View>
+              ) : (
+                <Select
+                  options={accountOptions}
+                  label="Select Account"
+                  value={selectedLandId || ''}
+                  onSelect={(value) => setSelectedLandId(value.toString())}
+                />
+              )}
               {selectedLand && (
                 <>
                   <FormCard>
