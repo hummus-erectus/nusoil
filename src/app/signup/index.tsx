@@ -5,9 +5,10 @@ import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { SignupSplash } from '@/components/signup-splash';
-import { Button, FormCard, Input, Select, Text } from '@/components/ui';
+import { Button, colors, FormCard, Input, Select, Text } from '@/components/ui';
 import { FocusAwareStatusBar } from '@/components/ui';
 import {
+  ArrowLeftFull,
   ArrowRightFull as ArrowRightFullIcon,
   CircleTick as CircleTickIcon,
 } from '@/components/ui/icons';
@@ -28,6 +29,10 @@ export default function Signup() {
 
   const handleSplashSubmit = () => {
     setStep('form');
+  };
+
+  const handleBack = () => {
+    router.back();
   };
 
   const handleFormSubmit = () => {
@@ -90,8 +95,21 @@ export default function Signup() {
       bottomOffset={62}
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View className="flex-1 p-6">
-        <Text className="mb-6 text-center font-lora text-3xl text-neutral-700">
+      <View className="flex-1 gap-6 bg-neutral-100 p-6">
+        <View className="-ml-10 self-start">
+          <Button
+            variant="ghost"
+            onPress={handleBack}
+            fullWidth={false}
+            label={
+              <View className="flex-row items-center justify-center">
+                <ArrowLeftFull color={colors.neutral[600]} />
+                <Text className="ml-4 text-neutral-600">Back</Text>
+              </View>
+            }
+          />
+        </View>
+        <Text className="text-center font-lora text-3xl text-primary">
           Create Your Account
         </Text>
 
