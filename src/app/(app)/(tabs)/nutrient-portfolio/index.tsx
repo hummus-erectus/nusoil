@@ -5,8 +5,11 @@ import { useEffect } from 'react';
 // import { Linking } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, FormCard, Select, Text, View } from '@/components/ui';
-import { Plus as PlusIcon } from '@/components/ui/icons';
+import { Button, colors, FormCard, Select, Text, View } from '@/components/ui';
+import {
+  Plus as PlusIcon,
+  Warning as WarningIcon,
+} from '@/components/ui/icons';
 import { type Land, type SoilTest, useUserStore } from '@/stores/user-store';
 
 export default function NutrientPortfolio() {
@@ -278,9 +281,12 @@ export default function NutrientPortfolio() {
                         </>
                       ) : (
                         <>
-                          <Text className="text-center font-lora text-xl text-primary">
-                            No Soil Test Data Available
-                          </Text>
+                          <View className="flex-row items-center justify-center gap-2">
+                            <WarningIcon color={colors.danger} />
+                            <Text className="font-lora text-xl text-primary">
+                              No Soil Test Data Available
+                            </Text>
+                          </View>
                           <Text className="text-center text-neutral-600">
                             To begin using the Nutrient Portfolio, please add
                             soil test data or order a soil test.
