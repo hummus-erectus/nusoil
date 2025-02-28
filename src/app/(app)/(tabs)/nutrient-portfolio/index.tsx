@@ -317,7 +317,7 @@ export default function NutrientPortfolio() {
                 nutrient portfolio.
               </Text>
               <Button
-                onPress={() => router.push('/land-management')}
+                onPress={() => router.push('/land-management/add')}
                 label="Add Land Account"
                 fullWidth={false}
               />
