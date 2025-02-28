@@ -24,7 +24,7 @@ export default function Login() {
       router.replace('/onboarding');
     } else {
       // Otherwise, go to the main app
-      router.replace('/(app)');
+      router.replace('/');
     }
   };
 
