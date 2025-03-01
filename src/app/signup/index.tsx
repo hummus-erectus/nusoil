@@ -10,6 +10,7 @@ import { FocusAwareStatusBar } from '@/components/ui';
 import {
   ArrowLeftFull,
   ArrowRightFull as ArrowRightFullIcon,
+  CircleCross as CircleCrossIcon,
   CircleTick as CircleTickIcon,
 } from '@/components/ui/icons';
 import { useSignupStore } from '@/stores/signup-store';
@@ -22,7 +23,9 @@ const countryOptions = [
 ];
 
 export default function Signup() {
-  const [step, setStep] = useState<'splash' | 'form' | 'success'>('splash');
+  const [step, setStep] = useState<
+    'splash' | 'form' | 'success' | 'service_unavailable'
+  >('splash');
   const { farmerData, setFarmerData, resetSignupForm } = useSignupStore();
   const [formPassword, setFormPassword] = useState('');
   const [formEmail, setFormEmail] = useState('');
@@ -86,6 +89,25 @@ export default function Signup() {
           </Text>
         </View>
         <Button onPress={handleCompleteSignup} label="Go to Login" />
+      </View>
+    );
+  }
+
+  //TODO: Implement logic based on server response. Check whether user can be notified
+  if (step === 'service_unavailable') {
+    return (
+      <View className="flex-1 items-center justify-center p-6">
+        <View className="mb-8 items-center">
+          <CircleCrossIcon color="#F44336" width={64} height={64} />
+          <Text className="mt-4 text-center font-lora text-3xl text-primary">
+            Service Unavailable
+          </Text>
+          <Text className="mt-4 text-center text-neutral-600">
+            We're sorry, but our service is not currently available in your
+            area. We'll notify you when we expand to your location.
+          </Text>
+        </View>
+        <Button onPress={handleCompleteSignup} label="Return to Login" />
       </View>
     );
   }
