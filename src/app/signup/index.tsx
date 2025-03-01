@@ -76,7 +76,7 @@ export default function Signup() {
     return (
       <View className="flex-1 items-center justify-center p-6">
         <View className="mb-8 items-center">
-          <CircleTickIcon color="#4CAF50" />
+          <CircleTickIcon color="#4CAF50" width={64} height={64} />
           <Text className="mt-4 text-center font-lora text-3xl text-primary">
             Registration Complete!
           </Text>
