@@ -30,8 +30,8 @@ export const SignupSplash = ({ onSubmit = () => {} }: SignupSplashProps) => {
         </Text>
 
         <Text className="mb-6 mt-2 text-center text-lg text-neutral-600">
-          Welcome to NuSoil, where we help farmers manage their soil for optimal
-          crop growth!
+          Welcome to NuSoil, where we help farmers increase their income and
+          land productivity through smarter soil management!
         </Text>
 
         <FormCard className="p-6">
@@ -48,11 +48,15 @@ export const SignupSplash = ({ onSubmit = () => {} }: SignupSplashProps) => {
           </Text>
 
           <Text className="mb-2 text-neutral-600">
-            • Track soil nutrients and get recommendations
+            • Increase your income with optimized crop yields
+          </Text>
+
+          <Text className="mb-2 text-neutral-600">
+            • Boost land productivity with personalized soil recommendations
           </Text>
 
           <Text className="mb-6 text-neutral-600">
-            • Improve crop yields with personalized soil management
+            • Track soil nutrients and get expert advice
           </Text>
         </FormCard>
 
