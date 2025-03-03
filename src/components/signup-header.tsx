@@ -2,15 +2,14 @@ import { router } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native';
 
-import { SignupProgress } from '@/components/signup-progress';
 import { Button, colors, Text } from '@/components/ui';
 import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
 
 interface SignupHeaderProps {
-  currentStep: 'farmer' | 'farm' | 'nutrient';
+  title?: string;
 }
 
-export function SignupHeader({ currentStep }: SignupHeaderProps) {
+export function SignupHeader({ title = 'Sign Up' }: SignupHeaderProps) {
   const handleBack = () => {
     router.back();
   };
@@ -31,9 +30,8 @@ export function SignupHeader({ currentStep }: SignupHeaderProps) {
         />
       </View>
       <Text className="mb-6 text-center font-lora text-3xl text-primary">
-        Sign Up
+        {title}
       </Text>
-      <SignupProgress currentStep={currentStep} />
     </View>
   );
 }

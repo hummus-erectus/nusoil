@@ -6,9 +6,6 @@ import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Button, FormCard, Text, View } from '@/components/ui';
 import { useSignupStore } from '@/stores/signup-store';
 
-import { SignupProgress } from './signup-progress';
-import { ArrowRightFull as ArrowRightFullIcon } from './ui/icons';
-
 export type SignupSplashProps = {
   onSubmit?: () => void;
 };
@@ -32,49 +29,36 @@ export const SignupSplash = ({ onSubmit = () => {} }: SignupSplashProps) => {
           Sign Up
         </Text>
 
-        <SignupProgress currentStep="intro" />
-
-        <Text className="mt-2 text-center text-neutral-400">
-          Register your NuSoil account{'\n'}in just three steps!
+        <Text className="mb-6 mt-2 text-center text-lg text-neutral-600">
+          Welcome to NuSoil, where we help farmers increase their income and
+          land productivity through smarter soil management!
         </Text>
 
-        <View className="gap-6">
-          <View className="gap-2">
-            <Text className="text-xs text-neutral-400">
-              <Text className="text-xs text-neutral-600">Step 1</Text>/3
-            </Text>
-            <FormCard className="flex-row justify-between">
-              <Text className="font-poppins-semibold text-base text-neutral-600">
-                Farmer
-              </Text>
-              <ArrowRightFullIcon />
-            </FormCard>
-          </View>
+        <FormCard className="p-6">
+          <Text className="mb-4 text-center font-poppins-semibold text-xl text-primary">
+            Quick and Easy Sign Up
+          </Text>
 
-          <View className="gap-2">
-            <Text className="text-xs text-neutral-400">
-              <Text className="text-xs text-neutral-600">Step 2</Text>/3
-            </Text>
-            <FormCard className="flex-row justify-between">
-              <Text className="font-poppins-semibold text-base text-neutral-600">
-                Farm Land
-              </Text>
-              <ArrowRightFullIcon />
-            </FormCard>
-          </View>
+          <Text className="mb-2 text-neutral-600">
+            • Create your account with personal information
+          </Text>
 
-          <View className="gap-2">
-            <Text className="text-xs text-neutral-400">
-              <Text className="text-xs text-neutral-600">Step 3</Text>/3
-            </Text>
-            <FormCard className="flex-row justify-between">
-              <Text className="font-poppins-semibold text-base text-neutral-600">
-                Nutrient
-              </Text>
-              <ArrowRightFullIcon />
-            </FormCard>
-          </View>
-        </View>
+          <Text className="mb-2 text-neutral-600">
+            • Add your land accounts when you're ready
+          </Text>
+
+          <Text className="mb-2 text-neutral-600">
+            • Increase your income with optimized crop yields
+          </Text>
+
+          <Text className="mb-2 text-neutral-600">
+            • Boost land productivity with personalized soil recommendations
+          </Text>
+
+          <Text className="mb-6 text-neutral-600">
+            • Track soil nutrients and get expert advice
+          </Text>
+        </FormCard>
 
         <View className="mt-8">
           <Button onPress={onSubmit} fullWidth={false} label="Get Started!" />

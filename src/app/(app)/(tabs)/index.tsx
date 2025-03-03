@@ -4,13 +4,19 @@ import React, { useEffect } from 'react';
 import { Alert, BackHandler, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
+import { OnboardingModal } from '@/components/onboarding-modal';
 import { Button, colors, FormCard, Text } from '@/components/ui';
 import { Warning as WarningIcon } from '@/components/ui/icons';
 import { type Land, useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
-  const { userName, subscriptionPlan, lands, setSelectedLandId } =
-    useUserStore();
+  const {
+    userName,
+    subscriptionPlan,
+    lands,
+    setSelectedLandId,
+    hasCompletedOnboarding,
+  } = useUserStore();
   const navigation = useNavigation();
 
   const getGreeting = () => {
@@ -175,6 +181,7 @@ const WelcomeScreen = () => {
           )}
         </FormCard>
       </View>
+      {!hasCompletedOnboarding && <OnboardingModal />}
     </KeyboardAwareScrollView>
   );
 };

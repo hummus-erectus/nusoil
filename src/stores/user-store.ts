@@ -72,11 +72,14 @@ interface UserState {
   email: string;
   lands: Land[];
   selectedLandId: string | null;
+  hasCompletedOnboarding: boolean;
 
   // User actions
   setSubscriptionPlan: (plan: SubscriptionPlan) => void;
   setUserName: (name: string) => void;
   setEmail: (email: string) => void;
+  setHasCompletedOnboarding: (value: boolean) => void;
+  resetHasCompletedOnboarding: () => void;
 
   // Land management
   setLands: (lands: Land[]) => void;
@@ -94,18 +97,23 @@ export const useUserStore = create<UserState>((set) => ({
   email: 'emily@anderson.com',
   lands: [],
   selectedLandId: null,
+  hasCompletedOnboarding: false,
 
   // User actions
   setSubscriptionPlan: (plan) => set({ subscriptionPlan: plan }),
   setUserName: (name) => set({ userName: name }),
   setEmail: (email) => set({ email: email }),
+  setHasCompletedOnboarding: (value) => set({ hasCompletedOnboarding: value }),
+  resetHasCompletedOnboarding: () => set({ hasCompletedOnboarding: false }),
 
   // Land management
   setLands: (lands) => set({ lands }),
-  addLand: (land) =>
+  addLand: (land) => {
+    console.log('Land data:', land);
     set((state) => ({
       lands: [...state.lands, land],
-    })),
+    }));
+  },
   updateLand: (id, updates) =>
     set((state) => ({
       lands: state.lands.map((land) =>
