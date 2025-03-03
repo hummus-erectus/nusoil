@@ -5,21 +5,12 @@ import React from 'react';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import {
-  Button,
-  colors,
-  FormCard,
-  Input,
-  Radio,
-  Select,
-  Text,
-} from '@/components/ui';
-import {
-  ArrowLeftFull as ArrowLeftFullIcon,
-  CircleTick as CircleTickIcon,
-} from '@/components/ui/icons';
+import { Button, FormCard, Input, Radio, Select, Text } from '@/components/ui';
+import { CircleTick as CircleTickIcon } from '@/components/ui/icons';
 import { type SoilTest } from '@/stores/user-store';
 import { useUserStore } from '@/stores/user-store';
+
+import { BackButton } from './back-button';
 
 const MONTH_OPTIONS = [
   { label: 'January', value: '1' },
@@ -547,10 +538,6 @@ export default function SoilTestForm({ landId }: { landId: string }) {
   const [testYear, setTestYear] = React.useState('');
   const [frequency, setFrequency] = React.useState('');
 
-  const handleBack = () => {
-    router.back();
-  };
-
   const handleSubmit = () => {
     console.log('handleSubmit called');
     if (!landId) {
@@ -644,17 +631,7 @@ export default function SoilTestForm({ landId }: { landId: string }) {
     >
       <View className="flex-1 gap-6 p-6">
         <View className="-ml-10 self-start">
-          <Button
-            variant="ghost"
-            onPress={handleBack}
-            fullWidth={false}
-            label={
-              <View className="flex-row items-center justify-center">
-                <ArrowLeftFullIcon color={colors.neutral[600]} />
-                <Text className="ml-4 text-neutral-600">Back</Text>
-              </View>
-            }
-          />
+          <BackButton />
         </View>
         <Text className="text-center font-lora text-3xl text-primary">
           Soil Test Details

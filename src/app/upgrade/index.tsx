@@ -1,17 +1,11 @@
 /* eslint-disable max-lines-per-function */
-import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Animated, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, PlanCard, Text } from '@/components/ui';
-import colors from '@/components/ui/colors';
-import {
-  ArrowLeftFull,
-  NutrientPortfolio,
-  Shop,
-  Wallet,
-} from '@/components/ui/icons';
+import { BackButton } from '@/components/back-button';
+import { PlanCard, Text } from '@/components/ui';
+import { NutrientPortfolio, Shop, Wallet } from '@/components/ui/icons';
 import { useUserStore } from '@/stores/user-store';
 
 export default function UpgradeScreen() {
@@ -26,10 +20,6 @@ export default function UpgradeScreen() {
     }).start();
   }, [fadeAnim]);
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <KeyboardAwareScrollView
       className="bg-background"
@@ -41,17 +31,7 @@ export default function UpgradeScreen() {
         style={{ opacity: fadeAnim }}
       >
         <View className="-ml-10 mt-6 self-start">
-          <Button
-            variant="ghost"
-            onPress={handleBack}
-            fullWidth={false}
-            label={
-              <View className="flex-row items-center justify-center">
-                <ArrowLeftFull color={colors.neutral[600]} />
-                <Text className="ml-4 text-neutral-600">Back</Text>
-              </View>
-            }
-          />
+          <BackButton />
         </View>
 
         <Text className="text-center font-lora text-3xl text-primary">

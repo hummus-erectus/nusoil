@@ -3,9 +3,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
+import { BackButton } from '@/components/back-button';
 import {
   Button,
-  colors,
   DateInput,
   FormCard,
   Input,
@@ -14,7 +14,6 @@ import {
   Text,
   View,
 } from '@/components/ui';
-import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
 import { useUserStore } from '@/stores/user-store';
 
 import {
@@ -141,10 +140,6 @@ export default function NutrientsManagement() {
   const { lands } = useUserStore();
   const { landId } = useLocalSearchParams<{ landId?: string }>();
 
-  const handleBack = () => {
-    router.back();
-  };
-
   // Find the selected land from the landId param
   const selectedLand = landId ? lands.find((land) => land.id === landId) : null;
 
@@ -155,17 +150,7 @@ export default function NutrientsManagement() {
     >
       <View className="flex-1 gap-6 p-6">
         <View className="-ml-10 self-start">
-          <Button
-            variant="ghost"
-            onPress={handleBack}
-            fullWidth={false}
-            label={
-              <View className="flex-row items-center justify-center">
-                <ArrowLeftFullIcon color={colors.neutral[600]} />
-                <Text className="ml-4 text-neutral-600">Back</Text>
-              </View>
-            }
-          />
+          <BackButton />
         </View>
         <Text className="text-center font-lora text-3xl text-primary">
           Nutrient Management

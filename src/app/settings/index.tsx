@@ -8,8 +8,15 @@ import { Item } from '@/components/settings/item';
 import { ItemsContainer } from '@/components/settings/items-container';
 import { LanguageItem } from '@/components/settings/language-item';
 import { ThemeItem } from '@/components/settings/theme-item';
-import { colors, ScrollView, Text, View } from '@/components/ui';
-import { Github, Rate, Share, Support, Website } from '@/components/ui/icons';
+import { Button, colors, ScrollView, Text, View } from '@/components/ui';
+import {
+  Github,
+  Logout,
+  Rate,
+  Share,
+  Support,
+  Website,
+} from '@/components/ui/icons';
 import { translate, useAuth } from '@/lib';
 
 export default function Settings() {
@@ -77,11 +84,16 @@ export default function Settings() {
             />
           </ItemsContainer>
 
-          <View className="my-8">
-            <ItemsContainer>
-              <Item text="settings.logout" onPress={handleSignOut} />
-            </ItemsContainer>
-          </View>
+          <Button
+            fullWidth={false}
+            label={
+              <View className="flex-row items-center justify-center">
+                <Logout color="white" />
+                <Text className="ml-4 text-white">Log out</Text>
+              </View>
+            }
+            onPress={handleSignOut}
+          />
         </View>
       </ScrollView>
     </>
