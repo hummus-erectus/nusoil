@@ -24,22 +24,24 @@ export default function Account() {
 
         {/* Account Details */}
         <View className="gap-4">
-          <Text className="font-poppins-bold text-xl text-primary">
+          <Text className="font-poppins-semibold text-xl text-primary">
             Account Details
           </Text>
-          <View className="gap-2">
+          <View className="gap-1">
+            <Text className="font-poppins-semibold text-neutral-600">Name</Text>
+            <Text className="text-neutral-500">{userName}</Text>
+          </View>
+          <View className="gap-1">
             <Text className="font-poppins-semibold text-neutral-600">
-              Name: {userName}
+              Email
             </Text>
-            <Text className="font-poppins-semibold text-neutral-600">
-              Email: {email}
-            </Text>
+            <Text className="text-neutral-500">{email}</Text>
           </View>
         </View>
 
         {/* Your Plan */}
         <View className="gap-4">
-          <Text className="font-poppins-bold text-xl text-primary">
+          <Text className="font-poppins-semibold text-xl text-primary">
             Your Plan
           </Text>
           <View className="gap-2">
