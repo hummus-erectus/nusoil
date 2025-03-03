@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
+import { BackButton } from '@/components/back-button';
 import { Pressable, Text, View } from '@/components/ui';
 import { useUserStore } from '@/stores/user-store';
 
@@ -14,7 +15,10 @@ export default function Account() {
       contentContainerStyle={{ flexGrow: 1 }}
     >
       <View className="flex-1 gap-6 p-6">
-        <Text className="mt-10 text-center font-lora text-3xl text-primary">
+        <View className="-ml-10 self-start">
+          <BackButton />
+        </View>
+        <Text className="text-center font-lora text-3xl text-primary">
           Account
         </Text>
 
