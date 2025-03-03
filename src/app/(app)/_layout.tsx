@@ -76,7 +76,6 @@ function CustomDrawerContent(props: any) {
   const userName = useUserStore((state) => state.userName);
   const email = useUserStore((state) => state.email);
   const lands = useUserStore((state) => state.lands);
-  const setSelectedLandId = useUserStore((state) => state.setSelectedLandId);
   const [isNavigating, setIsNavigating] = useState(false);
   const MAX_DISPLAYED_LANDS = 5;
 
@@ -99,10 +98,12 @@ function CustomDrawerContent(props: any) {
     setIsNavigating(true);
 
     props.navigation.closeDrawer();
-    setSelectedLandId(landId);
 
     requestAnimationFrame(() => {
-      router.push('/(app)/(tabs)/nutrient-portfolio' as any);
+      router.push({
+        pathname: '/(app)/(tabs)/nutrient-portfolio',
+        params: { landId },
+      });
       setTimeout(() => {
         setIsNavigating(false);
       }, 300);

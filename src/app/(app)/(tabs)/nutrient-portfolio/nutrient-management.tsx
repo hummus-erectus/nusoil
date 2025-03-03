@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
@@ -138,11 +138,15 @@ export const LogBookForm: React.FC = () => {
 
 export default function NutrientsManagement() {
   const [seedInputType, setSeedInputType] = React.useState<InputType>(null);
-  const { lands, selectedLandId } = useUserStore();
+  const { lands } = useUserStore();
+  const { landId } = useLocalSearchParams<{ landId?: string }>();
 
   const handleBack = () => {
     router.back();
   };
+
+  // Find the selected land from the landId param
+  const selectedLand = landId ? lands.find((land) => land.id === landId) : null;
 
   return (
     <KeyboardAwareScrollView
@@ -166,11 +170,9 @@ export default function NutrientsManagement() {
         <Text className="text-center font-lora text-3xl text-primary">
           Nutrient Management
         </Text>
-        {selectedLandId && (
+        {selectedLand && (
           <Text className="text-center font-poppins-semibold text-lg text-neutral-600">
-            Managing:{' '}
-            {lands.find((land) => land.id === selectedLandId)
-              ?.farmLocationName || 'Selected Land'}
+            Managing: {selectedLand.farmLocationName || 'Selected Land'}
           </Text>
         )}
         <View>

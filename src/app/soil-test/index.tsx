@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
-import { useRouter } from 'expo-router';
-import React from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
@@ -10,7 +10,11 @@ import { useUserStore } from '@/stores/user-store';
 
 export default function SoilTest() {
   const router = useRouter();
-  const { lands, selectedLandId, setSelectedLandId } = useUserStore();
+  const { lands } = useUserStore();
+  const { landId } = useLocalSearchParams<{ landId?: string }>();
+  const [selectedLandId, setSelectedLandId] = useState<string | null>(
+    landId || null
+  );
 
   const accountOptions =
     lands?.map((land) => ({
@@ -21,6 +25,12 @@ export default function SoilTest() {
   const selectedLand = lands?.find((land) => land.id === selectedLandId);
   const hasSoilTestInProgress =
     selectedLand?.soilTestStatus && selectedLand.soilTestStatus !== 'report';
+
+  useEffect(() => {
+    if (landId) {
+      setSelectedLandId(landId);
+    }
+  }, [landId]);
 
   const handleBack = () => {
     router.back();
@@ -53,6 +63,17 @@ export default function SoilTest() {
     }
   };
 
+  const handleSelectLand = (value: string | number) => {
+    const valueAsString = value.toString();
+    setSelectedLandId(valueAsString);
+
+    // Use router.replace instead of setParams to maintain navigation context
+    router.replace({
+      pathname: '/soil-test',
+      params: { landId: valueAsString },
+    });
+  };
+
   return (
     <KeyboardAwareScrollView
       bottomOffset={62}
@@ -80,7 +101,7 @@ export default function SoilTest() {
           options={accountOptions}
           label="Select Land"
           value={selectedLandId || ''}
-          onSelect={(value) => setSelectedLandId(value.toString())}
+          onSelect={handleSelectLand}
         />
 
         <Button

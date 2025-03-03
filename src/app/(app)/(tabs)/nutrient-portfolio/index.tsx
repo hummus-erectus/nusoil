@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 // import { Linking } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
@@ -13,7 +13,12 @@ import {
 import { type Land, type SoilTest, useUserStore } from '@/stores/user-store';
 
 export default function NutrientPortfolio() {
-  const { lands, selectedLandId, setSelectedLandId } = useUserStore();
+  const { lands } = useUserStore();
+  const { landId } = useLocalSearchParams<{ landId?: string }>();
+  const [selectedLandId, setSelectedLandId] = useState<string | null>(
+    landId || null
+  );
+
   const accountOptions =
     lands?.map((land) => ({
       label: land.farmLocationName || 'Unnamed Land',
@@ -46,7 +51,10 @@ export default function NutrientPortfolio() {
   // };
 
   const handleNutrientManagementClick = () => {
-    router.push('/(app)/(tabs)/nutrient-portfolio/nutrient-management');
+    router.push({
+      pathname: '/(app)/(tabs)/nutrient-portfolio/nutrient-management',
+      params: { landId: selectedLandId },
+    });
   };
 
   const handleOrderSoilTest = () => {
@@ -67,15 +75,24 @@ export default function NutrientPortfolio() {
     }
   };
 
-  const { landId } = useLocalSearchParams<{ landId?: string }>();
-
   useEffect(() => {
     if (landId) {
       setSelectedLandId(landId);
     } else if (lands && lands.length === 1) {
       setSelectedLandId(lands[0].id);
     }
-  }, [landId, setSelectedLandId, lands]);
+  }, [landId, lands]);
+
+  const handleSelectLand = (value: string | number) => {
+    const valueAsString = value.toString();
+    setSelectedLandId(valueAsString);
+
+    // Use router.replace instead of setParams to maintain navigation context
+    router.replace({
+      pathname: '/(app)/(tabs)/nutrient-portfolio',
+      params: { landId: valueAsString },
+    });
+  };
 
   return (
     <>
@@ -104,7 +121,7 @@ export default function NutrientPortfolio() {
                   options={accountOptions}
                   label="Select Account"
                   value={selectedLandId || ''}
-                  onSelect={(value) => setSelectedLandId(value.toString())}
+                  onSelect={handleSelectLand}
                 />
               )}
               {selectedLand && (
