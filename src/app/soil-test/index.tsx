@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, colors, Select, Text } from '@/components/ui';
-import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
+import { BackButton } from '@/components/back-button';
+import { Button, Select, Text } from '@/components/ui';
 import { useUserStore } from '@/stores/user-store';
 
 export default function SoilTest() {
@@ -31,10 +31,6 @@ export default function SoilTest() {
       setSelectedLandId(landId);
     }
   }, [landId]);
-
-  const handleBack = () => {
-    router.back();
-  };
 
   const handleAddSoilTest = () => {
     if (selectedLandId) {
@@ -81,17 +77,7 @@ export default function SoilTest() {
     >
       <View className="flex-1 gap-6 bg-neutral-100 p-6">
         <View className="-ml-10 self-start">
-          <Button
-            variant="ghost"
-            onPress={handleBack}
-            fullWidth={false}
-            label={
-              <View className="flex-row items-center justify-center">
-                <ArrowLeftFullIcon color={colors.neutral[600]} />
-                <Text className="ml-4 text-neutral-600">Back</Text>
-              </View>
-            }
-          />
+          <BackButton />
         </View>
         <Text className="text-center font-lora text-3xl text-primary">
           Soil Test

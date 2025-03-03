@@ -1,15 +1,12 @@
 /* eslint-disable max-lines-per-function */
 import { useRouter } from 'expo-router';
 import * as React from 'react';
-import { Alert, View } from 'react-native';
+import { Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, colors, FormCard, Text } from '@/components/ui';
-import {
-  ArrowLeftFull as ArrowLeftFullIcon,
-  Edit as EditIcon,
-  Trash as TrashIcon,
-} from '@/components/ui/icons';
+import { BackButton } from '@/components/back-button';
+import { Button, FormCard, Text, View } from '@/components/ui';
+import { Edit as EditIcon, Trash as TrashIcon } from '@/components/ui/icons';
 import { useUserStore } from '@/stores/user-store';
 
 export default function LandManagementScreen() {
@@ -46,28 +43,14 @@ export default function LandManagementScreen() {
     );
   };
 
-  const handleBack = () => {
-    navigation.back();
-  };
-
   return (
     <KeyboardAwareScrollView
       bottomOffset={62}
       contentContainerStyle={{ flexGrow: 1 }}
     >
       <View className="flex-1 gap-6 bg-neutral-100 p-6">
-        <View className="-ml-10 self-start">
-          <Button
-            variant="ghost"
-            onPress={handleBack}
-            fullWidth={false}
-            label={
-              <View className="flex-row items-center justify-center">
-                <ArrowLeftFullIcon color={colors.neutral[600]} />
-                <Text className="ml-4 text-neutral-600">Back</Text>
-              </View>
-            }
-          />
+        <View className="-ml-10 mt-6 self-start">
+          <BackButton />
         </View>
         <Text className="text-center font-lora text-3xl text-primary">
           Land Management
