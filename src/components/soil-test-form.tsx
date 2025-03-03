@@ -140,184 +140,201 @@ const ValueBasedForm = ({
 }: {
   soilTestData: SoilTestFormData;
   setSoilTestData: React.Dispatch<React.SetStateAction<SoilTestFormData>>;
-}) => (
-  <FormCard>
-    <View className="gap-4">
-      <Input
-        label="pH Value"
-        value={soilTestData.phValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            phValue: value,
-          }))
-        }
-        placeholder="Enter pH value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="EC Value (dS/m)"
-        value={soilTestData.ecValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            ecValue: value,
-          }))
-        }
-        placeholder="Enter EC value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="OC Value (%)"
-        value={soilTestData.ocValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            ocValue: value,
-          }))
-        }
-        placeholder="Enter OC value"
-        keyboardType="numeric"
-      />
+}) => {
+  // Local state for each input to improve responsiveness
+  const [phValue, setPhValue] = React.useState(soilTestData.phValue || '');
+  const [ecValue, setEcValue] = React.useState(soilTestData.ecValue || '');
+  const [ocValue, setOcValue] = React.useState(soilTestData.ocValue || '');
+  const [nValue, setNValue] = React.useState(soilTestData.nValue || '');
+  const [pValue, setPValue] = React.useState(soilTestData.pValue || '');
+  const [kValue, setKValue] = React.useState(soilTestData.kValue || '');
+  const [znValue, setZnValue] = React.useState(soilTestData.znValue || '');
+  const [bValue, setBValue] = React.useState(soilTestData.bValue || '');
+  const [feValue, setFeValue] = React.useState(soilTestData.feValue || '');
+  const [mnValue, setMnValue] = React.useState(soilTestData.mnValue || '');
+  const [moValue, setMoValue] = React.useState(soilTestData.moValue || '');
+  const [cuValue, setCuValue] = React.useState(soilTestData.cuValue || '');
+  const [clValue, setClValue] = React.useState(soilTestData.clValue || '');
+  const [niValue, setNiValue] = React.useState(soilTestData.niValue || '');
 
-      <Text className="font-lora text-secondary">MACRO Nutrients</Text>
-      <Input
-        label="N Value"
-        value={soilTestData.nValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            nValue: value,
-          }))
-        }
-        placeholder="Enter N value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="P Value"
-        value={soilTestData.pValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            pValue: value,
-          }))
-        }
-        placeholder="Enter P value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="K Value"
-        value={soilTestData.kValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            kValue: value,
-          }))
-        }
-        placeholder="Enter K value"
-        keyboardType="numeric"
-      />
+  // Update parent state when input is complete (on blur)
+  const updateParentState = React.useCallback(() => {
+    setSoilTestData((prev: SoilTestFormData) => ({
+      ...prev,
+      phValue,
+      ecValue,
+      ocValue,
+      nValue,
+      pValue,
+      kValue,
+      znValue,
+      bValue,
+      feValue,
+      mnValue,
+      moValue,
+      cuValue,
+      clValue,
+      niValue,
+    }));
+  }, [
+    phValue,
+    ecValue,
+    ocValue,
+    nValue,
+    pValue,
+    kValue,
+    znValue,
+    bValue,
+    feValue,
+    mnValue,
+    moValue,
+    cuValue,
+    clValue,
+    niValue,
+    setSoilTestData,
+  ]);
 
-      <Text className="font-lora text-secondary">MICRO Nutrients</Text>
-      <Input
-        label="Zn Value"
-        value={soilTestData.znValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            znValue: value,
-          }))
-        }
-        placeholder="Enter Zn value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="B Value"
-        value={soilTestData.bValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            bValue: value,
-          }))
-        }
-        placeholder="Enter B value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="Fe Value"
-        value={soilTestData.feValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            feValue: value,
-          }))
-        }
-        placeholder="Enter Fe value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="Mn Value"
-        value={soilTestData.mnValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            mnValue: value,
-          }))
-        }
-        placeholder="Enter Mn value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="Mo Value"
-        value={soilTestData.moValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            moValue: value,
-          }))
-        }
-        placeholder="Enter Mo value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="Cu Value"
-        value={soilTestData.cuValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            cuValue: value,
-          }))
-        }
-        placeholder="Enter Cu value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="Cl Value"
-        value={soilTestData.clValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            clValue: value,
-          }))
-        }
-        placeholder="Enter Cl value"
-        keyboardType="numeric"
-      />
-      <Input
-        label="Ni Value"
-        value={soilTestData.niValue}
-        onChangeText={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            niValue: value,
-          }))
-        }
-        placeholder="Enter Ni value"
-        keyboardType="numeric"
-      />
-    </View>
-  </FormCard>
-);
+  // Sync local state with parent state when parent state changes
+  React.useEffect(() => {
+    setPhValue(soilTestData.phValue || '');
+    setEcValue(soilTestData.ecValue || '');
+    setOcValue(soilTestData.ocValue || '');
+    setNValue(soilTestData.nValue || '');
+    setPValue(soilTestData.pValue || '');
+    setKValue(soilTestData.kValue || '');
+    setZnValue(soilTestData.znValue || '');
+    setBValue(soilTestData.bValue || '');
+    setFeValue(soilTestData.feValue || '');
+    setMnValue(soilTestData.mnValue || '');
+    setMoValue(soilTestData.moValue || '');
+    setCuValue(soilTestData.cuValue || '');
+    setClValue(soilTestData.clValue || '');
+    setNiValue(soilTestData.niValue || '');
+  }, [soilTestData]);
+
+  return (
+    <FormCard>
+      <View className="gap-4">
+        <Input
+          label="pH Value"
+          value={phValue}
+          onChangeText={setPhValue}
+          onBlur={updateParentState}
+          placeholder="Enter pH value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="EC Value (dS/m)"
+          value={ecValue}
+          onChangeText={setEcValue}
+          onBlur={updateParentState}
+          placeholder="Enter EC value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="OC Value (%)"
+          value={ocValue}
+          onChangeText={setOcValue}
+          onBlur={updateParentState}
+          placeholder="Enter OC value"
+          keyboardType="numeric"
+        />
+
+        <Text className="font-lora text-secondary">MACRO Nutrients</Text>
+        <Input
+          label="N Value"
+          value={nValue}
+          onChangeText={setNValue}
+          onBlur={updateParentState}
+          placeholder="Enter N value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="P Value"
+          value={pValue}
+          onChangeText={setPValue}
+          onBlur={updateParentState}
+          placeholder="Enter P value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="K Value"
+          value={kValue}
+          onChangeText={setKValue}
+          onBlur={updateParentState}
+          placeholder="Enter K value"
+          keyboardType="numeric"
+        />
+
+        <Text className="font-lora text-secondary">MICRO Nutrients</Text>
+        <Input
+          label="Zn Value"
+          value={znValue}
+          onChangeText={setZnValue}
+          onBlur={updateParentState}
+          placeholder="Enter Zn value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="B Value"
+          value={bValue}
+          onChangeText={setBValue}
+          onBlur={updateParentState}
+          placeholder="Enter B value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="Fe Value"
+          value={feValue}
+          onChangeText={setFeValue}
+          onBlur={updateParentState}
+          placeholder="Enter Fe value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="Mn Value"
+          value={mnValue}
+          onChangeText={setMnValue}
+          onBlur={updateParentState}
+          placeholder="Enter Mn value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="Mo Value"
+          value={moValue}
+          onChangeText={setMoValue}
+          onBlur={updateParentState}
+          placeholder="Enter Mo value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="Cu Value"
+          value={cuValue}
+          onChangeText={setCuValue}
+          onBlur={updateParentState}
+          placeholder="Enter Cu value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="Cl Value"
+          value={clValue}
+          onChangeText={setClValue}
+          onBlur={updateParentState}
+          placeholder="Enter Cl value"
+          keyboardType="numeric"
+        />
+        <Input
+          label="Ni Value"
+          value={niValue}
+          onChangeText={setNiValue}
+          onBlur={updateParentState}
+          placeholder="Enter Ni value"
+          keyboardType="numeric"
+        />
+      </View>
+    </FormCard>
+  );
+};
 
 const RangeBasedForm = ({
   soilTestData,
@@ -325,184 +342,197 @@ const RangeBasedForm = ({
 }: {
   soilTestData: SoilTestFormData;
   setSoilTestData: React.Dispatch<React.SetStateAction<SoilTestFormData>>;
-}) => (
-  <FormCard>
-    <View className="gap-4">
-      <Select
-        label="pH Range"
-        value={soilTestData.phRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            phRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.ph}
-        placeholder="Select..."
-      />
-      <Select
-        label="EC Range"
-        value={soilTestData.ecRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            ecRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.ec}
-        placeholder="Select..."
-      />
-      <Select
-        label="OC Range"
-        value={soilTestData.ocRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            ocRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.oc}
-        placeholder="Select..."
-      />
+}) => {
+  // Local state for each select field to improve responsiveness
+  const [phRange, setPhRange] = React.useState(soilTestData.phRange || '');
+  const [ecRange, setEcRange] = React.useState(soilTestData.ecRange || '');
+  const [ocRange, setOcRange] = React.useState(soilTestData.ocRange || '');
+  const [nRange, setNRange] = React.useState(soilTestData.nRange || '');
+  const [pRange, setPRange] = React.useState(soilTestData.pRange || '');
+  const [kRange, setKRange] = React.useState(soilTestData.kRange || '');
+  const [znRange, setZnRange] = React.useState(soilTestData.znRange || '');
+  const [bRange, setBRange] = React.useState(soilTestData.bRange || '');
+  const [feRange, setFeRange] = React.useState(soilTestData.feRange || '');
+  const [mnRange, setMnRange] = React.useState(soilTestData.mnRange || '');
+  const [moRange, setMoRange] = React.useState(soilTestData.moRange || '');
+  const [cuRange, setCuRange] = React.useState(soilTestData.cuRange || '');
+  const [clRange, setClRange] = React.useState(soilTestData.clRange || '');
+  const [niRange, setNiRange] = React.useState(soilTestData.niRange || '');
 
-      <Text className="font-lora text-secondary">MACRO Nutrients</Text>
-      <Select
-        label="N Range"
-        value={soilTestData.nRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            nRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.macro}
-        placeholder="Select..."
-      />
-      <Select
-        label="P Range"
-        value={soilTestData.pRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            pRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.macro}
-        placeholder="Select..."
-      />
-      <Select
-        label="K Range"
-        value={soilTestData.kRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            kRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.macro}
-        placeholder="Select..."
-      />
+  // Update parent state when selection is complete
+  const updateParentState = React.useCallback(() => {
+    setSoilTestData((prev: SoilTestFormData) => ({
+      ...prev,
+      phRange,
+      ecRange,
+      ocRange,
+      nRange,
+      pRange,
+      kRange,
+      znRange,
+      bRange,
+      feRange,
+      mnRange,
+      moRange,
+      cuRange,
+      clRange,
+      niRange,
+    }));
+  }, [
+    phRange,
+    ecRange,
+    ocRange,
+    nRange,
+    pRange,
+    kRange,
+    znRange,
+    bRange,
+    feRange,
+    mnRange,
+    moRange,
+    cuRange,
+    clRange,
+    niRange,
+    setSoilTestData,
+  ]);
 
-      <Text className="font-lora text-secondary">MICRO Nutrients</Text>
-      <Select
-        label="Zn Range"
-        value={soilTestData.znRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            znRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.micro}
-        placeholder="Select..."
-      />
-      <Select
-        label="B Range"
-        value={soilTestData.bRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            bRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.micro}
-        placeholder="Select..."
-      />
-      <Select
-        label="Fe Range"
-        value={soilTestData.feRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            feRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.micro}
-        placeholder="Select..."
-      />
-      <Select
-        label="Mn Range"
-        value={soilTestData.mnRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            mnRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.micro}
-        placeholder="Select..."
-      />
-      <Select
-        label="Mo Range"
-        value={soilTestData.moRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            moRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.micro}
-        placeholder="Select..."
-      />
-      <Select
-        label="Cu Range"
-        value={soilTestData.cuRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            cuRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.micro}
-        placeholder="Select..."
-      />
-      <Select
-        label="Cl Range"
-        value={soilTestData.clRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            clRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.micro}
-        placeholder="Select..."
-      />
-      <Select
-        label="Ni Range"
-        value={soilTestData.niRange}
-        onSelect={(value) =>
-          setSoilTestData((prev: SoilTestFormData) => ({
-            ...prev,
-            niRange: value.toString(),
-          }))
-        }
-        options={SOIL_TEST_RANGES.micro}
-        placeholder="Select..."
-      />
-    </View>
-  </FormCard>
-);
+  // Sync local state with parent state when parent state changes
+  React.useEffect(() => {
+    setPhRange(soilTestData.phRange || '');
+    setEcRange(soilTestData.ecRange || '');
+    setOcRange(soilTestData.ocRange || '');
+    setNRange(soilTestData.nRange || '');
+    setPRange(soilTestData.pRange || '');
+    setKRange(soilTestData.kRange || '');
+    setZnRange(soilTestData.znRange || '');
+    setBRange(soilTestData.bRange || '');
+    setFeRange(soilTestData.feRange || '');
+    setMnRange(soilTestData.mnRange || '');
+    setMoRange(soilTestData.moRange || '');
+    setCuRange(soilTestData.cuRange || '');
+    setClRange(soilTestData.clRange || '');
+    setNiRange(soilTestData.niRange || '');
+  }, [soilTestData]);
+
+  // Helper function to handle select changes
+  const handleSelectChange = (
+    value: string | number,
+    setter: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    setter(value.toString());
+    // We need to update parent state immediately for selects since there's no blur event
+    setTimeout(updateParentState, 0);
+  };
+
+  return (
+    <FormCard>
+      <View className="gap-4">
+        <Select
+          label="pH Range"
+          value={phRange}
+          onSelect={(value) => handleSelectChange(value, setPhRange)}
+          options={SOIL_TEST_RANGES.ph}
+          placeholder="Select..."
+        />
+        <Select
+          label="EC Range"
+          value={ecRange}
+          onSelect={(value) => handleSelectChange(value, setEcRange)}
+          options={SOIL_TEST_RANGES.ec}
+          placeholder="Select..."
+        />
+        <Select
+          label="OC Range"
+          value={ocRange}
+          onSelect={(value) => handleSelectChange(value, setOcRange)}
+          options={SOIL_TEST_RANGES.oc}
+          placeholder="Select..."
+        />
+
+        <Text className="font-lora text-secondary">MACRO Nutrients</Text>
+        <Select
+          label="N Range"
+          value={nRange}
+          onSelect={(value) => handleSelectChange(value, setNRange)}
+          options={SOIL_TEST_RANGES.macro}
+          placeholder="Select..."
+        />
+        <Select
+          label="P Range"
+          value={pRange}
+          onSelect={(value) => handleSelectChange(value, setPRange)}
+          options={SOIL_TEST_RANGES.macro}
+          placeholder="Select..."
+        />
+        <Select
+          label="K Range"
+          value={kRange}
+          onSelect={(value) => handleSelectChange(value, setKRange)}
+          options={SOIL_TEST_RANGES.macro}
+          placeholder="Select..."
+        />
+
+        <Text className="font-lora text-secondary">MICRO Nutrients</Text>
+        <Select
+          label="Zn Range"
+          value={znRange}
+          onSelect={(value) => handleSelectChange(value, setZnRange)}
+          options={SOIL_TEST_RANGES.micro}
+          placeholder="Select..."
+        />
+        <Select
+          label="B Range"
+          value={bRange}
+          onSelect={(value) => handleSelectChange(value, setBRange)}
+          options={SOIL_TEST_RANGES.micro}
+          placeholder="Select..."
+        />
+        <Select
+          label="Fe Range"
+          value={feRange}
+          onSelect={(value) => handleSelectChange(value, setFeRange)}
+          options={SOIL_TEST_RANGES.micro}
+          placeholder="Select..."
+        />
+        <Select
+          label="Mn Range"
+          value={mnRange}
+          onSelect={(value) => handleSelectChange(value, setMnRange)}
+          options={SOIL_TEST_RANGES.micro}
+          placeholder="Select..."
+        />
+        <Select
+          label="Mo Range"
+          value={moRange}
+          onSelect={(value) => handleSelectChange(value, setMoRange)}
+          options={SOIL_TEST_RANGES.micro}
+          placeholder="Select..."
+        />
+        <Select
+          label="Cu Range"
+          value={cuRange}
+          onSelect={(value) => handleSelectChange(value, setCuRange)}
+          options={SOIL_TEST_RANGES.micro}
+          placeholder="Select..."
+        />
+        <Select
+          label="Cl Range"
+          value={clRange}
+          onSelect={(value) => handleSelectChange(value, setClRange)}
+          options={SOIL_TEST_RANGES.micro}
+          placeholder="Select..."
+        />
+        <Select
+          label="Ni Range"
+          value={niRange}
+          onSelect={(value) => handleSelectChange(value, setNiRange)}
+          options={SOIL_TEST_RANGES.micro}
+          placeholder="Select..."
+        />
+      </View>
+    </FormCard>
+  );
+};
 
 export default function SoilTestForm({ landId }: { landId: string }) {
   const { addSoilTest, lands } = useUserStore();
