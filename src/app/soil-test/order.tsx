@@ -4,11 +4,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Modal as RNModal, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
+import { BackButton } from '@/components/back-button';
 import { Button, colors, FocusAwareStatusBar, Text } from '@/components/ui';
-import {
-  ArrowLeftFull as ArrowLeftFullIcon,
-  CircleTick,
-} from '@/components/ui/icons';
+import { CircleTick } from '@/components/ui/icons';
 import { useNotifications } from '@/features/notifications/notifications-context';
 import { useUserStore } from '@/stores/user-store';
 
@@ -78,10 +76,6 @@ export default function SoilTestOrderPage() {
     });
   }, [landId, land, updateLand, addNotification]);
 
-  const handleBack = () => {
-    router.back();
-  };
-
   if (!landId || !land) {
     return (
       <>
@@ -108,17 +102,7 @@ export default function SoilTestOrderPage() {
     >
       <View className="flex-1 gap-6 p-6">
         <View className="-ml-10 self-start">
-          <Button
-            variant="ghost"
-            onPress={handleBack}
-            fullWidth={false}
-            label={
-              <View className="flex-row items-center justify-center">
-                <ArrowLeftFullIcon color={colors.neutral[600]} />
-                <Text className="ml-4 text-neutral-600">Back</Text>
-              </View>
-            }
-          />
+          <BackButton />
         </View>
         <Text className="text-center font-lora text-3xl text-primary">
           Order Soil Test
