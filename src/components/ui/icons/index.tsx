@@ -1,6 +1,7 @@
 export * from './arrow-left-full';
 export * from './arrow-right';
 export * from './arrow-right-full';
+export * from './arrow-square-out';
 export * from './calendar';
 export * from './caret-down';
 export * from './circle-cross';
@@ -15,6 +16,7 @@ export * from './github';
 export * from './hamburger-menu';
 export * from './home';
 export * from './home-fill';
+export * from './info';
 export * from './key';
 export * from './lamp-on';
 export * from './language';
