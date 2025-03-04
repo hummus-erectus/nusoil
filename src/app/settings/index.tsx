@@ -1,6 +1,7 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable react/react-in-jsx-scope */
 import { useRouter } from 'expo-router';
+import { Share } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { BackButton } from '@/components/back-button';
@@ -12,7 +13,7 @@ import {
   NotificationBell,
   Profile,
   Rate,
-  Share,
+  Share as ShareIcon,
   Support,
 } from '@/components/ui/icons';
 import { SettingsItem } from '@/components/ui/settings-item';
@@ -25,6 +26,18 @@ export default function Settings() {
   const handleSignOut = () => {
     signOut();
     router.replace('/login');
+  };
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        // TODO: Update the link
+        message:
+          'Check out NuSoil - The ultimate soil health tracking app! https://nusoil.app',
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
   };
 
   return (
@@ -74,10 +87,10 @@ export default function Settings() {
 
           <View className="rounded-lg bg-neutral-100 dark:bg-neutral-800">
             <SettingsItem
-              icon={Share}
+              icon={ShareIcon}
               title="Share"
               features={['Tell friends about NuSoil']}
-              onPress={() => {}}
+              onPress={handleShare}
             />
             <SettingsItem
               icon={Rate}
