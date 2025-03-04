@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { create } from 'zustand';
 
 export type SubscriptionPlan = 'Seed' | 'Mature' | 'Harvest';
@@ -66,6 +67,14 @@ export interface SoilTest {
   createdAt: string;
 }
 
+export interface NotificationSetting {
+  id: string;
+  title: string;
+  description: string;
+  pushEnabled: boolean;
+  emailEnabled: boolean;
+}
+
 interface UserState {
   subscriptionPlan: SubscriptionPlan;
   userName: string;
@@ -73,6 +82,9 @@ interface UserState {
   lands: Land[];
   selectedLandId: string | null;
   hasCompletedOnboarding: boolean;
+  notificationSettings: NotificationSetting[];
+  pushNotificationsEnabled: boolean;
+  emailNotificationsEnabled: boolean;
 
   // User actions
   setSubscriptionPlan: (plan: SubscriptionPlan) => void;
@@ -80,6 +92,15 @@ interface UserState {
   setEmail: (email: string) => void;
   setHasCompletedOnboarding: (value: boolean) => void;
   resetHasCompletedOnboarding: () => void;
+
+  // Notification settings
+  setPushNotificationsEnabled: (enabled: boolean) => void;
+  setEmailNotificationsEnabled: (enabled: boolean) => void;
+  updateNotificationSetting: (
+    id: string,
+    updates: Partial<NotificationSetting>
+  ) => void;
+  setNotificationSettings: (settings: NotificationSetting[]) => void;
 
   // Land management
   setLands: (lands: Land[]) => void;
@@ -98,6 +119,39 @@ export const useUserStore = create<UserState>((set) => ({
   lands: [],
   selectedLandId: null,
   hasCompletedOnboarding: false,
+  pushNotificationsEnabled: true,
+  emailNotificationsEnabled: true,
+  notificationSettings: [
+    {
+      id: 'applications',
+      title: 'Application Updates',
+      description:
+        'Updates on soil tests, initiatives, financial agreements and more',
+      pushEnabled: true,
+      emailEnabled: true,
+    },
+    {
+      id: 'features',
+      title: 'New Features',
+      description: 'Learn about new app features and improvements',
+      pushEnabled: true,
+      emailEnabled: false,
+    },
+    {
+      id: 'deals',
+      title: 'Special Deals',
+      description: 'Exclusive offers and promotions for NuSoil users',
+      pushEnabled: true,
+      emailEnabled: true,
+    },
+    {
+      id: 'reminders',
+      title: 'Reminders',
+      description: 'Reminders for upcoming tasks and deadlines',
+      pushEnabled: true,
+      emailEnabled: false,
+    },
+  ],
 
   // User actions
   setSubscriptionPlan: (plan) => set({ subscriptionPlan: plan }),
@@ -105,6 +159,20 @@ export const useUserStore = create<UserState>((set) => ({
   setEmail: (email) => set({ email: email }),
   setHasCompletedOnboarding: (value) => set({ hasCompletedOnboarding: value }),
   resetHasCompletedOnboarding: () => set({ hasCompletedOnboarding: false }),
+
+  // Notification settings
+  setPushNotificationsEnabled: (enabled) =>
+    set({ pushNotificationsEnabled: enabled }),
+  setEmailNotificationsEnabled: (enabled) =>
+    set({ emailNotificationsEnabled: enabled }),
+  updateNotificationSetting: (id, updates) =>
+    set((state) => ({
+      notificationSettings: state.notificationSettings.map((setting) =>
+        setting.id === id ? { ...setting, ...updates } : setting
+      ),
+    })),
+  setNotificationSettings: (settings) =>
+    set({ notificationSettings: settings }),
 
   // Land management
   setLands: (lands) => set({ lands }),

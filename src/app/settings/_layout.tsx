@@ -18,6 +18,12 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
+        name="notifications"
+        options={{
+          title: 'Notifications',
+        }}
+      />
+      <Stack.Screen
         name="style"
         options={{
           headerShown: true,

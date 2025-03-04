@@ -13,6 +13,7 @@ import { Button, colors, Text, View } from '@/components/ui';
 import {
   Info,
   Logout,
+  NotificationBell,
   Profile,
   Rate,
   Share,
@@ -58,6 +59,12 @@ export default function Settings() {
             title="About"
             features={['Version', 'Privacy Policy']}
             onPress={() => router.push('/settings/about')}
+          />
+          <SettingsItem
+            icon={NotificationBell}
+            title="Notifications"
+            features={['Push', 'Email']}
+            onPress={() => router.push('/settings/notifications')}
           />
         </View>
         <ItemsContainer title="settings.generale">
