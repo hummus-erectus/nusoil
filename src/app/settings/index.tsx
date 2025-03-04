@@ -1,16 +1,12 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable react/react-in-jsx-scope */
-import { Link, useRouter } from 'expo-router';
-import { useColorScheme } from 'nativewind';
+import { useRouter } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { BackButton } from '@/components/back-button';
-import { Item } from '@/components/settings/item';
-import { ItemsContainer } from '@/components/settings/items-container';
-import { LanguageItem } from '@/components/settings/language-item';
-import { ThemeItem } from '@/components/settings/theme-item';
-import { Button, colors, Text, View } from '@/components/ui';
+import { Button, Text, View } from '@/components/ui';
 import {
+  DeviceMobile,
   Info,
   Logout,
   NotificationBell,
@@ -31,9 +27,6 @@ export default function Settings() {
     router.replace('/login');
   };
 
-  const { colorScheme } = useColorScheme();
-  const iconColor =
-    colorScheme === 'dark' ? colors.neutral[400] : colors.neutral[500];
   return (
     <KeyboardAwareScrollView
       bottomOffset={62}
@@ -55,10 +48,10 @@ export default function Settings() {
             onPress={() => router.push('/settings/account')}
           />
           <SettingsItem
-            icon={Info}
-            title="About"
-            features={['Version', 'Privacy Policy']}
-            onPress={() => router.push('/settings/about')}
+            icon={DeviceMobile}
+            title="App Settings"
+            features={['Language', 'Theme']}
+            onPress={() => router.push('/settings/app-settings')}
           />
           <SettingsItem
             icon={NotificationBell}
@@ -66,32 +59,40 @@ export default function Settings() {
             features={['Push', 'Email']}
             onPress={() => router.push('/settings/notifications')}
           />
+          <SettingsItem
+            icon={Info}
+            title="About"
+            features={['Version', 'Privacy Policy']}
+            onPress={() => router.push('/settings/about')}
+          />
         </View>
-        <ItemsContainer title="settings.generale">
-          <LanguageItem />
-          <ThemeItem />
-          <Link href="/settings/style" asChild>
-            <Item text="settings.style_guide" onPress={() => {}} />
-          </Link>
-        </ItemsContainer>
 
-        <ItemsContainer title="settings.support_us">
-          <Item
-            text="settings.share"
-            icon={<Share color={iconColor} />}
-            onPress={() => {}}
-          />
-          <Item
-            text="settings.rate"
-            icon={<Rate color={iconColor} />}
-            onPress={() => {}}
-          />
-          <Item
-            text="settings.support"
-            icon={<Support color={iconColor} />}
-            onPress={() => {}}
-          />
-        </ItemsContainer>
+        <View className="gap-2">
+          <Text className="font-poppins-semibold text-xl text-primary">
+            Support Us
+          </Text>
+
+          <View className="rounded-lg bg-neutral-100 dark:bg-neutral-800">
+            <SettingsItem
+              icon={Share}
+              title="Share"
+              features={['Tell friends about NuSoil']}
+              onPress={() => {}}
+            />
+            <SettingsItem
+              icon={Rate}
+              title="Rate"
+              features={['Rate us on the app store']}
+              onPress={() => {}}
+            />
+            <SettingsItem
+              icon={Support}
+              title="Support"
+              features={['Contact our support team']}
+              onPress={() => {}}
+            />
+          </View>
+        </View>
 
         <Button
           fullWidth={false}

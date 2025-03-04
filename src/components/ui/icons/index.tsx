@@ -7,6 +7,7 @@ export * from './caret-down';
 export * from './circle-cross';
 export * from './circle-tick';
 export * from './clipboard';
+export * from './device-mobile';
 export * from './edit';
 export * from './enter';
 export * from './eye-closed';

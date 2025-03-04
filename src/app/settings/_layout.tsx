@@ -18,6 +18,12 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
+        name="app-settings"
+        options={{
+          title: 'App Settings',
+        }}
+      />
+      <Stack.Screen
         name="notifications"
         options={{
           title: 'Notifications',
