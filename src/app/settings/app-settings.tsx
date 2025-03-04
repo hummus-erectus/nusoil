@@ -4,8 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { BackButton } from '@/components/back-button';
 import { Item } from '@/components/settings/item';
-import { Select } from '@/components/ui';
-import { Text, View } from '@/components/ui';
+import { Select, Text, View } from '@/components/ui';
 import {
   type ColorSchemeType,
   translate,
