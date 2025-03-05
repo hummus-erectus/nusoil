@@ -1,22 +1,22 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable react/react-in-jsx-scope */
-import { Env } from '@env';
-import { Link, useRouter } from 'expo-router';
-import { useColorScheme } from 'nativewind';
+import { useRouter } from 'expo-router';
+import { Share } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Item } from '@/components/settings/item';
-import { ItemsContainer } from '@/components/settings/items-container';
-import { LanguageItem } from '@/components/settings/language-item';
-import { ThemeItem } from '@/components/settings/theme-item';
-import { Button, colors, ScrollView, Text, View } from '@/components/ui';
+import { BackButton } from '@/components/back-button';
+import { Button, Text, View } from '@/components/ui';
 import {
-  Github,
+  DeviceMobile,
+  Info,
   Logout,
+  NotificationBell,
+  Profile,
   Rate,
-  Share,
+  Share as ShareIcon,
   Support,
-  Website,
 } from '@/components/ui/icons';
+import { SettingsItem } from '@/components/ui/settings-item';
 import { translate, useAuth } from '@/lib';
 
 export default function Settings() {
@@ -28,74 +28,97 @@ export default function Settings() {
     router.replace('/login');
   };
 
-  const { colorScheme } = useColorScheme();
-  const iconColor =
-    colorScheme === 'dark' ? colors.neutral[400] : colors.neutral[500];
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        // TODO: Update the link
+        message:
+          'Check out NuSoil - The ultimate soil health tracking app! https://nusoil.app',
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
   return (
-    <>
-      <ScrollView>
-        <View className="flex-1 px-4 pt-16 ">
-          <Text className="text-xl font-bold">
-            {translate('settings.title')}
-          </Text>
-          <ItemsContainer title="settings.generale">
-            <LanguageItem />
-            <ThemeItem />
-            <Link href="/settings/style" asChild>
-              <Item text="settings.style_guide" onPress={() => {}} />
-            </Link>
-          </ItemsContainer>
+    <KeyboardAwareScrollView
+      bottomOffset={62}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <View className="flex-1 gap-6 p-6">
+        <View className="-ml-10 self-start">
+          <BackButton />
+        </View>
+        <Text className="text-center font-lora text-3xl text-primary">
+          {translate('settings.title')}
+        </Text>
 
-          <ItemsContainer title="settings.about">
-            <Item text="settings.app_name" value={Env.NAME} />
-            <Item text="settings.version" value={Env.VERSION} />
-          </ItemsContainer>
-
-          <ItemsContainer title="settings.support_us">
-            <Item
-              text="settings.share"
-              icon={<Share color={iconColor} />}
-              onPress={() => {}}
-            />
-            <Item
-              text="settings.rate"
-              icon={<Rate color={iconColor} />}
-              onPress={() => {}}
-            />
-            <Item
-              text="settings.support"
-              icon={<Support color={iconColor} />}
-              onPress={() => {}}
-            />
-          </ItemsContainer>
-
-          <ItemsContainer title="settings.links">
-            <Item text="settings.privacy" onPress={() => {}} />
-            <Item text="settings.terms" onPress={() => {}} />
-            <Item
-              text="settings.github"
-              icon={<Github color={iconColor} />}
-              onPress={() => {}}
-            />
-            <Item
-              text="settings.website"
-              icon={<Website color={iconColor} />}
-              onPress={() => {}}
-            />
-          </ItemsContainer>
-
-          <Button
-            fullWidth={false}
-            label={
-              <View className="flex-row items-center justify-center">
-                <Logout color="white" />
-                <Text className="ml-4 text-white">Log out</Text>
-              </View>
-            }
-            onPress={handleSignOut}
+        <View>
+          <SettingsItem
+            icon={Profile}
+            title="Account"
+            features={['User settings', 'Subscription']}
+            onPress={() => router.push('/settings/account')}
+          />
+          <SettingsItem
+            icon={DeviceMobile}
+            title="App Settings"
+            features={['Language', 'Theme']}
+            onPress={() => router.push('/settings/app-settings')}
+          />
+          <SettingsItem
+            icon={NotificationBell}
+            title="Notifications"
+            features={['Push', 'Email']}
+            onPress={() => router.push('/settings/notifications')}
+          />
+          <SettingsItem
+            icon={Info}
+            title="About"
+            features={['Version', 'Privacy Policy']}
+            onPress={() => router.push('/settings/about')}
           />
         </View>
-      </ScrollView>
-    </>
+
+        <View className="gap-2">
+          <Text className="font-poppins-semibold text-xl text-primary">
+            Support Us
+          </Text>
+
+          <View className="rounded-lg bg-neutral-100 dark:bg-neutral-800">
+            <SettingsItem
+              icon={ShareIcon}
+              title="Share"
+              features={['Tell friends about NuSoil']}
+              onPress={handleShare}
+            />
+            {/* TODO: Implement Rate and Support */}
+            <SettingsItem
+              icon={Rate}
+              title="Rate"
+              features={['Rate us on the app store']}
+              onPress={() => {}}
+            />
+            <SettingsItem
+              icon={Support}
+              title="Support"
+              features={['Contact our support team']}
+              onPress={() => {}}
+            />
+          </View>
+        </View>
+
+        <Button
+          fullWidth={false}
+          label={
+            <View className="flex-row items-center justify-center">
+              <Logout color="white" />
+              <Text className="ml-4 text-white">Log out</Text>
+            </View>
+          }
+          onPress={handleSignOut}
+        />
+      </View>
+    </KeyboardAwareScrollView>
   );
 }
