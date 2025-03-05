@@ -92,6 +92,7 @@ export default function Settings() {
               features={['Tell friends about NuSoil']}
               onPress={handleShare}
             />
+            {/* TODO: Implement Rate and Support */}
             <SettingsItem
               icon={Rate}
               title="Rate"
