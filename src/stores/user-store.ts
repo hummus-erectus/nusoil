@@ -1,6 +1,8 @@
 /* eslint-disable max-lines-per-function */
 import { create } from 'zustand';
 
+import { type PolygonCoordinate } from '@/components/polygon-map';
+
 export type SubscriptionPlan = 'Seed' | 'Mature' | 'Harvest';
 export type SoilTestStatus =
   | 'agent'
@@ -36,6 +38,7 @@ export interface Land {
   income: string;
   soilTests?: SoilTest[];
   soilTestStatus?: SoilTestStatus;
+  coordinates?: PolygonCoordinate[];
 }
 
 export interface SoilTest {
@@ -106,6 +109,10 @@ interface UserState {
   setLands: (lands: Land[]) => void;
   addLand: (land: Land) => void;
   updateLand: (id: string, updates: Partial<Land>) => void;
+  updateLandCoordinates: (
+    landId: string,
+    coordinates: PolygonCoordinate[]
+  ) => void;
   addSoilTest: (landId: string, soilTest: SoilTest) => void;
   deleteLand: (id: string) => void;
   setSelectedLandId: (id: string | null) => void;
@@ -188,6 +195,38 @@ export const useUserStore = create<UserState>((set) => ({
         land.id === id ? { ...land, ...updates } : land
       ),
     })),
+  updateLandCoordinates: (landId, coordinates) =>
+    set((state) => {
+      const lands = [...state.lands];
+      const landIndex = lands.findIndex((land) => land.id === landId);
+
+      if (landIndex !== -1) {
+        // Update coordinates
+        lands[landIndex] = {
+          ...lands[landIndex],
+          coordinates,
+        };
+
+        // Update latLong with center point
+        if (coordinates.length > 0) {
+          const sumLat = coordinates.reduce(
+            (sum, coord) => sum + coord.latitude,
+            0
+          );
+          const sumLng = coordinates.reduce(
+            (sum, coord) => sum + coord.longitude,
+            0
+          );
+          const centerLat = sumLat / coordinates.length;
+          const centerLng = sumLng / coordinates.length;
+
+          lands[landIndex].latLong =
+            `${centerLat.toFixed(6)},${centerLng.toFixed(6)}`;
+        }
+      }
+
+      return { lands };
+    }),
   addSoilTest: (landId, soilTest) =>
     set((state) => ({
       lands: state.lands.map((land) =>

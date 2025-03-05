@@ -78,6 +78,7 @@ const client = z.object({
   PACKAGE: z.string(),
   VERSION: z.string(),
   API_URL: z.string().optional(),
+  GOOGLE_MAPS_API_KEY: z.string().optional(),
 });
 
 const buildTime = z.object({
@@ -96,6 +97,7 @@ const _clientEnv = {
   PACKAGE: withEnvSuffix(PACKAGE),
   VERSION: packageJSON.version,
   API_URL: process.env.API_URL,
+  GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
 };
 
 /**

@@ -22,6 +22,7 @@ export * from './key';
 export * from './lamp-on';
 export * from './language';
 export * from './logout';
+export * from './map';
 export * from './notification-bell';
 export * from './nutrient-management';
 export * from './nutrient-portfolio';
