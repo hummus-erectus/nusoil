@@ -111,17 +111,22 @@ const WelcomeScreen = () => {
               <Text className="font-lora text-xl text-primary">
                 Your Land Accounts
               </Text>
-              <Button
-                variant="link"
-                label="Manage"
-                onPress={() => router.push('/land-management')}
-              />
+              {lands?.length > 0 && (
+                <Button
+                  variant="link"
+                  label="Manage"
+                  onPress={() => router.push('/land-management')}
+                />
+              )}
             </View>
 
             {!lands?.length ? (
-              <Text className="font-poppins text-neutral-600">
-                No land accounts registered yet
-              </Text>
+              <View className="flex-row items-center gap-2">
+                <WarningIcon color={colors.danger} width={24} height={24} />
+                <Text className="font-poppins-semibold text-neutral-600">
+                  No land accounts registered yet
+                </Text>
+              </View>
             ) : (
               <View className="gap-4">
                 {lands.slice(0, MAX_VISIBLE_LANDS).map((land) => (
@@ -162,9 +167,16 @@ const WelcomeScreen = () => {
               </View>
             )}
           </View>
+          {!lands?.length && (
+            <Button
+              className="mt-4"
+              label="Add Your First Land Account"
+              onPress={() => router.push('/land-management/add')}
+            />
+          )}
           {needsSoilTesting && (
             <View className="mt-4 flex-row items-center">
-              <WarningIcon color="#FF0000" width={20} height={20} />
+              <WarningIcon color={colors.danger} width={20} height={20} />
               <View className="ml-4 flex-1">
                 <Text className="font-poppins text-neutral-600">
                   Some of your land accounts haven't had soil testing performed
