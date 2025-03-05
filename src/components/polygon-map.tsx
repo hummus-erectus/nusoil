@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import * as Location from 'expo-location';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Dimensions,
@@ -11,11 +11,13 @@ import {
 } from 'react-native';
 import MapView, {
   MAP_TYPES,
+  Marker,
   Polygon,
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
 
 import { colors } from '@/components/ui';
+import { Location as LocationIcon } from '@/components/ui/icons';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -38,18 +40,53 @@ const PolygonMap = ({
   onSave,
   onCancel,
 }: PolygonMapProps) => {
+  const mapRef = useRef<MapView>(null);
   const [region, setRegion] = useState({
-    latitude: 0,
-    longitude: 0,
+    latitude: initialCoordinates?.[0]?.latitude || 0,
+    longitude: initialCoordinates?.[0]?.longitude || 0,
     latitudeDelta: LATITUDE_DELTA,
     longitudeDelta: LONGITUDE_DELTA,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [polygons, setPolygons] = useState<PolygonCoordinate[][]>([]);
-  const [editing, setEditing] = useState<PolygonCoordinate[]>([]);
-  const [trackingEnabled, setTrackingEnabled] = useState(false);
-  const [locationSubscription, setLocationSubscription] =
-    useState<Location.LocationSubscription | null>(null);
+  const [polygonPoints, setPolygonPoints] = useState<PolygonCoordinate[]>(
+    initialCoordinates || []
+  );
+  const [previousPoints, setPreviousPoints] = useState<PolygonCoordinate[][]>(
+    []
+  );
+  const [polygonArea, setPolygonArea] = useState<number | null>(null);
+
+  // Calculate area of polygon in hectares
+  const calculatePolygonArea = useCallback(
+    (coordinates: PolygonCoordinate[]) => {
+      if (coordinates.length < 3) return null;
+
+      // Implementation of the Shoelace formula (Gauss's area formula)
+      let area = 0;
+      for (let i = 0; i < coordinates.length; i++) {
+        const j = (i + 1) % coordinates.length;
+        area += coordinates[i].longitude * coordinates[j].latitude;
+        area -= coordinates[j].longitude * coordinates[i].latitude;
+      }
+      area = Math.abs(area) / 2;
+
+      // Convert to hectares (rough approximation - this depends on latitude)
+      // 1 degree of latitude = ~111km, 1 degree of longitude varies with latitude
+      // At the equator, 1 degree of longitude = ~111km
+      const avgLat =
+        coordinates.reduce((sum, coord) => sum + coord.latitude, 0) /
+        coordinates.length;
+      const latRadians = avgLat * (Math.PI / 180);
+      const lonKmPerDegree = 111.32 * Math.cos(latRadians);
+      const latKmPerDegree = 110.574;
+
+      // Convert square degrees to square km and then to hectares (1 sq km = 100 hectares)
+      const areaInHectares = area * latKmPerDegree * lonKmPerDegree * 100;
+
+      return areaInHectares;
+    },
+    []
+  );
 
   // Initialize with user's location
   useEffect(() => {
@@ -61,6 +98,7 @@ const PolygonMap = ({
             'Permission denied',
             'Location permission is required for this feature'
           );
+          setIsLoading(false);
           return;
         }
 
@@ -69,19 +107,37 @@ const PolygonMap = ({
         });
         const { latitude, longitude } = location.coords;
 
-        setRegion({
-          latitude,
-          longitude,
-          latitudeDelta: LATITUDE_DELTA,
-          longitudeDelta: LONGITUDE_DELTA,
-        });
-
-        // If we have initial coordinates, use those
-        if (initialCoordinates && initialCoordinates.length > 0) {
-          setEditing(initialCoordinates);
+        // Only update region if we don't have initial coordinates
+        if (!initialCoordinates || initialCoordinates.length === 0) {
+          setRegion({
+            latitude,
+            longitude,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
+          });
         } else {
-          // Start with an empty polygon
-          setEditing([]);
+          // Calculate the center of the polygon for the region
+          const sumLat = initialCoordinates.reduce(
+            (sum, coord) => sum + coord.latitude,
+            0
+          );
+          const sumLng = initialCoordinates.reduce(
+            (sum, coord) => sum + coord.longitude,
+            0
+          );
+          const centerLat = sumLat / initialCoordinates.length;
+          const centerLng = sumLng / initialCoordinates.length;
+
+          setRegion({
+            latitude: centerLat,
+            longitude: centerLng,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
+          });
+
+          // Calculate area for initial coordinates
+          const area = calculatePolygonArea(initialCoordinates);
+          setPolygonArea(area);
         }
       } catch (error) {
         console.error('Error getting location:', error);
@@ -90,122 +146,134 @@ const PolygonMap = ({
         setIsLoading(false);
       }
     })();
+  }, [initialCoordinates, calculatePolygonArea]);
 
-    // Cleanup function
-    return () => {
-      if (locationSubscription) {
-        locationSubscription.remove();
-      }
-    };
-  }, [initialCoordinates, locationSubscription]);
+  // Update area when polygon points change
+  useEffect(() => {
+    if (polygonPoints.length >= 3) {
+      const area = calculatePolygonArea(polygonPoints);
+      setPolygonArea(area);
+    } else {
+      setPolygonArea(null);
+    }
+  }, [polygonPoints, calculatePolygonArea]);
 
-  const startTracking = useCallback(async () => {
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(
-          'Permission denied',
-          'Location permission is required for this feature'
-        );
-        return;
-      }
+  const handleMapPress = (e: {
+    nativeEvent: { coordinate: PolygonCoordinate };
+  }) => {
+    const newPoint = e.nativeEvent.coordinate;
+    setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
+    setPolygonPoints((prev) => [...prev, newPoint]);
 
-      // Subscribe to location updates
-      const subscription = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.Highest,
-          distanceInterval: 5, // minimum distance in meters
-          timeInterval: 2000, // minimum time in milliseconds
-        },
-        (location: Location.LocationObject) => {
-          const { latitude, longitude } = location.coords;
+    const updatedPoints = [...polygonPoints, newPoint];
+    console.log(
+      'Polygon Points:',
+      updatedPoints.map(
+        (point, idx) =>
+          `Point ${idx + 1}: ${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}`
+      )
+    );
+  };
 
-          setRegion((prev) => ({
-            ...prev,
-            latitude,
-            longitude,
-          }));
-        }
+  const handleRemovePoint = (index: number) => {
+    setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
+    setPolygonPoints((prev) => prev.filter((_, i) => i !== index));
+
+    const updatedPoints = polygonPoints.filter((_, i) => i !== index);
+    console.log(
+      'Polygon Points after removal:',
+      updatedPoints.map(
+        (point, idx) =>
+          `Point ${idx + 1}: ${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}`
+      )
+    );
+  };
+
+  const handleMarkerDragEnd = (
+    index: number,
+    newCoordinate: PolygonCoordinate
+  ) => {
+    setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
+    setPolygonPoints((prev) =>
+      prev.map((point, i) => (i === index ? newCoordinate : point))
+    );
+
+    const updatedPoints = polygonPoints.map((point, i) =>
+      i === index ? newCoordinate : point
+    );
+    console.log(
+      'Polygon Points after drag:',
+      updatedPoints.map(
+        (point, idx) =>
+          `Point ${idx + 1}: ${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}`
+      )
+    );
+  };
+
+  const handleUndo = () => {
+    if (previousPoints.length > 0) {
+      const lastPoints = previousPoints[previousPoints.length - 1];
+      setPolygonPoints(lastPoints);
+      setPreviousPoints((prev) => prev.slice(0, -1));
+
+      console.log(
+        'Polygon Points after undo:',
+        lastPoints.map(
+          (point, idx) =>
+            `Point ${idx + 1}: ${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}`
+        )
       );
-
-      setLocationSubscription(subscription);
-      setTrackingEnabled(true);
-    } catch (error) {
-      console.error('Error starting tracking:', error);
-      Alert.alert('Error', 'Could not start location tracking');
     }
-  }, []);
+  };
 
-  const stopTracking = useCallback(() => {
-    if (locationSubscription) {
-      locationSubscription.remove();
-      setLocationSubscription(null);
-      setTrackingEnabled(false);
-    }
-  }, [locationSubscription]);
-
-  const addCurrentLocation = useCallback(async () => {
-    try {
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Highest,
-      });
-      const { latitude, longitude } = location.coords;
-
-      setEditing((prev) => [...prev, { latitude, longitude }]);
-    } catch (error) {
-      console.error('Error getting current location:', error);
-      Alert.alert('Error', 'Could not get your current location');
-    }
-  }, []);
-
-  const finish = useCallback(() => {
-    if (editing.length >= 3) {
-      setPolygons((prev) => [...prev, editing]);
-      onSave(editing);
+  const handleSave = () => {
+    if (polygonPoints.length >= 3) {
+      console.log(
+        'Final Polygon Points:',
+        polygonPoints.map(
+          (point, idx) =>
+            `Point ${idx + 1}: ${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}`
+        )
+      );
+      onSave(polygonPoints);
     } else {
       Alert.alert(
         'Invalid Polygon',
         'A polygon must have at least 3 points. Please add more points.'
       );
     }
-  }, [editing, onSave]);
+  };
 
-  const clear = useCallback(() => {
-    setEditing([]);
-  }, []);
+  const handleClear = () => {
+    setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
+    setPolygonPoints([]);
+    setPolygonArea(null);
+    console.log('Polygon cleared');
+  };
 
-  const onMapPress = useCallback(
-    (e: { nativeEvent: { coordinate: PolygonCoordinate } }) => {
-      if (!trackingEnabled) {
-        const coordinate = e.nativeEvent.coordinate;
-        setEditing((prev) => [...prev, coordinate]);
-      }
-    },
-    [trackingEnabled]
-  );
+  const handleGoToCurrentLocation = async () => {
+    try {
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Highest,
+      });
+      const { latitude, longitude } = location.coords;
+
+      mapRef.current?.animateToRegion({
+        latitude,
+        longitude,
+        latitudeDelta: LATITUDE_DELTA / 2,
+        longitudeDelta: LONGITUDE_DELTA / 2,
+      });
+    } catch (error) {
+      console.error('Error getting location:', error);
+      Alert.alert('Error', 'Could not get your current location');
+    }
+  };
 
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Loading map...</Text>
-      </View>
-    );
-  }
-
-  // Add a check for Google Maps API key
-  if (!PROVIDER_GOOGLE) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Google Maps API key is missing</Text>
-        <Text style={styles.errorSubText}>
-          You need to add a Google Maps API key to use this feature.
-        </Text>
-        <TouchableOpacity
-          style={[styles.bubble, styles.button, styles.activeButton]}
-          onPress={onCancel}
-        >
-          <Text style={styles.activeButtonText}>Go Back</Text>
-        </TouchableOpacity>
+        <Text style={styles.loadingText}>Loading map...</Text>
       </View>
     );
   }
@@ -213,78 +281,110 @@ const PolygonMap = ({
   return (
     <View style={styles.container}>
       <MapView
+        ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         mapType={MAP_TYPES.HYBRID}
-        region={region}
-        onPress={onMapPress}
+        initialRegion={region}
+        onPress={handleMapPress}
         onRegionChangeComplete={setRegion}
+        showsUserLocation
+        showsMyLocationButton={false}
       >
-        {editing.length > 0 && (
+        {polygonPoints.length > 0 && (
           <Polygon
-            coordinates={editing}
+            coordinates={polygonPoints}
             strokeColor={colors.primary}
             fillColor="rgba(0, 153, 102, 0.3)"
             strokeWidth={2}
           />
         )}
 
-        {polygons.map((polygon, index) => (
-          <Polygon
-            key={`polygon-${index}`}
-            coordinates={polygon}
-            strokeColor={colors.secondary}
-            fillColor="rgba(255, 102, 0, 0.3)"
-            strokeWidth={2}
-          />
+        {polygonPoints.map((point, index) => (
+          <Marker
+            key={`marker-${index}`}
+            coordinate={point}
+            onPress={() => handleRemovePoint(index)}
+            onDragEnd={(e) =>
+              handleMarkerDragEnd(index, e.nativeEvent.coordinate)
+            }
+            draggable
+            pinColor={colors.primary}
+          >
+            <View style={styles.markerContainer}>
+              <View style={styles.markerNumberContainer}>
+                <Text style={styles.markerNumber}>{index + 1}</Text>
+              </View>
+            </View>
+          </Marker>
         ))}
       </MapView>
 
+      <View style={styles.instructionsContainer}>
+        <Text style={styles.instructionsText}>
+          Tap on the map to add points. Drag markers to adjust. Tap a marker to
+          remove it.
+        </Text>
+        {polygonArea !== null && (
+          <Text style={styles.areaText}>
+            Approximate Area: {polygonArea.toFixed(2)} hectares
+          </Text>
+        )}
+      </View>
+
+      <TouchableOpacity
+        style={styles.locationButton}
+        onPress={handleGoToCurrentLocation}
+      >
+        <LocationIcon color={colors.primary} size={24} />
+      </TouchableOpacity>
+
       <View style={styles.controlsContainer}>
-        <TouchableOpacity style={styles.backButton} onPress={onCancel}>
-          <Text style={styles.buttonText}>Back</Text>
+        <TouchableOpacity
+          style={[styles.button, styles.cancelButton]}
+          onPress={onCancel}
+        >
+          <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>
 
-        <View style={styles.buttonContainer}>
-          {!trackingEnabled ? (
-            <TouchableOpacity
-              onPress={startTracking}
-              style={[styles.bubble, styles.button]}
-            >
-              <Text style={styles.buttonText}>Track Location</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={stopTracking}
-              style={[styles.bubble, styles.button, styles.activeButton]}
-            >
-              <Text style={styles.activeButtonText}>Stop Tracking</Text>
-            </TouchableOpacity>
-          )}
-
-          {trackingEnabled && (
-            <TouchableOpacity
-              onPress={addCurrentLocation}
-              style={[styles.bubble, styles.button]}
-            >
-              <Text style={styles.buttonText}>Add Waypoint</Text>
-            </TouchableOpacity>
-          )}
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              previousPoints.length === 0 && styles.disabledButton,
+            ]}
+            onPress={handleUndo}
+            disabled={previousPoints.length === 0}
+          >
+            <Text style={styles.buttonText}>Undo</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={clear}
-            style={[styles.bubble, styles.button]}
+            style={[
+              styles.button,
+              polygonPoints.length === 0 && styles.disabledButton,
+            ]}
+            onPress={handleClear}
+            disabled={polygonPoints.length === 0}
           >
             <Text style={styles.buttonText}>Clear</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={finish}
-            style={[styles.bubble, styles.button, styles.activeButton]}
-          >
-            <Text style={styles.activeButtonText}>Save</Text>
-          </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={[
+            styles.button,
+            styles.saveButton,
+            polygonPoints.length < 3 && styles.disabledButton,
+          ]}
+          onPress={handleSave}
+          disabled={polygonPoints.length < 3}
+        >
+          <Text style={styles.saveButtonText}>
+            Save{' '}
+            {polygonPoints.length > 0 ? `(${polygonPoints.length} points)` : ''}
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -299,82 +399,127 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
     backgroundColor: colors.neutral[100],
   },
-  errorText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-    color: colors.danger,
-  },
-  errorSubText: {
+  loadingText: {
     fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
     color: colors.neutral[600],
   },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+  instructionsContainer: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    padding: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  instructionsText: {
+    textAlign: 'center',
+    color: colors.neutral[700],
+    fontSize: 14,
+  },
+  areaText: {
+    textAlign: 'center',
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: 5,
+  },
   controlsContainer: {
     position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    gap: 10,
-    paddingHorizontal: 10,
-  },
-  backButton: {
-    position: 'absolute',
-    top: -height + 100,
+    bottom: 30,
     left: 20,
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    right: 20,
+    flexDirection: 'column',
+    gap: 10,
   },
-  bubble: {
-    backgroundColor: 'white',
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+  buttonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
   },
   button: {
-    minWidth: 100,
+    backgroundColor: 'white',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    flex: 1,
   },
-  activeButton: {
+  cancelButton: {
+    backgroundColor: colors.neutral[200],
+  },
+  saveButton: {
     backgroundColor: colors.primary,
   },
-  buttonText: {
-    fontWeight: '600',
-    color: colors.neutral[600],
+  disabledButton: {
+    backgroundColor: colors.neutral[200],
+    opacity: 0.6,
   },
-  activeButtonText: {
+  buttonText: {
+    color: colors.neutral[700],
     fontWeight: '600',
+    fontSize: 16,
+  },
+  cancelButtonText: {
+    color: colors.neutral[700],
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  saveButtonText: {
     color: 'white',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  markerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  markerNumberContainer: {
+    backgroundColor: colors.primary,
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+  markerNumber: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  locationButton: {
+    position: 'absolute',
+    top: 90,
+    right: 20,
+    backgroundColor: 'white',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 
