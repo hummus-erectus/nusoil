@@ -16,6 +16,7 @@ import MapView, {
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
 
+import CustomMarker from '@/components/custom-marker';
 import { colors } from '@/components/ui';
 import { Location as LocationIcon } from '@/components/ui/icons';
 
@@ -158,9 +159,19 @@ const PolygonMap = ({
     }
   }, [polygonPoints, calculatePolygonArea]);
 
+  // Track the current dragging marker index
+  const draggingMarkerIndex = useRef<number | null>(null);
+  // Track the last time we updated the state during dragging
+  const lastDragUpdateTime = useRef<number>(0);
+  // Throttle time in ms (update at most every X ms during drag)
+  const DRAG_THROTTLE = 50;
+
   const handleMapPress = (e: {
     nativeEvent: { coordinate: PolygonCoordinate };
   }) => {
+    // Don't add points if we're currently dragging
+    if (draggingMarkerIndex.current !== null) return;
+
     const newPoint = e.nativeEvent.coordinate;
     setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
     setPolygonPoints((prev) => [...prev, newPoint]);
@@ -175,6 +186,63 @@ const PolygonMap = ({
     );
   };
 
+  const handleMarkerDragStart = (
+    index: number,
+    _coordinate: PolygonCoordinate
+  ) => {
+    // Set the current dragging marker index
+    draggingMarkerIndex.current = index;
+    // Save the current state for undo before starting to drag
+    setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
+  };
+
+  const handleMarkerDrag = (
+    index: number,
+    newCoordinate: PolygonCoordinate
+  ) => {
+    // Only update if this is the marker we started dragging
+    if (draggingMarkerIndex.current !== index) return;
+
+    const now = Date.now();
+    // Throttle updates to prevent too many state changes
+    if (now - lastDragUpdateTime.current > DRAG_THROTTLE) {
+      lastDragUpdateTime.current = now;
+
+      // Create a copy of the current points
+      const newPoints = [...polygonPoints];
+      // Update the specific point
+      newPoints[index] = newCoordinate;
+      // Update state with the new array
+      setPolygonPoints(newPoints);
+    }
+  };
+
+  const handleMarkerDragEnd = (
+    index: number,
+    newCoordinate: PolygonCoordinate
+  ) => {
+    // Only process if this is the marker we started dragging
+    if (draggingMarkerIndex.current !== index) return;
+
+    // Reset the dragging marker index
+    draggingMarkerIndex.current = null;
+
+    // Create a new copy of the points array
+    const newPoints = [...polygonPoints];
+    // Update the specific point with the final position
+    newPoints[index] = newCoordinate;
+    // Update state with the new array
+    setPolygonPoints(newPoints);
+
+    console.log(
+      'Polygon Points after drag:',
+      newPoints.map(
+        (point, idx) =>
+          `Point ${idx + 1}: ${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}`
+      )
+    );
+  };
+
   const handleRemovePoint = (index: number) => {
     setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
     setPolygonPoints((prev) => prev.filter((_, i) => i !== index));
@@ -182,36 +250,6 @@ const PolygonMap = ({
     const updatedPoints = polygonPoints.filter((_, i) => i !== index);
     console.log(
       'Polygon Points after removal:',
-      updatedPoints.map(
-        (point, idx) =>
-          `Point ${idx + 1}: ${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}`
-      )
-    );
-  };
-
-  const handleMarkerDrag = (
-    index: number,
-    newCoordinate: PolygonCoordinate
-  ) => {
-    setPolygonPoints((prev) =>
-      prev.map((point, i) => (i === index ? newCoordinate : point))
-    );
-  };
-
-  const handleMarkerDragEnd = (
-    index: number,
-    newCoordinate: PolygonCoordinate
-  ) => {
-    setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
-    setPolygonPoints((prev) =>
-      prev.map((point, i) => (i === index ? newCoordinate : point))
-    );
-
-    const updatedPoints = polygonPoints.map((point, i) =>
-      i === index ? newCoordinate : point
-    );
-    console.log(
-      'Polygon Points after drag:',
       updatedPoints.map(
         (point, idx) =>
           `Point ${idx + 1}: ${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}`
@@ -326,18 +364,17 @@ const PolygonMap = ({
             key={`marker-${index}`}
             coordinate={point}
             onPress={() => handleRemovePoint(index)}
+            onDragStart={(e) =>
+              handleMarkerDragStart(index, e.nativeEvent.coordinate)
+            }
             onDrag={(e) => handleMarkerDrag(index, e.nativeEvent.coordinate)}
             onDragEnd={(e) =>
               handleMarkerDragEnd(index, e.nativeEvent.coordinate)
             }
             draggable
-            pinColor={colors.primary}
+            anchor={{ x: 0.53, y: 0.08 }}
           >
-            <View style={styles.markerContainer}>
-              <View style={styles.markerNumberContainer}>
-                <Text style={styles.markerNumber}>{index + 1}</Text>
-              </View>
-            </View>
+            <CustomMarker number={index + 1} color={colors.primary} />
           </Marker>
         ))}
       </MapView>
@@ -507,25 +544,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
     fontSize: 16,
-  },
-  markerContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  markerNumberContainer: {
-    backgroundColor: colors.primary,
-    borderRadius: 15,
-    width: 30,
-    height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: 'white',
-  },
-  markerNumber: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
   },
   locationButton: {
     position: 'absolute',
