@@ -189,6 +189,15 @@ const PolygonMap = ({
     );
   };
 
+  const handleMarkerDrag = (
+    index: number,
+    newCoordinate: PolygonCoordinate
+  ) => {
+    setPolygonPoints((prev) =>
+      prev.map((point, i) => (i === index ? newCoordinate : point))
+    );
+  };
+
   const handleMarkerDragEnd = (
     index: number,
     newCoordinate: PolygonCoordinate
@@ -317,6 +326,7 @@ const PolygonMap = ({
             key={`marker-${index}`}
             coordinate={point}
             onPress={() => handleRemovePoint(index)}
+            onDrag={(e) => handleMarkerDrag(index, e.nativeEvent.coordinate)}
             onDragEnd={(e) =>
               handleMarkerDragEnd(index, e.nativeEvent.coordinate)
             }
