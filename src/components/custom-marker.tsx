@@ -1,7 +1,7 @@
 import React from 'react';
 import Svg, { Circle, Path, Text as SvgText } from 'react-native-svg';
 
-import { colors, View } from '@/components/ui';
+import { colors } from '@/components/ui';
 
 interface CustomMarkerProps {
   number: number;
@@ -26,29 +26,27 @@ const CustomMarker = ({
   size = 40,
 }: CustomMarkerProps) => {
   return (
-    <View style={{ width: size * 1.2, height: size * 1.2 }}>
-      <Svg height={size} width={size} viewBox="0 0 256 256">
-        <Path
-          d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.41,134.55a8,8,0,0,0,9.18,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Z"
-          fill={color}
-          transform="translate(0,256) scale(1,-1)"
-        />
-        {/* White circle placed where the original inner cut-out was (now larger) */}
-        <Circle cx="128" cy="154" r="60" fill="white" />
-        {/* Number text centered in the white circle */}
-        <SvgText
-          x="128"
-          y="164"
-          fill={color}
-          fontSize="96"
-          fontWeight="bold"
-          textAnchor="middle"
-          alignmentBaseline="middle"
-        >
-          {number}
-        </SvgText>
-      </Svg>
-    </View>
+    <Svg height={size} width={size} viewBox="0 0 256 256">
+      <Path
+        d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.41,134.55a8,8,0,0,0,9.18,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Z"
+        fill={color}
+        transform="translate(0,256) scale(1,-1)"
+      />
+      {/* White circle placed where the original inner cut-out was (now larger) */}
+      <Circle cx="128" cy="154" r="60" fill="white" />
+      {/* Number text centered in the white circle */}
+      <SvgText
+        x="128"
+        y="164"
+        fill={color}
+        fontSize="96"
+        fontWeight="bold"
+        textAnchor="middle"
+        alignmentBaseline="middle"
+      >
+        {number}
+      </SvgText>
+    </Svg>
   );
 };
 
