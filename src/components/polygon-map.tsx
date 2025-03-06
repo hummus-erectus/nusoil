@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
   },
   locationButton: {
     position: 'absolute',
-    top: 90,
+    top: 110,
     right: 20,
     backgroundColor: 'white',
     width: 44,
