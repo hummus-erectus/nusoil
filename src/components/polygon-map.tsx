@@ -21,7 +21,7 @@ import { Location as LocationIcon } from '@/components/ui/icons';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
-const LATITUDE_DELTA = 0.0922;
+const LATITUDE_DELTA = 0.00922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 export type PolygonCoordinate = {
@@ -88,7 +88,7 @@ const PolygonMap = ({
     []
   );
 
-  // Initialize with user's location
+  // Initialize with user's location only once when component loads
   useEffect(() => {
     (async () => {
       try {
@@ -102,18 +102,18 @@ const PolygonMap = ({
           return;
         }
 
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Highest,
-        });
-        const { latitude, longitude } = location.coords;
-
-        // Only update region if we don't have initial coordinates
+        // Only get location if we don't have initial coordinates
         if (!initialCoordinates || initialCoordinates.length === 0) {
+          const location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Highest,
+          });
+          const { latitude, longitude } = location.coords;
+
           setRegion({
             latitude,
             longitude,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
+            latitudeDelta: LATITUDE_DELTA / 2,
+            longitudeDelta: LONGITUDE_DELTA / 2,
           });
         } else {
           // Calculate the center of the polygon for the region
@@ -251,8 +251,22 @@ const PolygonMap = ({
     console.log('Polygon cleared');
   };
 
+  // Only get the user's location when they click the location button
   const handleGoToCurrentLocation = async () => {
     try {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        const { status: newStatus } =
+          await Location.requestForegroundPermissionsAsync();
+        if (newStatus !== 'granted') {
+          Alert.alert(
+            'Permission denied',
+            'Location permission is required for this feature'
+          );
+          return;
+        }
+      }
+
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Highest,
       });
@@ -288,8 +302,6 @@ const PolygonMap = ({
         initialRegion={region}
         onPress={handleMapPress}
         onRegionChangeComplete={setRegion}
-        showsUserLocation
-        showsMyLocationButton={false}
       >
         {polygonPoints.length > 0 && (
           <Polygon
