@@ -1,22 +1,35 @@
 /* eslint-disable max-lines-per-function */
-import { useFocusEffect, useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, BackHandler, Modal, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  BackHandler,
+  Modal as RNModal,
+  View,
+} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { LandForm } from '@/components/land-form';
-import { type PolygonCoordinate } from '@/components/polygon-map';
 import { Button, colors, Text } from '@/components/ui';
-import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
+import {
+  ArrowLeftFull as ArrowLeftFullIcon,
+  CircleTick,
+} from '@/components/ui/icons';
+import { useNotifications } from '@/features/notifications/notifications-context';
 import { useUserStore } from '@/stores/user-store';
 
 export default function AddLand() {
-  const router = useRouter();
   const { addLand, setHasCompletedOnboarding } = useUserStore();
+  const { addNotification } = useNotifications();
+  const [hasChanges, setHasChanges] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [saveState, setSaveState] = useState<'loading' | 'success'>('loading');
   const [form, setForm] = useState({
     id: `land_${Date.now()}`,
     farmLocationName: '',
     farmCity: '',
+    size: '',
     irrigationType: '',
     latLong: '',
     ownershipType: '',
@@ -37,11 +50,7 @@ export default function AddLand() {
     pestDiseaseCost: '',
     cropYieldAverage: '',
     income: '',
-    coordinates: [] as PolygonCoordinate[],
   });
-  const [hasChanges, setHasChanges] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [saveState, setSaveState] = useState<'loading' | 'success'>('loading');
 
   useEffect(() => {
     const backAction = () => {
@@ -72,42 +81,46 @@ export default function AddLand() {
     );
 
     return () => backHandler.remove();
-  }, [hasChanges, router]);
+  }, [hasChanges]);
 
-  // Listen for updates to coordinates when returning from polygon map screen
-  useFocusEffect(
-    useCallback(() => {
-      // Check if we have land coordinates in the store
-      const { lands } = useUserStore.getState();
-      const land = lands.find((l) => l.id === form.id);
-
-      if (land && land.coordinates && land.coordinates.length > 0) {
-        setForm((prev) => ({
-          ...prev,
-          coordinates: land.coordinates || [],
-          latLong: land.latLong || prev.latLong,
-        }));
-        setHasChanges(true);
-      }
-    }, [form.id])
-  );
-
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
+    // Show loading modal
     setModalVisible(true);
-    setSaveState('loading');
 
-    // Simulate API call
+    // Log the form data
+    console.log('Land management form data:', form);
+
+    // Simulate API call with a timeout
     setTimeout(() => {
-      // Add land to store
-      addLand(form);
+      const newLand = {
+        ...form,
+      };
+      addLand(newLand);
+      setHasChanges(false);
 
-      // Mark onboarding as complete
+      // Mark onboarding as completed
       setHasCompletedOnboarding(true);
 
       // Show success state
       setSaveState('success');
+
+      // Add notification
+      addNotification({
+        title: 'Land Added',
+        message: `Your land account for ${form.farmLocationName} has been successfully added.`,
+        type: 'success',
+        read: false,
+        action: {
+          label: 'Manage Land Accounts',
+          onPress: () => {
+            router.replace({
+              pathname: '/land-management',
+            });
+          },
+        },
+      });
     }, 2000);
-  };
+  }, [form, addLand, addNotification, setHasCompletedOnboarding]);
 
   const handleGoToSoilTestForm = useCallback(() => {
     setModalVisible(false);
@@ -115,14 +128,20 @@ export default function AddLand() {
       pathname: '/soil-test/form',
       params: { landId: form.id },
     });
-  }, [form.id, router]);
+  }, [form.id]);
 
-  const handleGoToLandManagement = useCallback(() => {
+  const handleGoToSoilTestOrder = useCallback(() => {
     setModalVisible(false);
     router.replace({
-      pathname: '/land-management',
+      pathname: '/soil-test/order',
+      params: { landId: form.id },
     });
-  }, [router]);
+  }, [form.id]);
+
+  const handleNotNow = useCallback(() => {
+    setModalVisible(false);
+    router.replace('/');
+  }, []);
 
   const handleBack = () => {
     if (hasChanges) {
@@ -147,99 +166,93 @@ export default function AddLand() {
   };
 
   return (
-    <>
-      <KeyboardAwareScrollView
-        bottomOffset={62}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <View className="flex-1 gap-6 bg-neutral-100 p-6 pb-28">
-          <View className="-ml-10 self-start">
+    <KeyboardAwareScrollView
+      bottomOffset={62}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <View className="flex-1 gap-6 bg-neutral-100 p-6">
+        <View className="-ml-10 self-start">
+          <Button
+            variant="ghost"
+            onPress={handleBack}
+            fullWidth={false}
+            label={
+              <View className="flex-row items-center justify-center">
+                <ArrowLeftFullIcon color={colors.neutral[600]} />
+                <Text className="ml-4 text-neutral-600">Back</Text>
+              </View>
+            }
+          />
+        </View>
+        <Text className="text-center font-lora text-3xl text-primary">
+          Add New Land
+        </Text>
+        <LandForm
+          form={form}
+          onFieldChange={(field, value) => {
+            setForm((prev) => ({ ...prev, [field]: value }));
+            setHasChanges(true);
+          }}
+        />
+        <View className="flex-row gap-2">
+          <View className="flex-1">
             <Button
-              variant="ghost"
-              onPress={handleBack}
-              fullWidth={false}
-              label={
-                <View className="flex-row items-center justify-center">
-                  <ArrowLeftFullIcon color={colors.neutral[600]} />
-                  <Text className="ml-4 text-neutral-600">Back</Text>
-                </View>
-              }
+              variant="secondary"
+              label="Cancel"
+              onPress={() => router.back()}
             />
           </View>
-          <Text className="text-center font-lora text-3xl text-primary">
-            Add Land
-          </Text>
-          <LandForm
-            form={form}
-            onFieldChange={(field, value) => {
-              setForm((prev) => ({ ...prev, [field]: value }));
-              setHasChanges(true);
-            }}
-          />
+          <View className="flex-1">
+            <Button variant="default" label="Save" onPress={handleSave} />
+          </View>
         </View>
-      </KeyboardAwareScrollView>
-      <View className="absolute bottom-6 w-full flex-row items-center justify-center gap-2 px-6">
-        <View className="flex-1">
-          <Button
-            variant="secondary"
-            className="bg-white"
-            label="Cancel"
-            onPress={() => router.back()}
-          />
-        </View>
-        <View className="flex-1">
-          <Button variant="default" label="Save" onPress={handleSave} />
-        </View>
-      </View>
-
-      {/* Success Modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
-      >
-        <View className="flex-1 items-center justify-center bg-black/50">
-          <View className="w-[90%] rounded-xl bg-white p-6">
-            <View className="items-center justify-center">
+        <RNModal visible={modalVisible} transparent={true} animationType="fade">
+          <View className="flex-1 items-center justify-center bg-black/50">
+            <View className="w-4/5 items-center rounded-2xl bg-white p-6 shadow-lg">
               {saveState === 'loading' ? (
-                <View className="py-4">
-                  <Text className="text-center text-lg font-medium">
-                    Saving your land...
+                <View className="items-center gap-4">
+                  <ActivityIndicator size="large" color={colors.primary} />
+                  <Text className="font-poppins text-center text-base text-neutral-600">
+                    Saving your land account...
                   </Text>
                 </View>
               ) : (
-                <View className="gap-6 py-4">
-                  <Text className="text-center text-lg font-medium">
-                    Land Added Successfully!
+                <View className="items-center gap-6">
+                  <View className="rounded-full bg-green-100 p-4">
+                    <CircleTick color={'green'} width={64} height={64} />
+                  </View>
+                  <Text className="text-center font-poppins-semibold text-lg">
+                    Your land account has been successfully added!
                   </Text>
-                  <Text className="text-center text-neutral-600">
-                    Would you like to add a soil test for this land now?
+                  <Text className="font-poppins text-center text-base text-neutral-600">
+                    Would you like to add nutrient information for this land?
                   </Text>
-                  <View className="flex-row gap-4">
-                    <View className="flex-1">
-                      <Button
-                        variant="secondary"
-                        label="Skip"
-                        onPress={handleGoToLandManagement}
-                      />
-                    </View>
-                    <View className="flex-1">
-                      <Button
-                        variant="default"
-                        label="Add Soil Test"
-                        onPress={handleGoToSoilTestForm}
-                      />
-                    </View>
+                  <View className="w-full gap-2">
+                    <Button
+                      fullWidth
+                      variant="default"
+                      label="Order Soil Test"
+                      onPress={handleGoToSoilTestOrder}
+                    />
+                    <Button
+                      fullWidth
+                      variant="secondary"
+                      label="Add Soil Test Results"
+                      onPress={handleGoToSoilTestForm}
+                    />
+                    <Button
+                      fullWidth
+                      variant="ghost"
+                      label="Not Now"
+                      onPress={handleNotNow}
+                    />
                   </View>
                 </View>
               )}
             </View>
           </View>
-        </View>
-      </Modal>
-    </>
+        </RNModal>
+      </View>
+    </KeyboardAwareScrollView>
   );
 }
