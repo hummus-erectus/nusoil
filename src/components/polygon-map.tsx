@@ -247,6 +247,9 @@ const PolygonMap = ({
     setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
     setPolygonPoints((prev) => prev.filter((_, i) => i !== index));
 
+    // Prevent map from centering on removed point
+    mapRef.current?.setNativeProps({ region: region });
+
     const updatedPoints = polygonPoints.filter((_, i) => i !== index);
     console.log(
       'Polygon Points after removal:',
@@ -348,6 +351,15 @@ const PolygonMap = ({
         mapType={MAP_TYPES.HYBRID}
         initialRegion={region}
         onPress={handleMapPress}
+        showsUserLocation={false}
+        showsMyLocationButton={false}
+        showsCompass={false}
+        showsScale={false}
+        showsBuildings={false}
+        showsIndoors={false}
+        showsTraffic={false}
+        showsPointsOfInterest={false}
+        toolbarEnabled={false}
         onRegionChangeComplete={setRegion}
       >
         {polygonPoints.length > 0 && (
