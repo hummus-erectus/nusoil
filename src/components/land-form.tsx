@@ -123,8 +123,24 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             fullWidth={false}
             label={
               <View className="flex-row items-center justify-center">
-                <MapIcon color={colors.primary} />
-                <Text className="ml-2 text-primary">Create Map</Text>
+                <MapIcon
+                  color={
+                    form.coordinates && form.coordinates.length > 0
+                      ? colors.success
+                      : colors.primary
+                  }
+                />
+                <Text
+                  className={`ml-2 ${
+                    form.coordinates && form.coordinates.length > 0
+                      ? 'text-success'
+                      : 'text-primary'
+                  }`}
+                >
+                  {form.coordinates && form.coordinates.length > 0
+                    ? 'Edit Map'
+                    : 'Create Map'}
+                </Text>
               </View>
             }
             onPress={handleOpenPolygonMap}
