@@ -387,6 +387,10 @@ const PolygonMap = ({
     setIsGeolocationMode(false);
   };
 
+  const handleQuitGeolocationMode = () => {
+    setIsGeolocationMode(false);
+  };
+
   const handleCancel = () => {
     onCancel();
   };
@@ -478,7 +482,7 @@ const PolygonMap = ({
             <TouchableOpacity
               style={[
                 styles.button,
-                styles.defaultButton,
+                styles.ghostButton,
                 isFetchingLocation && styles.disabledButton,
               ]}
               onPress={handlePlacePointAtLocation}
@@ -502,6 +506,19 @@ const PolygonMap = ({
                 disabled={isFetchingLocation}
               >
                 <Text style={styles.buttonText}>Finish Geolocation</Text>
+              </TouchableOpacity>
+            )}
+            {polygonPoints.length < 3 && (
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  styles.ghostButton,
+                  isFetchingLocation && styles.disabledButton,
+                ]}
+                onPress={handleQuitGeolocationMode}
+                disabled={isFetchingLocation}
+              >
+                <Text style={styles.buttonText}>Quit Geolocation Mode</Text>
               </TouchableOpacity>
             )}
           </>
