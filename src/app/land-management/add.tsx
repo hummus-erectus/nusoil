@@ -63,7 +63,7 @@ export default function AddLand() {
 
   useEffect(() => {
     const backAction = () => {
-      if (hasChanges) {
+      if (hasChanges || polygonCoordinates.length > 0) {
         Alert.alert(
           'Unsaved Changes',
           'You have unsaved changes. Are you sure you want to go back?',
@@ -90,7 +90,7 @@ export default function AddLand() {
     );
 
     return () => backHandler.remove();
-  }, [hasChanges]);
+  }, [hasChanges, polygonCoordinates.length]);
 
   useEffect(() => {
     return () => {
