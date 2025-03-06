@@ -56,6 +56,9 @@ const PolygonMap = ({
     []
   );
   const [polygonArea, setPolygonArea] = useState<number | null>(null);
+  const [isGeolocationMode, setIsGeolocationMode] = useState(false);
+  const [geolocationStartIndex, setGeolocationStartIndex] = useState(0);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   // Calculate area of polygon in hectares
   const calculatePolygonArea = useCallback(
@@ -261,18 +264,13 @@ const PolygonMap = ({
   };
 
   const handleUndo = () => {
-    if (previousPoints.length > 0) {
+    if (
+      previousPoints.length > 0 &&
+      previousPoints.length > geolocationStartIndex
+    ) {
       const lastPoints = previousPoints[previousPoints.length - 1];
       setPolygonPoints(lastPoints);
       setPreviousPoints((prev) => prev.slice(0, -1));
-
-      console.log(
-        'Polygon Points after undo:',
-        lastPoints.map(
-          (point, idx) =>
-            `Point ${idx + 1}: ${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}`
-        )
-      );
     }
   };
 
@@ -334,6 +332,65 @@ const PolygonMap = ({
     }
   };
 
+  const handleEnableGeolocationMode = async () => {
+    if (polygonPoints.length > 0) {
+      Alert.alert(
+        'Clear Existing Points?',
+        'Enabling geolocation mode will clear your current polygon. Continue?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Clear and Continue',
+            style: 'destructive',
+            onPress: async () => {
+              setPreviousPoints([]);
+              setPolygonPoints([]);
+              setGeolocationStartIndex(0);
+              setIsGeolocationMode(true);
+              await handleGoToCurrentLocation();
+            },
+          },
+        ]
+      );
+    } else {
+      setPreviousPoints([]);
+      setGeolocationStartIndex(0);
+      setIsGeolocationMode(true);
+      await handleGoToCurrentLocation();
+    }
+  };
+
+  const handlePlacePointAtLocation = async () => {
+    setIsFetchingLocation(true);
+    try {
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Highest,
+      });
+      const newPoint = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+      setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
+      setPolygonPoints((prev) => [...prev, newPoint]);
+    } catch (error) {
+      console.error('Error getting location:', error);
+      Alert.alert('Error', 'Could not get your current location');
+    } finally {
+      setIsFetchingLocation(false);
+    }
+  };
+
+  const handleFinishGeolocation = () => {
+    setIsGeolocationMode(false);
+  };
+
+  const handleCancel = () => {
+    onCancel();
+  };
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -350,8 +407,8 @@ const PolygonMap = ({
         style={styles.map}
         mapType={MAP_TYPES.HYBRID}
         initialRegion={region}
-        onPress={handleMapPress}
-        showsUserLocation={false}
+        onPress={!isGeolocationMode ? handleMapPress : undefined}
+        showsUserLocation={isGeolocationMode}
         showsMyLocationButton={false}
         showsCompass={false}
         showsScale={false}
@@ -375,7 +432,11 @@ const PolygonMap = ({
           <Marker
             key={`marker-${index}`}
             coordinate={point}
-            onPress={() => handleRemovePoint(index)}
+            onPress={() => {
+              if (!isFetchingLocation) {
+                handleRemovePoint(index);
+              }
+            }}
             onDragStart={(e) =>
               handleMarkerDragStart(index, e.nativeEvent.coordinate)
             }
@@ -383,7 +444,7 @@ const PolygonMap = ({
             onDragEnd={(e) =>
               handleMarkerDragEnd(index, e.nativeEvent.coordinate)
             }
-            draggable
+            draggable={!isFetchingLocation}
             anchor={{ x: 0.53, y: 0.08 }}
           >
             <CustomMarker number={index + 1} color={colors.primary} />
@@ -393,8 +454,9 @@ const PolygonMap = ({
 
       <View style={styles.instructionsContainer}>
         <Text style={styles.instructionsText}>
-          Tap on the map to add points. Drag markers to adjust. Tap a marker to
-          remove it.
+          {isGeolocationMode
+            ? 'Move around to add points at your location. Hold and drag markers to adjust. Tap markers to remove.'
+            : 'Tap on the map to add points. Hold and drag markers to adjust. Tap a marker to remove it.'}
         </Text>
         {polygonArea !== null && (
           <Text style={styles.areaText}>
@@ -411,50 +473,99 @@ const PolygonMap = ({
       </TouchableOpacity>
 
       <View style={styles.controlsContainer}>
-        <TouchableOpacity
-          style={[styles.button, styles.cancelButton]}
-          onPress={onCancel}
-        >
-          <Text style={styles.cancelButtonText}>Cancel</Text>
-        </TouchableOpacity>
+        {isGeolocationMode ? (
+          <>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.defaultButton,
+                isFetchingLocation && styles.disabledButton,
+              ]}
+              onPress={handlePlacePointAtLocation}
+              disabled={isFetchingLocation}
+            >
+              <Text style={styles.buttonText}>
+                {isFetchingLocation
+                  ? 'Locating...'
+                  : 'Place Point at This Location'}
+              </Text>
+            </TouchableOpacity>
 
-        <View style={styles.buttonGroup}>
+            {polygonPoints.length >= 3 && (
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  styles.successButton,
+                  isFetchingLocation && styles.disabledButton,
+                ]}
+                onPress={handleFinishGeolocation}
+                disabled={isFetchingLocation}
+              >
+                <Text style={styles.buttonText}>Finish Geolocation</Text>
+              </TouchableOpacity>
+            )}
+          </>
+        ) : (
           <TouchableOpacity
             style={[
               styles.button,
-              previousPoints.length === 0 && styles.disabledButton,
+              styles.secondaryButton,
+              isFetchingLocation && styles.disabledButton,
             ]}
-            onPress={handleUndo}
-            disabled={previousPoints.length === 0}
+            onPress={handleEnableGeolocationMode}
+            disabled={isFetchingLocation}
           >
-            <Text style={styles.buttonText}>Undo</Text>
+            <Text style={styles.buttonText}>Use Location Tracking</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.button,
-              polygonPoints.length === 0 && styles.disabledButton,
-            ]}
-            onPress={handleClear}
-            disabled={polygonPoints.length === 0}
-          >
-            <Text style={styles.buttonText}>Clear</Text>
-          </TouchableOpacity>
-        </View>
-
+        )}
         <TouchableOpacity
           style={[
             styles.button,
-            styles.saveButton,
-            polygonPoints.length < 3 && styles.disabledButton,
+            styles.ghostButton,
+            (polygonPoints.length === 0 || isFetchingLocation) &&
+              styles.disabledButton,
+          ]}
+          onPress={handleUndo}
+          disabled={polygonPoints.length === 0 || isFetchingLocation}
+        >
+          <Text style={styles.buttonText}>Undo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            (polygonPoints.length === 0 || isFetchingLocation) &&
+              styles.disabledButton,
+          ]}
+          onPress={handleClear}
+          disabled={polygonPoints.length === 0 || isFetchingLocation}
+        >
+          <Text style={styles.buttonText}>Clear</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            styles.defaultButton,
+            (polygonPoints.length < 3 || isFetchingLocation) &&
+              styles.disabledButton,
           ]}
           onPress={handleSave}
-          disabled={polygonPoints.length < 3}
+          disabled={polygonPoints.length < 3 || isFetchingLocation}
         >
-          <Text style={styles.saveButtonText}>
+          <Text style={styles.buttonText}>
             Save{' '}
             {polygonPoints.length > 0 ? `(${polygonPoints.length} points)` : ''}
           </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            styles.ghostButton,
+            isFetchingLocation && styles.disabledButton,
+          ]}
+          onPress={handleCancel}
+          disabled={isFetchingLocation}
+        >
+          <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -572,6 +683,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  defaultButton: {
+    backgroundColor: colors.neutral[100],
+  },
+  secondaryButton: {
+    backgroundColor: colors.neutral[200],
+  },
+  successButton: {
+    backgroundColor: colors.success,
+  },
+  ghostButton: {
+    backgroundColor: colors.neutral[100],
+    borderColor: colors.neutral[400],
+    borderWidth: 1,
   },
 });
 
