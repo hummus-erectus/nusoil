@@ -248,7 +248,7 @@ const PolygonMap = ({
     setPolygonPoints((prev) => prev.filter((_, i) => i !== index));
 
     // Prevent map from centering on removed point
-    mapRef.current?.setNativeProps({ region: region });
+    mapRef.current?.animateToRegion(region, 0);
 
     const updatedPoints = polygonPoints.filter((_, i) => i !== index);
     console.log(
