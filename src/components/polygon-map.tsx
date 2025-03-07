@@ -523,10 +523,10 @@ const PolygonMap = ({
         {isGeolocationMode ? (
           <>
             <TouchableOpacity
-              style={[styles.button, styles.ghostButton]}
+              style={[styles.button, styles.placeButton]}
               onPress={handlePlacePointAtLocation}
             >
-              <Text style={styles.buttonText}>
+              <Text style={styles.placeButtonText}>
                 Place Point at This Location
               </Text>
             </TouchableOpacity>
@@ -541,7 +541,7 @@ const PolygonMap = ({
             )}
             {polygonPoints.length < 3 && (
               <TouchableOpacity
-                style={[styles.button, styles.ghostButton]}
+                style={[styles.button]}
                 onPress={handleQuitGeolocationMode}
               >
                 <Text style={styles.buttonText}>Quit Geolocation Mode</Text>
@@ -550,7 +550,7 @@ const PolygonMap = ({
           </>
         ) : (
           <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
+            style={[styles.button]}
             onPress={handleEnableGeolocationMode}
           >
             <Text style={styles.buttonText}>Use Location Tracking</Text>
@@ -559,7 +559,6 @@ const PolygonMap = ({
         <TouchableOpacity
           style={[
             styles.button,
-            styles.ghostButton,
             polygonPoints.length === 0 && styles.disabledButton,
           ]}
           onPress={handleUndo}
@@ -591,10 +590,10 @@ const PolygonMap = ({
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, styles.ghostButton]}
+          style={[styles.button, styles.cancelButton]}
           onPress={handleCancel}
         >
-          <Text style={styles.buttonText}>Cancel</Text>
+          <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -679,9 +678,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cancelButton: {
-    backgroundColor: colors.neutral[200],
+    backgroundColor: colors.danger,
+    borderWidth: 0,
   },
-  saveButton: {
+  placeButton: {
     backgroundColor: colors.primary,
   },
   disabledButton: {
@@ -694,11 +694,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   cancelButtonText: {
-    color: colors.neutral[700],
+    color: 'white',
     fontWeight: '600',
     fontSize: 16,
   },
-  saveButtonText: {
+  placeButtonText: {
     color: 'white',
     fontWeight: '600',
     fontSize: 16,
@@ -719,19 +719,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  defaultButton: {
-    backgroundColor: colors.neutral[100],
-  },
-  secondaryButton: {
-    backgroundColor: colors.neutral[200],
-  },
   successButton: {
     backgroundColor: colors.success,
-  },
-  ghostButton: {
-    backgroundColor: colors.neutral[100],
-    borderColor: colors.neutral[400],
-    borderWidth: 1,
   },
 });
 
