@@ -20,6 +20,11 @@ const appIconBadgeConfig: AppIconBadgeConfig = {
   ],
 };
 
+// For development, you can use a placeholder key here
+// For production, you should use a proper API key from Google Cloud Console
+const GOOGLE_MAPS_API_KEY =
+  process.env.GOOGLE_MAPS_API_KEY || Env.GOOGLE_MAPS_API_KEY;
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: Env.NAME,
@@ -39,6 +44,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: Env.BUNDLE_ID,
+    config: {
+      googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+    },
   },
   experiments: {
     typedRoutes: true,
@@ -51,6 +59,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     package: Env.PACKAGE,
     googleServicesFile:
       process.env.GOOGLE_SERVICES_JSON || './google-services.json',
+    config: {
+      googleMaps: {
+        apiKey: GOOGLE_MAPS_API_KEY,
+      },
+    },
   },
   web: {
     favicon: './assets/favicon.png',
@@ -91,6 +104,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     ['app-icon-badge', appIconBadgeConfig],
     ['react-native-edge-to-edge'],
+    [
+      'expo-location',
+      {
+        locationWhenInUsePermission:
+          'Allow $(PRODUCT_NAME) to access your location for mapping your land boundaries.',
+      },
+    ],
   ],
   notification: {
     icon: './assets/icon.png',
@@ -102,5 +122,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     eas: {
       projectId: Env.EAS_PROJECT_ID,
     },
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY, // Make it available to the client code
   },
 });

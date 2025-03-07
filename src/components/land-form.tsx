@@ -1,8 +1,10 @@
 /* eslint-disable max-lines-per-function */
+import { router } from 'expo-router';
 import { View } from 'react-native';
 
+import { type PolygonCoordinate } from '@/components/polygon-map';
 import { Button, colors, FormCard, Input, Select, Text } from '@/components/ui';
-import { Upload as UploadIcon } from '@/components/ui/icons';
+import { Map as MapIcon } from '@/components/ui/icons';
 
 const ownershipOptions = [
   { label: 'Leased Land', value: 'Leased Land' },
@@ -77,11 +79,19 @@ export interface LandFormProps {
     pestDiseaseCost: string;
     cropYieldAverage: string;
     income: string;
+    coordinates?: PolygonCoordinate[];
   };
   onFieldChange: (field: keyof LandFormProps['form'], value: string) => void;
 }
 
 export function LandForm({ form, onFieldChange }: LandFormProps) {
+  const handleOpenPolygonMap = () => {
+    router.push({
+      pathname: '/land-management/polygon-map',
+      params: { landId: form.id },
+    });
+  };
+
   return (
     <View className="gap-4">
       {/* Physical Location */}
@@ -113,11 +123,21 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             fullWidth={false}
             label={
               <View className="flex-row items-center justify-center">
-                <UploadIcon color={colors.primary} />
-                <Text className="ml-2 text-primary">Upload</Text>
+                <MapIcon color={colors.primary} />
+                <Text className="ml-2 text-primary">
+                  {form.coordinates && form.coordinates.length > 0
+                    ? 'Edit Map'
+                    : 'Create Map'}
+                </Text>
               </View>
             }
+            onPress={handleOpenPolygonMap}
           />
+          {form.coordinates && form.coordinates.length > 0 && (
+            <Text className="text-center text-xs text-success">
+              Polygon map created with {form.coordinates.length} points
+            </Text>
+          )}
         </FormCard>
       </View>
 

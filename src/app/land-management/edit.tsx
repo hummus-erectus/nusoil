@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
@@ -52,6 +52,30 @@ export default function EditLand() {
 
     return () => backHandler.remove();
   }, [hasChanges, router]);
+
+  // Listen for updates to coordinates when returning from polygon map screen
+  useFocusEffect(
+    useCallback(() => {
+      if (!id) return;
+
+      // Check if we have land coordinates in the store
+      const { lands } = useUserStore.getState();
+      const land = lands.find((l) => l.id === id);
+
+      if (land && land.coordinates && land.coordinates.length > 0) {
+        setForm((prev) =>
+          prev
+            ? {
+                ...prev,
+                coordinates: land.coordinates || [],
+                latLong: land.latLong || prev.latLong,
+              }
+            : prev
+        );
+        setHasChanges(true);
+      }
+    }, [id])
+  );
 
   const handleSave = () => {
     if (!form) return;
