@@ -22,7 +22,12 @@ export function OnboardingModal() {
   };
 
   return (
-    <Modal visible={true} animationType="slide" transparent={true}>
+    <Modal
+      visible={true}
+      animationType="slide"
+      transparent={true}
+      statusBarTranslucent
+    >
       <KeyboardAwareScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
