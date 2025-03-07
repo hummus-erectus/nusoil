@@ -78,7 +78,8 @@ export default function NutrientPortfolio() {
   useEffect(() => {
     if (landId) {
       setSelectedLandId(landId);
-    } else if (lands && lands.length === 1) {
+    } else if (lands && lands.length > 0) {
+      // If no landId is provided, select the first land from the array
       setSelectedLandId(lands[0].id);
     }
   }, [landId, lands]);
@@ -101,9 +102,11 @@ export default function NutrientPortfolio() {
         contentContainerStyle={{ flexGrow: 1 }}
       >
         <View className="flex-1 gap-6 p-6">
-          <Text className="text-center font-lora text-3xl text-primary">
-            Nutrient Portfolio
-          </Text>
+          {selectedLand && (
+            <Text className="text-center font-lora text-3xl text-primary">
+              {selectedLand.farmLocationName || 'Unnamed Land'}
+            </Text>
+          )}
 
           {lands && lands.length > 0 ? (
             <>
