@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 // import { Linking } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { Button, colors, FormCard, Select, Text, View } from '@/components/ui';
+import { Button, colors, FormCard, Text, View } from '@/components/ui';
 import {
   Plus as PlusIcon,
   Warning as WarningIcon,
@@ -19,11 +19,11 @@ export default function NutrientPortfolio() {
     landId || null
   );
 
-  const accountOptions =
-    lands?.map((land) => ({
-      label: land.farmLocationName || 'Unnamed Land',
-      value: land.id,
-    })) || [];
+  // const accountOptions =
+  //   lands?.map((land) => ({
+  //     label: land.farmLocationName || 'Unnamed Land',
+  //     value: land.id,
+  //   })) || [];
 
   const selectedLand = lands?.find((land) => land.id === selectedLandId);
   const hasSoilTestInProgress =
@@ -84,16 +84,16 @@ export default function NutrientPortfolio() {
     }
   }, [landId, lands]);
 
-  const handleSelectLand = (value: string | number) => {
-    const valueAsString = value.toString();
-    setSelectedLandId(valueAsString);
+  // const handleSelectLand = (value: string | number) => {
+  //   const valueAsString = value.toString();
+  //   setSelectedLandId(valueAsString);
 
-    // Use router.replace instead of setParams to maintain navigation context
-    router.replace({
-      pathname: '/(app)/(tabs)/nutrient-portfolio',
-      params: { landId: valueAsString },
-    });
-  };
+  //   // Use router.replace instead of setParams to maintain navigation context
+  //   router.replace({
+  //     pathname: '/(app)/(tabs)/nutrient-portfolio',
+  //     params: { landId: valueAsString },
+  //   });
+  // };
 
   return (
     <>
@@ -110,7 +110,7 @@ export default function NutrientPortfolio() {
 
           {lands && lands.length > 0 ? (
             <>
-              {lands.length === 1 ? (
+              {/* {lands.length === 1 ? (
                 <View className="gap-2">
                   <Text className="font-poppins-semibold text-lg text-primary">
                     Account
@@ -126,10 +126,10 @@ export default function NutrientPortfolio() {
                   value={selectedLandId || ''}
                   onSelect={handleSelectLand}
                 />
-              )}
+              )} */}
               {selectedLand && (
                 <>
-                  <FormCard>
+                  {/* <FormCard>
                     <View className="gap-2">
                       <Text className="font-poppins-semibold text-lg">
                         Land Location
@@ -140,19 +140,10 @@ export default function NutrientPortfolio() {
                           <Text className="font-poppins-light text-sm">
                             {selectedLand.farmCity}
                           </Text>
-                          {/* TODO: Add actual coordinates to land data model */}
-                          {/* <Text
-                        className="text-right text-primary underline"
-                        onPress={() =>
-                          openInMaps(location.latitude, location.longitude)
-                        }
-                      >
-                        Open in Maps
-                      </Text> */}
                         </>
                       )}
                     </View>
-                  </FormCard>
+                  </FormCard> */}
 
                   {latestSoilTest ? (
                     <View className="gap-4 pb-20">
@@ -337,7 +328,7 @@ export default function NutrientPortfolio() {
               )}
             </>
           ) : (
-            <View className="items-center gap-4">
+            <View className="flex-1 items-center justify-center gap-4">
               <Text className="text-center">
                 No land accounts found. Please add a land account to view its
                 nutrient portfolio.
