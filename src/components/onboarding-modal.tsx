@@ -13,8 +13,9 @@ export function OnboardingModal() {
   const { setHasCompletedOnboarding } = useUserStore();
 
   const handleAddLand = () => {
-    setHasCompletedOnboarding(true);
-    router.push('/land-management/add');
+    router.replace('/land-management/add');
+    // Avoid showing user the main index screen
+    setTimeout(() => setHasCompletedOnboarding(true), 0);
   };
 
   const handleSkip = () => {
@@ -22,7 +23,12 @@ export function OnboardingModal() {
   };
 
   return (
-    <Modal visible={true} animationType="slide" transparent={true}>
+    <Modal
+      visible={true}
+      animationType="fade"
+      transparent={true}
+      statusBarTranslucent
+    >
       <KeyboardAwareScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
