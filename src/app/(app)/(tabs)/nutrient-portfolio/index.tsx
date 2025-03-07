@@ -91,14 +91,8 @@ export default function NutrientPortfolio() {
   }, [landId, lands]);
 
   const handleSelectLand = (value: string) => {
-    setSelectedLandId(value);
     landSwitchModal.dismiss();
-
-    // Use router.replace instead of setParams to maintain navigation context
-    router.replace({
-      pathname: '/(app)/(tabs)/nutrient-portfolio',
-      params: { landId: value },
-    });
+    setSelectedLandId(value);
   };
 
   return (
