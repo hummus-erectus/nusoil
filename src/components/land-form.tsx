@@ -123,20 +123,8 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             fullWidth={false}
             label={
               <View className="flex-row items-center justify-center">
-                <MapIcon
-                  color={
-                    form.coordinates && form.coordinates.length > 0
-                      ? colors.success
-                      : colors.primary
-                  }
-                />
-                <Text
-                  className={`ml-2 ${
-                    form.coordinates && form.coordinates.length > 0
-                      ? 'text-success'
-                      : 'text-primary'
-                  }`}
-                >
+                <MapIcon color={colors.primary} />
+                <Text className="ml-2 text-primary">
                   {form.coordinates && form.coordinates.length > 0
                     ? 'Edit Map'
                     : 'Create Map'}
@@ -146,7 +134,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             onPress={handleOpenPolygonMap}
           />
           {form.coordinates && form.coordinates.length > 0 && (
-            <Text className="text-xs text-green-600">
+            <Text className="text-center text-xs text-success">
               Polygon map created with {form.coordinates.length} points
             </Text>
           )}
