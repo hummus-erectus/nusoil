@@ -58,7 +58,6 @@ const PolygonMap = ({
   const [polygonArea, setPolygonArea] = useState<number | null>(null);
   const [isGeolocationMode, setIsGeolocationMode] = useState(false);
   const [geolocationStartIndex, setGeolocationStartIndex] = useState(0);
-  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   // New state for GPS signal status: "Acquiring GPS", "GPS signal acquired", "No GPS signal"
   const [gpsSignalStatus, setGpsSignalStatus] = useState('Acquiring GPS');
   // Ref to track the timestamp of the last location update
@@ -472,9 +471,7 @@ const PolygonMap = ({
             key={`marker-${index}`}
             coordinate={point}
             onPress={() => {
-              if (!isFetchingLocation) {
-                handleRemovePoint(index);
-              }
+              handleRemovePoint(index);
             }}
             onDragStart={(e) =>
               handleMarkerDragStart(index, e.nativeEvent.coordinate)
@@ -483,7 +480,7 @@ const PolygonMap = ({
             onDragEnd={(e) =>
               handleMarkerDragEnd(index, e.nativeEvent.coordinate)
             }
-            draggable={!isFetchingLocation}
+            draggable
             anchor={{ x: 0.53, y: 0.08 }}
           >
             <CustomMarker number={index + 1} color={colors.primary} />
@@ -526,43 +523,26 @@ const PolygonMap = ({
         {isGeolocationMode ? (
           <>
             <TouchableOpacity
-              style={[
-                styles.button,
-                styles.ghostButton,
-                isFetchingLocation && styles.disabledButton,
-              ]}
+              style={[styles.button, styles.ghostButton]}
               onPress={handlePlacePointAtLocation}
-              disabled={isFetchingLocation}
             >
               <Text style={styles.buttonText}>
-                {isFetchingLocation
-                  ? 'Locating...'
-                  : 'Place Point at This Location'}
+                Place Point at This Location
               </Text>
             </TouchableOpacity>
 
             {polygonPoints.length >= 3 && (
               <TouchableOpacity
-                style={[
-                  styles.button,
-                  styles.successButton,
-                  isFetchingLocation && styles.disabledButton,
-                ]}
+                style={[styles.button, styles.successButton]}
                 onPress={handleFinishGeolocation}
-                disabled={isFetchingLocation}
               >
                 <Text style={styles.buttonText}>Finish Geolocation</Text>
               </TouchableOpacity>
             )}
             {polygonPoints.length < 3 && (
               <TouchableOpacity
-                style={[
-                  styles.button,
-                  styles.ghostButton,
-                  isFetchingLocation && styles.disabledButton,
-                ]}
+                style={[styles.button, styles.ghostButton]}
                 onPress={handleQuitGeolocationMode}
-                disabled={isFetchingLocation}
               >
                 <Text style={styles.buttonText}>Quit Geolocation Mode</Text>
               </TouchableOpacity>
@@ -570,13 +550,8 @@ const PolygonMap = ({
           </>
         ) : (
           <TouchableOpacity
-            style={[
-              styles.button,
-              styles.secondaryButton,
-              isFetchingLocation && styles.disabledButton,
-            ]}
+            style={[styles.button, styles.secondaryButton]}
             onPress={handleEnableGeolocationMode}
-            disabled={isFetchingLocation}
           >
             <Text style={styles.buttonText}>Use Location Tracking</Text>
           </TouchableOpacity>
@@ -585,34 +560,30 @@ const PolygonMap = ({
           style={[
             styles.button,
             styles.ghostButton,
-            (polygonPoints.length === 0 || isFetchingLocation) &&
-              styles.disabledButton,
+            polygonPoints.length === 0 && styles.disabledButton,
           ]}
           onPress={handleUndo}
-          disabled={polygonPoints.length === 0 || isFetchingLocation}
+          disabled={polygonPoints.length === 0}
         >
           <Text style={styles.buttonText}>Undo</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.button,
-            (polygonPoints.length === 0 || isFetchingLocation) &&
-              styles.disabledButton,
+            polygonPoints.length === 0 && styles.disabledButton,
           ]}
           onPress={handleClear}
-          disabled={polygonPoints.length === 0 || isFetchingLocation}
+          disabled={polygonPoints.length === 0}
         >
           <Text style={styles.buttonText}>Clear</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.button,
-            styles.defaultButton,
-            (polygonPoints.length < 3 || isFetchingLocation) &&
-              styles.disabledButton,
+            polygonPoints.length < 3 && styles.disabledButton,
           ]}
           onPress={handleSave}
-          disabled={polygonPoints.length < 3 || isFetchingLocation}
+          disabled={polygonPoints.length < 3}
         >
           <Text style={styles.buttonText}>
             Save{' '}
@@ -620,13 +591,8 @@ const PolygonMap = ({
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[
-            styles.button,
-            styles.ghostButton,
-            isFetchingLocation && styles.disabledButton,
-          ]}
+          style={[styles.button, styles.ghostButton]}
           onPress={handleCancel}
-          disabled={isFetchingLocation}
         >
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
