@@ -59,6 +59,13 @@ const PolygonMap = ({
   const [isGeolocationMode, setIsGeolocationMode] = useState(false);
   const [geolocationStartIndex, setGeolocationStartIndex] = useState(0);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  // New state for GPS signal status: "Acquiring GPS", "GPS signal acquired", "No GPS signal"
+  const [gpsSignalStatus, setGpsSignalStatus] = useState('Acquiring GPS');
+  // Ref to track the timestamp of the last location update
+  const lastGpsUpdateRef = useRef(Date.now());
+  // New state to store the latest acquired coordinates
+  const [latestLocation, setLatestLocation] =
+    useState<PolygonCoordinate | null>(null);
 
   // Calculate area of polygon in hectares
   const calculatePolygonArea = useCallback(
@@ -75,8 +82,6 @@ const PolygonMap = ({
       area = Math.abs(area) / 2;
 
       // Convert to hectares (rough approximation - this depends on latitude)
-      // 1 degree of latitude = ~111km, 1 degree of longitude varies with latitude
-      // At the equator, 1 degree of longitude = ~111km
       const avgLat =
         coordinates.reduce((sum, coord) => sum + coord.latitude, 0) /
         coordinates.length;
@@ -162,6 +167,59 @@ const PolygonMap = ({
     }
   }, [polygonPoints, calculatePolygonArea]);
 
+  // --- GPS Signal Monitoring Setup ---
+  // When in geolocation mode, start watching location updates.
+  useEffect(() => {
+    let subscription: Location.LocationSubscription | null = null;
+
+    if (isGeolocationMode) {
+      // Set initial status to "Acquiring GPS"
+      setGpsSignalStatus('Acquiring GPS');
+
+      (async () => {
+        subscription = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.Highest,
+            timeInterval: 1000,
+            distanceInterval: 1,
+          },
+          (_location) => {
+            // Update the last update timestamp
+            lastGpsUpdateRef.current = Date.now();
+            // When a location is received, update the status and store the coordinates
+            setGpsSignalStatus('GPS signal acquired');
+            setLatestLocation({
+              latitude: _location.coords.latitude,
+              longitude: _location.coords.longitude,
+            });
+            // (Optional) you can update the region or do other actions here.
+          }
+        );
+      })();
+    }
+
+    // Clean up subscription when geolocation mode is turned off or component unmounts
+    return () => {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
+  }, [isGeolocationMode]);
+
+  // Check periodically if the GPS signal seems lost
+  useEffect(() => {
+    if (isGeolocationMode) {
+      const intervalId = setInterval(() => {
+        // If more than 5 seconds have passed since the last update, assume no GPS signal.
+        if (Date.now() - lastGpsUpdateRef.current > 5000) {
+          setGpsSignalStatus('No GPS signal');
+        }
+      }, 1000);
+      return () => clearInterval(intervalId);
+    }
+  }, [isGeolocationMode]);
+  // --- End GPS Signal Monitoring Setup ---
+
   // Track the current dragging marker index
   const draggingMarkerIndex = useRef<number | null>(null);
   // Track the last time we updated the state during dragging
@@ -193,9 +251,7 @@ const PolygonMap = ({
     index: number,
     _coordinate: PolygonCoordinate
   ) => {
-    // Set the current dragging marker index
     draggingMarkerIndex.current = index;
-    // Save the current state for undo before starting to drag
     setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
   };
 
@@ -203,19 +259,13 @@ const PolygonMap = ({
     index: number,
     newCoordinate: PolygonCoordinate
   ) => {
-    // Only update if this is the marker we started dragging
     if (draggingMarkerIndex.current !== index) return;
 
     const now = Date.now();
-    // Throttle updates to prevent too many state changes
     if (now - lastDragUpdateTime.current > DRAG_THROTTLE) {
       lastDragUpdateTime.current = now;
-
-      // Create a copy of the current points
       const newPoints = [...polygonPoints];
-      // Update the specific point
       newPoints[index] = newCoordinate;
-      // Update state with the new array
       setPolygonPoints(newPoints);
     }
   };
@@ -224,17 +274,10 @@ const PolygonMap = ({
     index: number,
     newCoordinate: PolygonCoordinate
   ) => {
-    // Only process if this is the marker we started dragging
     if (draggingMarkerIndex.current !== index) return;
-
-    // Reset the dragging marker index
     draggingMarkerIndex.current = null;
-
-    // Create a new copy of the points array
     const newPoints = [...polygonPoints];
-    // Update the specific point with the final position
     newPoints[index] = newCoordinate;
-    // Update state with the new array
     setPolygonPoints(newPoints);
 
     console.log(
@@ -299,7 +342,6 @@ const PolygonMap = ({
     console.log('Polygon cleared');
   };
 
-  // Only get the user's location when they click the location button
   const handleGoToCurrentLocation = async () => {
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
@@ -363,24 +405,17 @@ const PolygonMap = ({
     }
   };
 
-  const handlePlacePointAtLocation = async () => {
-    setIsFetchingLocation(true);
-    try {
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Highest,
-      });
-      const newPoint = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-      setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
-      setPolygonPoints((prev) => [...prev, newPoint]);
-    } catch (error) {
-      console.error('Error getting location:', error);
-      Alert.alert('Error', 'Could not get your current location');
-    } finally {
-      setIsFetchingLocation(false);
+  // Updated handler: Use the last acquired coordinates instead of waiting for a new fix
+  const handlePlacePointAtLocation = () => {
+    if (!latestLocation) {
+      Alert.alert(
+        'No location data available',
+        'Please wait until a GPS signal is acquired.'
+      );
+      return;
     }
+    setPreviousPoints((prev) => [...prev, [...polygonPoints]]);
+    setPolygonPoints((prev) => [...prev, latestLocation]);
   };
 
   const handleFinishGeolocation = () => {
@@ -462,6 +497,17 @@ const PolygonMap = ({
             ? 'Move around to add points at your location. Hold and drag markers to adjust. Tap markers to remove.'
             : 'Tap on the map to add points. Hold and drag markers to adjust. Tap a marker to remove it.'}
         </Text>
+        {/* Display the GPS signal indicator when in geolocation mode */}
+        {isGeolocationMode && (
+          <Text
+            style={[
+              styles.gpsStatusText,
+              { color: gpsSignalStatus === 'No GPS signal' ? 'red' : 'green' },
+            ]}
+          >
+            {gpsSignalStatus}
+          </Text>
+        )}
         {polygonArea !== null && (
           <Text style={styles.areaText}>
             Approximate Area: {polygonArea.toFixed(2)} hectares
@@ -625,6 +671,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: colors.neutral[700],
     fontSize: 14,
+  },
+  gpsStatusText: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 5,
   },
   areaText: {
     textAlign: 'center',
