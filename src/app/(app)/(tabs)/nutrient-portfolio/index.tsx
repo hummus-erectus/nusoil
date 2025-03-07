@@ -3,13 +3,18 @@ import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 // import { Linking } from 'react-native';
+import { Pressable } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import Svg, { Path } from 'react-native-svg';
 
 import { Button, colors, FormCard, Text, View } from '@/components/ui';
 import {
+  CaretDown as CaretDownIcon,
   Plus as PlusIcon,
   Warning as WarningIcon,
 } from '@/components/ui/icons';
+import { Modal, useModal } from '@/components/ui/modal';
 import { type Land, type SoilTest, useUserStore } from '@/stores/user-store';
 
 export default function NutrientPortfolio() {
@@ -18,12 +23,13 @@ export default function NutrientPortfolio() {
   const [selectedLandId, setSelectedLandId] = useState<string | null>(
     landId || null
   );
+  const landSwitchModal = useModal();
 
-  // const accountOptions =
-  //   lands?.map((land) => ({
-  //     label: land.farmLocationName || 'Unnamed Land',
-  //     value: land.id,
-  //   })) || [];
+  const accountOptions =
+    lands?.map((land) => ({
+      label: land.farmLocationName || 'Unnamed Land',
+      value: land.id,
+    })) || [];
 
   const selectedLand = lands?.find((land) => land.id === selectedLandId);
   const hasSoilTestInProgress =
@@ -84,16 +90,16 @@ export default function NutrientPortfolio() {
     }
   }, [landId, lands]);
 
-  // const handleSelectLand = (value: string | number) => {
-  //   const valueAsString = value.toString();
-  //   setSelectedLandId(valueAsString);
+  const handleSelectLand = (value: string) => {
+    setSelectedLandId(value);
+    landSwitchModal.dismiss();
 
-  //   // Use router.replace instead of setParams to maintain navigation context
-  //   router.replace({
-  //     pathname: '/(app)/(tabs)/nutrient-portfolio',
-  //     params: { landId: valueAsString },
-  //   });
-  // };
+    // Use router.replace instead of setParams to maintain navigation context
+    router.replace({
+      pathname: '/(app)/(tabs)/nutrient-portfolio',
+      params: { landId: value },
+    });
+  };
 
   return (
     <>
@@ -103,30 +109,26 @@ export default function NutrientPortfolio() {
       >
         <View className="flex-1 gap-6 p-6">
           {selectedLand && (
-            <Text className="text-center font-lora text-3xl text-primary">
-              {selectedLand.farmLocationName || 'Unnamed Land'}
-            </Text>
+            <View className="items-center">
+              <Text className="text-center font-lora text-3xl text-primary">
+                {selectedLand.farmLocationName || 'Unnamed Land'}
+              </Text>
+              {lands && lands.length > 1 && (
+                <Pressable
+                  onPress={() => landSwitchModal.present()}
+                  className="mt-2 flex-row items-center gap-2"
+                >
+                  <Text className="text-sm text-primary">
+                    Switch Land Account
+                  </Text>
+                  <CaretDownIcon color={colors.primary} />
+                </Pressable>
+              )}
+            </View>
           )}
 
           {lands && lands.length > 0 ? (
             <>
-              {/* {lands.length === 1 ? (
-                <View className="gap-2">
-                  <Text className="font-poppins-semibold text-lg text-primary">
-                    Account
-                  </Text>
-                  <Text className="text-lg text-neutral-600">
-                    {lands[0].farmLocationName || 'Unnamed Land'}
-                  </Text>
-                </View>
-              ) : (
-                <Select
-                  options={accountOptions}
-                  label="Select Account"
-                  value={selectedLandId || ''}
-                  onSelect={handleSelectLand}
-                />
-              )} */}
               {selectedLand && (
                 <>
                   {/* <FormCard>
@@ -357,6 +359,35 @@ export default function NutrientPortfolio() {
           />
         </View>
       )}
+      <Modal ref={landSwitchModal.ref} snapPoints={['40%']} title="Select Land">
+        <ScrollView className="flex-1 px-4">
+          {accountOptions.map((option) => (
+            <Pressable
+              key={option.value}
+              className="flex-row items-center justify-between border-b border-neutral-100 px-6 py-3 last:border-b-0 active:bg-neutral-100 dark:border-neutral-700 dark:active:bg-neutral-700"
+              onPress={() => handleSelectLand(option.value.toString())}
+            >
+              <Text
+                className={
+                  option.value === selectedLandId
+                    ? 'font-poppins-semibold text-base text-neutral-700 dark:text-neutral-100'
+                    : 'font-poppins-regular text-base text-neutral-700 dark:text-neutral-100'
+                }
+              >
+                {option.label}
+              </Text>
+              {option.value === selectedLandId && (
+                <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+                  <Path
+                    d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                    fill="currentColor"
+                  />
+                </Svg>
+              )}
+            </Pressable>
+          ))}
+        </ScrollView>
+      </Modal>
     </>
   );
 }
