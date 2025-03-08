@@ -1,13 +1,13 @@
 /* eslint-disable max-lines-per-function */
 import { router, useNavigation } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Alert, BackHandler, TouchableOpacity, View } from 'react-native';
+import { Alert, BackHandler, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
+import { LandAccountsCard } from '@/components/land-accounts-card';
 import { OnboardingModal } from '@/components/onboarding-modal';
-import { Button, colors, FormCard, Text } from '@/components/ui';
-import { Warning as WarningIcon } from '@/components/ui/icons';
-import { type Land, useUserStore } from '@/stores/user-store';
+import { Button, FormCard, Text } from '@/components/ui';
+import { useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
   const { userName, subscriptionPlan, lands, hasCompletedOnboarding } =
@@ -55,18 +55,6 @@ const WelcomeScreen = () => {
     router.push('/upgrade');
   };
 
-  const MAX_VISIBLE_LANDS = 3;
-
-  const needsSoilTesting = lands.some(
-    (land) =>
-      (!land.soilTests || land.soilTests.length === 0) &&
-      (!land.soilTestStatus || land.soilTestStatus === 'report')
-  );
-
-  const landNeedsSoilTesting = (land: Land) =>
-    (!land.soilTests || land.soilTests.length === 0) &&
-    (!land.soilTestStatus || land.soilTestStatus === 'report');
-
   return (
     <KeyboardAwareScrollView
       bottomOffset={62}
@@ -94,100 +82,14 @@ const WelcomeScreen = () => {
             <Button
               variant="link"
               fullWidth={false}
-              label="Upgrade"
+              label={subscriptionPlan === 'Harvest' ? 'Manage' : 'Upgrade'}
               onPress={handleUpgrade}
             />
           </View>
         </View>
 
         <FormCard>
-          <View className="gap-4">
-            <View className="flex-row items-center justify-between">
-              <Text className="font-lora text-xl text-primary">
-                Your Land Accounts
-              </Text>
-              {lands?.length > 0 && (
-                <Button
-                  variant="link"
-                  label="Manage"
-                  onPress={() => router.push('/land-management')}
-                />
-              )}
-            </View>
-
-            {!lands?.length ? (
-              <View className="flex-row items-center gap-2">
-                <WarningIcon color={colors.danger} width={24} height={24} />
-                <Text className="font-poppins-semibold text-neutral-600">
-                  No land accounts registered yet
-                </Text>
-              </View>
-            ) : (
-              <View className="gap-4">
-                {lands.slice(0, MAX_VISIBLE_LANDS).map((land) => (
-                  <TouchableOpacity
-                    key={land.id}
-                    className="flex-row items-center justify-between rounded-lg border border-neutral-200 p-4"
-                    onPress={() => {
-                      router.push({
-                        pathname: '/(app)/(tabs)/nutrient-portfolio',
-                        params: { landId: land.id },
-                      });
-                    }}
-                  >
-                    <View>
-                      <View>
-                        <Text className="font-poppins-semibold text-lg">
-                          {land.farmLocationName || 'Unnamed Land'}
-                        </Text>
-                      </View>
-                      <Text className="font-poppins text-neutral-600">
-                        {land.farmCity}
-                      </Text>
-                    </View>
-                    {landNeedsSoilTesting(land) && (
-                      <WarningIcon
-                        color={colors.danger}
-                        width={24}
-                        height={24}
-                      />
-                    )}
-                  </TouchableOpacity>
-                ))}
-                {lands.length > MAX_VISIBLE_LANDS && (
-                  <Button
-                    variant="link"
-                    label="See More"
-                    onPress={() => router.push('/land-management')}
-                  />
-                )}
-              </View>
-            )}
-          </View>
-          {!lands?.length && (
-            <Button
-              className="mt-4"
-              label="Add Your First Land Account"
-              onPress={() => router.push('/land-management/add')}
-            />
-          )}
-          {needsSoilTesting && (
-            <View className="mt-4 flex-row items-center">
-              <WarningIcon color={colors.danger} width={20} height={20} />
-              <View className="ml-4 flex-1">
-                <Text className="font-poppins text-neutral-600">
-                  Some of your land accounts haven't had soil testing performed
-                  yet.{' '}
-                  <Text
-                    className="font-poppins-semibold text-primary"
-                    onPress={() => router.push('/soil-test')}
-                  >
-                    Order a soil test now
-                  </Text>
-                </Text>
-              </View>
-            </View>
-          )}
+          <LandAccountsCard lands={lands} />
         </FormCard>
       </View>
       {!hasCompletedOnboarding && <OnboardingModal />}
