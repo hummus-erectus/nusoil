@@ -110,11 +110,6 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             onChangeText={(v) => onFieldChange('farmCity', v)}
             placeholder="City (PIN /Zip Number)"
           />
-          <Input
-            value={form.latLong}
-            onChangeText={(v) => onFieldChange('latLong', v)}
-            placeholder="Lat/Long"
-          />
         </FormCard>
         <FormCard className="gap-6">
           <Text className="text-sm text-neutral-600">Create a Polygon Map</Text>
