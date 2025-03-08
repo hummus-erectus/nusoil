@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { router } from 'expo-router';
+import { Linking } from 'react-native';
 
 import { Button, colors, Text, TouchableOpacity, View } from '@/components/ui';
 import { Warning as WarningIcon } from '@/components/ui/icons';
@@ -16,6 +17,8 @@ const landNeedsSoilTesting = (land: Land) =>
   (!land.soilTestStatus || land.soilTestStatus === 'report');
 
 const needsSoilTesting = (lands: Land[]) => lands.some(landNeedsSoilTesting);
+
+const getMapUrl = (coordinates: string) => `geo:${coordinates}`;
 
 export const LandAccountsCard = ({ lands }: LandAccountsCardProps) => {
   return (
@@ -60,7 +63,18 @@ export const LandAccountsCard = ({ lands }: LandAccountsCardProps) => {
                   </Text>
                 </View>
                 <Text className="font-poppins text-neutral-600">
-                  {land.farmCity}
+                  {land.latLong ? (
+                    <Text
+                      className="text-primary underline"
+                      onPress={() => {
+                        Linking.openURL(getMapUrl(land.latLong!));
+                      }}
+                    >
+                      View on Map
+                    </Text>
+                  ) : (
+                    'No location data available'
+                  )}
                 </Text>
               </View>
               {landNeedsSoilTesting(land) && (
