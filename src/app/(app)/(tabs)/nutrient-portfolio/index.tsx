@@ -253,23 +253,22 @@ export default function NutrientPortfolio() {
                       </FormCard>
                     </View>
                   ) : (
-                    <View className="gap-4 pb-20">
+                    <View className="flex-1 justify-center gap-4 pb-20">
                       {hasSoilTestInProgress ? (
                         <>
-                          <View className="rounded-xl bg-white p-6 shadow-sm">
-                            <Text className="mb-4 text-center font-poppins-semibold text-xl text-primary">
+                          <View className="flex-row items-center justify-center gap-2">
+                            <Text className="font-lora text-xl text-primary">
                               Soil Test in Progress
                             </Text>
-                            <Text className="font-poppins mb-6 text-center text-base text-neutral-600">
-                              Your soil test for{' '}
-                              {selectedLand?.farmLocationName} is currently
-                              being processed.
-                            </Text>
-                            <Button
-                              onPress={handleViewProgress}
-                              label="View Progress"
-                            />
                           </View>
+                          <Text className="text-center text-neutral-600">
+                            Your soil test for {selectedLand?.farmLocationName}{' '}
+                            is currently being processed.
+                          </Text>
+                          <Button
+                            onPress={handleViewProgress}
+                            label="View Progress"
+                          />
                           <View className="flex-row justify-center">
                             <Text>
                               You can also add soil test data manually{' '}
