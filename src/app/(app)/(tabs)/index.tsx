@@ -94,7 +94,7 @@ const WelcomeScreen = () => {
             <Button
               variant="link"
               fullWidth={false}
-              label="Upgrade"
+              label={subscriptionPlan === 'Harvest' ? 'Manage' : 'Upgrade'}
               onPress={handleUpgrade}
             />
           </View>
