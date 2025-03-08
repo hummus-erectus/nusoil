@@ -3,13 +3,18 @@ import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 // import { Linking } from 'react-native';
+import { Pressable } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import Svg, { Path } from 'react-native-svg';
 
-import { Button, colors, FormCard, Select, Text, View } from '@/components/ui';
+import { Button, colors, FormCard, Text, View } from '@/components/ui';
 import {
+  CaretDown as CaretDownIcon,
   Plus as PlusIcon,
   Warning as WarningIcon,
 } from '@/components/ui/icons';
+import { Modal, useModal } from '@/components/ui/modal';
 import { type Land, type SoilTest, useUserStore } from '@/stores/user-store';
 
 export default function NutrientPortfolio() {
@@ -18,6 +23,7 @@ export default function NutrientPortfolio() {
   const [selectedLandId, setSelectedLandId] = useState<string | null>(
     landId || null
   );
+  const landSwitchModal = useModal();
 
   const accountOptions =
     lands?.map((land) => ({
@@ -78,20 +84,15 @@ export default function NutrientPortfolio() {
   useEffect(() => {
     if (landId) {
       setSelectedLandId(landId);
-    } else if (lands && lands.length === 1) {
+    } else if (lands && lands.length > 0) {
+      // If no landId is provided, select the first land from the array
       setSelectedLandId(lands[0].id);
     }
   }, [landId, lands]);
 
-  const handleSelectLand = (value: string | number) => {
-    const valueAsString = value.toString();
-    setSelectedLandId(valueAsString);
-
-    // Use router.replace instead of setParams to maintain navigation context
-    router.replace({
-      pathname: '/(app)/(tabs)/nutrient-portfolio',
-      params: { landId: valueAsString },
-    });
+  const handleSelectLand = (value: string) => {
+    landSwitchModal.dismiss();
+    setSelectedLandId(value);
   };
 
   return (
@@ -101,32 +102,30 @@ export default function NutrientPortfolio() {
         contentContainerStyle={{ flexGrow: 1 }}
       >
         <View className="flex-1 gap-6 p-6">
-          <Text className="text-center font-lora text-3xl text-primary">
-            Nutrient Portfolio
-          </Text>
+          {selectedLand && (
+            <View className="items-center">
+              <Text className="text-center font-lora text-3xl text-primary">
+                {selectedLand.farmLocationName || 'Unnamed Land'}
+              </Text>
+              {lands && lands.length > 1 && (
+                <Pressable
+                  onPress={() => landSwitchModal.present()}
+                  className="mt-2 flex-row items-center gap-2"
+                >
+                  <Text className="text-sm text-primary">
+                    Switch Land Account
+                  </Text>
+                  <CaretDownIcon color={colors.primary} />
+                </Pressable>
+              )}
+            </View>
+          )}
 
           {lands && lands.length > 0 ? (
             <>
-              {lands.length === 1 ? (
-                <View className="gap-2">
-                  <Text className="font-poppins-semibold text-lg text-primary">
-                    Account
-                  </Text>
-                  <Text className="text-lg text-neutral-600">
-                    {lands[0].farmLocationName || 'Unnamed Land'}
-                  </Text>
-                </View>
-              ) : (
-                <Select
-                  options={accountOptions}
-                  label="Select Account"
-                  value={selectedLandId || ''}
-                  onSelect={handleSelectLand}
-                />
-              )}
               {selectedLand && (
                 <>
-                  <FormCard>
+                  {/* <FormCard>
                     <View className="gap-2">
                       <Text className="font-poppins-semibold text-lg">
                         Land Location
@@ -137,19 +136,10 @@ export default function NutrientPortfolio() {
                           <Text className="font-poppins-light text-sm">
                             {selectedLand.farmCity}
                           </Text>
-                          {/* TODO: Add actual coordinates to land data model */}
-                          {/* <Text
-                        className="text-right text-primary underline"
-                        onPress={() =>
-                          openInMaps(location.latitude, location.longitude)
-                        }
-                      >
-                        Open in Maps
-                      </Text> */}
                         </>
                       )}
                     </View>
-                  </FormCard>
+                  </FormCard> */}
 
                   {latestSoilTest ? (
                     <View className="gap-4 pb-20">
@@ -263,23 +253,22 @@ export default function NutrientPortfolio() {
                       </FormCard>
                     </View>
                   ) : (
-                    <View className="gap-4 pb-20">
+                    <View className="flex-1 justify-center gap-4 pb-20">
                       {hasSoilTestInProgress ? (
                         <>
-                          <View className="rounded-xl bg-white p-6 shadow-sm">
-                            <Text className="mb-4 text-center font-poppins-semibold text-xl text-primary">
+                          <View className="flex-row items-center justify-center gap-2">
+                            <Text className="font-lora text-xl text-primary">
                               Soil Test in Progress
                             </Text>
-                            <Text className="font-poppins mb-6 text-center text-base text-neutral-600">
-                              Your soil test for{' '}
-                              {selectedLand?.farmLocationName} is currently
-                              being processed.
-                            </Text>
-                            <Button
-                              onPress={handleViewProgress}
-                              label="View Progress"
-                            />
                           </View>
+                          <Text className="text-center text-neutral-600">
+                            Your soil test for {selectedLand?.farmLocationName}{' '}
+                            is currently being processed.
+                          </Text>
+                          <Button
+                            onPress={handleViewProgress}
+                            label="View Progress"
+                          />
                           <View className="flex-row justify-center">
                             <Text>
                               You can also add soil test data manually{' '}
@@ -334,7 +323,7 @@ export default function NutrientPortfolio() {
               )}
             </>
           ) : (
-            <View className="items-center gap-4">
+            <View className="flex-1 items-center justify-center gap-4">
               <Text className="text-center">
                 No land accounts found. Please add a land account to view its
                 nutrient portfolio.
@@ -363,6 +352,35 @@ export default function NutrientPortfolio() {
           />
         </View>
       )}
+      <Modal ref={landSwitchModal.ref} snapPoints={['40%']} title="Select Land">
+        <ScrollView className="flex-1 px-4">
+          {accountOptions.map((option) => (
+            <Pressable
+              key={option.value}
+              className="flex-row items-center justify-between border-b border-neutral-100 px-6 py-3 last:border-b-0 active:bg-neutral-100 dark:border-neutral-700 dark:active:bg-neutral-700"
+              onPress={() => handleSelectLand(option.value.toString())}
+            >
+              <Text
+                className={
+                  option.value === selectedLandId
+                    ? 'font-poppins-semibold text-base text-neutral-700 dark:text-neutral-100'
+                    : 'font-poppins-regular text-base text-neutral-700 dark:text-neutral-100'
+                }
+              >
+                {option.label}
+              </Text>
+              {option.value === selectedLandId && (
+                <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+                  <Path
+                    d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+                    fill="currentColor"
+                  />
+                </Svg>
+              )}
+            </Pressable>
+          ))}
+        </ScrollView>
+      </Modal>
     </>
   );
 }

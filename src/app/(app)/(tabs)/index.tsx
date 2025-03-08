@@ -10,13 +10,8 @@ import { Warning as WarningIcon } from '@/components/ui/icons';
 import { type Land, useUserStore } from '@/stores/user-store';
 
 const WelcomeScreen = () => {
-  const {
-    userName,
-    subscriptionPlan,
-    lands,
-    setSelectedLandId,
-    hasCompletedOnboarding,
-  } = useUserStore();
+  const { userName, subscriptionPlan, lands, hasCompletedOnboarding } =
+    useUserStore();
   const navigation = useNavigation();
 
   const getGreeting = () => {
@@ -134,8 +129,10 @@ const WelcomeScreen = () => {
                     key={land.id}
                     className="flex-row items-center justify-between rounded-lg border border-neutral-200 p-4"
                     onPress={() => {
-                      setSelectedLandId(land.id);
-                      router.push('/(app)/(tabs)/nutrient-portfolio');
+                      router.push({
+                        pathname: '/(app)/(tabs)/nutrient-portfolio',
+                        params: { landId: land.id },
+                      });
                     }}
                   >
                     <View>
