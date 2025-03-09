@@ -1,19 +1,19 @@
 /* eslint-disable max-lines-per-function */
+import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
+import { useCallback } from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { z } from 'zod';
 
-import { type PolygonCoordinate } from '@/components/polygon-map';
 import {
   Button,
-  colors,
+  ControlledInput,
+  ControlledNumberInput,
+  ControlledSelect,
   FormCard,
-  Input,
-  NumberInput,
-  Select,
   Text,
 } from '@/components/ui';
-import { Map as MapIcon } from '@/components/ui/icons';
 
 const ownershipOptions = [
   { label: 'Leased Land', value: 'Leased Land' },
@@ -120,49 +120,58 @@ export const landFormSchema = z.object({
     .nullable()
     .optional(),
   income: z.number().min(0, 'Income cannot be negative').nullable().optional(),
+  ownershipType: z.string().optional(),
+  rainWater: z.string().optional(),
+  groundWater: z.string().optional(),
+  waterIrrigationType: z.string().optional(),
+  waterPump: z.string().optional(),
+  tillageType: z.string().optional(),
+  cropsPerYear: z.string().optional(),
+  cropType: z.string().optional(),
+  irrigationType: z.string().optional(),
+  coordinates: z
+    .array(
+      z.object({
+        latitude: z.number(),
+        longitude: z.number(),
+      })
+    )
+    .optional(),
 });
 
-export interface LandFormProps {
-  form: {
-    id: string;
-    farmLocationName: string;
-    farmCity: string;
-    irrigationType: string;
-    latLong: string;
-    ownershipType: string;
-    yearsOperated: number | null;
-    leasedAmount: number | null;
-    rainWater: string;
-    groundWater: string;
-    waterIrrigationType: string;
-    waterDays: number | null;
-    waterPump: string;
-    tillageType: string;
-    cropsPerYear: string;
-    cropDuration: number | null;
-    cropType: string;
-    leasedLandCost: number | null;
-    tillageCost: number | null;
-    fertilizerCost: number | null;
-    pestDiseaseCost: number | null;
-    cropYieldAverage: number | null;
-    income: number | null;
-    coordinates?: PolygonCoordinate[];
-  };
-  onFieldChange: (
-    field: keyof LandFormProps['form'],
-    value: string | number | null
-  ) => void;
-  errors?: Partial<Record<keyof LandFormProps['form'], string>>;
-}
+export type LandFormSchema = z.infer<typeof landFormSchema>;
 
-export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
-  const handleOpenPolygonMap = () => {
-    router.push({
-      pathname: '/land-management/polygon-map',
-      params: { landId: form.id },
-    });
-  };
+export type LandFormProps = {
+  onSubmit: SubmitHandler<LandFormSchema>;
+  defaultValues?: Partial<LandFormSchema>;
+  tempId?: string;
+};
+
+export const LandForm = ({
+  onSubmit,
+  defaultValues,
+  // tempId,
+}: LandFormProps) => {
+  const { handleSubmit, control } = useForm<LandFormSchema>({
+    resolver: zodResolver(landFormSchema),
+    defaultValues,
+  });
+  // const handleOpenPolygonMap = () => {
+  //   // If we are adding a new land but generating the id upon creation, it won't exist at this point
+  //   // TODO: Generate the id upon creation
+  //   // TODO: Pass existing ID if exists
+  //   router.push({
+  //     pathname: '/land-management/polygon-map',
+  //     params: { landId: tempId },
+  //   });
+  // };
+
+  const handleFormSubmit = useCallback<SubmitHandler<LandFormSchema>>(
+    (data, event) => {
+      onSubmit(data, event);
+    },
+    [onSubmit]
+  );
 
   return (
     <View className="gap-4">
@@ -172,22 +181,20 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
           Physical Location of Your Farm
         </Text>
         <FormCard className="gap-4">
-          <Input
+          <ControlledInput
             label="Location Name"
-            value={form.farmLocationName}
-            onChangeText={(v) => onFieldChange('farmLocationName', v)}
+            name="farmLocationName"
+            control={control}
             placeholder="e.g. 'Shibata North'"
-            error={errors?.farmLocationName}
           />
-          <Input
+          <ControlledInput
             label="City/ Town"
-            value={form.farmCity}
-            onChangeText={(v) => onFieldChange('farmCity', v)}
+            name="farmCity"
+            control={control}
             placeholder="e.g. 'Niigata'"
-            error={errors?.farmCity}
           />
         </FormCard>
-        <FormCard className="gap-6">
+        {/* <FormCard className="gap-6">
           <Text className="text-sm text-neutral-600">Create a Polygon Map</Text>
           <Button
             variant="secondary"
@@ -209,35 +216,33 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
               Polygon map created with {form.coordinates.length} points
             </Text>
           )}
-        </FormCard>
+        </FormCard> */}
       </View>
 
       {/* Ownership */}
       <View className="gap-4">
         <Text className="font-lora text-secondary">Ownership</Text>
         <FormCard className="gap-4">
-          <Select
+          <ControlledSelect
             label="Ownership Type"
+            name="ownershipType"
+            control={control}
             options={ownershipOptions}
-            value={form.ownershipType}
-            onSelect={(v) => onFieldChange('ownershipType', String(v))}
           />
-          <NumberInput
+          <ControlledNumberInput
             label="Years Operated"
-            value={form.yearsOperated}
-            onChangeText={(v) => onFieldChange('yearsOperated', v)}
+            name="yearsOperated"
+            control={control}
             placeholder="0"
             min={0}
-            error={errors?.yearsOperated}
           />
-          <NumberInput
+          <ControlledNumberInput
             label="Leased Amount"
-            value={form.leasedAmount}
-            onChangeText={(v) => onFieldChange('leasedAmount', v)}
+            name="leasedAmount"
+            control={control}
             placeholder="0"
             min={0}
             allowDecimals={true}
-            error={errors?.leasedAmount}
           />
         </FormCard>
       </View>
@@ -246,31 +251,30 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
       <View className="gap-4">
         <Text className="font-lora text-secondary">Water Availability</Text>
         <FormCard className="gap-4">
-          <Select
+          <ControlledSelect
             label="Rain Water"
+            name="rainWater"
+            control={control}
             options={rainWaterOptions}
-            value={form.rainWater}
-            onSelect={(v) => onFieldChange('rainWater', String(v))}
           />
-          <Select
+          <ControlledSelect
             label="Ground Water"
+            name="groundWater"
+            control={control}
             options={groundWaterOptions}
-            value={form.groundWater}
-            onSelect={(v) => onFieldChange('groundWater', String(v))}
           />
-          <Select
+          <ControlledSelect
             label="Water Irrigation Type"
+            name="waterIrrigationType"
+            control={control}
             options={waterIrrigationTypeOptions}
-            value={form.waterIrrigationType}
-            onSelect={(v) => onFieldChange('waterIrrigationType', String(v))}
           />
-          <NumberInput
+          <ControlledNumberInput
             label="Number of Days"
-            value={form.waterDays}
-            onChangeText={(v) => onFieldChange('waterDays', v)}
+            name="waterDays"
+            control={control}
             placeholder="0"
             min={0}
-            error={errors?.waterDays}
           />
         </FormCard>
       </View>
@@ -279,17 +283,17 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
       <View className="gap-4">
         <Text className="font-lora text-secondary">Irrigation Technology</Text>
         <FormCard className="gap-4">
-          <Select
+          <ControlledSelect
             label="Irrigation Type"
+            name="irrigationType"
+            control={control}
             options={irrigationOptions}
-            value={form.irrigationType}
-            onSelect={(v) => onFieldChange('irrigationType', String(v))}
           />
-          <Select
+          <ControlledSelect
             label="Water Pump"
+            name="waterPump"
+            control={control}
             options={waterPumpOptions}
-            value={form.waterPump}
-            onSelect={(v) => onFieldChange('waterPump', String(v))}
           />
         </FormCard>
       </View>
@@ -298,11 +302,11 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
       <View className="gap-4">
         <Text className="font-lora text-secondary">Tillage Practices</Text>
         <FormCard className="gap-4">
-          <Select
+          <ControlledSelect
             label="Tillage Practices"
+            name="tillageType"
+            control={control}
             options={tillageOptions}
-            value={form.tillageType}
-            onSelect={(v) => onFieldChange('tillageType', String(v))}
           />
         </FormCard>
       </View>
@@ -311,25 +315,24 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
       <View className="gap-4">
         <Text className="font-lora text-secondary">Land Use Intensity</Text>
         <FormCard className="gap-4">
-          <Select
+          <ControlledSelect
             label="Number of Crops per Calendar Year"
+            name="cropsPerYear"
+            control={control}
             options={cropsPerYearOptions}
-            value={form.cropsPerYear}
-            onSelect={(v) => onFieldChange('cropsPerYear', String(v))}
           />
-          <NumberInput
+          <ControlledNumberInput
             label="Crop Duration (Days Average)"
-            value={form.cropDuration}
-            onChangeText={(v) => onFieldChange('cropDuration', v)}
+            name="cropDuration"
+            control={control}
             placeholder="0"
             min={0}
-            error={errors?.cropDuration}
           />
-          <Select
+          <ControlledSelect
             label="Type"
+            name="cropType"
+            control={control}
             options={cropTypeOptions}
-            value={form.cropType}
-            onSelect={(v) => onFieldChange('cropType', String(v))}
           />
         </FormCard>
       </View>
@@ -340,14 +343,13 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
         <FormCard className="gap-4">
           <View className="flex w-full flex-row items-center">
             <View className="flex-1">
-              <NumberInput
+              <ControlledNumberInput
                 label="Cost of Leased Land"
-                value={form.leasedLandCost}
-                onChangeText={(v) => onFieldChange('leasedLandCost', v)}
+                name="leasedLandCost"
+                control={control}
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
-                error={errors?.leasedLandCost}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -355,14 +357,13 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
 
           <View className="flex w-full flex-row items-center">
             <View className="flex-1">
-              <NumberInput
+              <ControlledNumberInput
                 label="Tillage Cost"
-                value={form.tillageCost}
-                onChangeText={(v) => onFieldChange('tillageCost', v)}
+                name="tillageCost"
+                control={control}
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
-                error={errors?.tillageCost}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -370,14 +371,13 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
 
           <View className="flex w-full flex-row items-center">
             <View className="flex-1">
-              <NumberInput
+              <ControlledNumberInput
                 label="Fertilizer Cost"
-                value={form.fertilizerCost}
-                onChangeText={(v) => onFieldChange('fertilizerCost', v)}
+                name="fertilizerCost"
+                control={control}
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
-                error={errors?.fertilizerCost}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -385,14 +385,13 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
 
           <View className="flex w-full flex-row items-center">
             <View className="flex-1">
-              <NumberInput
+              <ControlledNumberInput
                 label="Pest and Disease Management Cost"
-                value={form.pestDiseaseCost}
-                onChangeText={(v) => onFieldChange('pestDiseaseCost', v)}
+                name="pestDiseaseCost"
+                control={control}
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
-                error={errors?.pestDiseaseCost}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -400,14 +399,13 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
 
           <View className="flex w-full flex-row items-center">
             <View className="flex-1">
-              <NumberInput
+              <ControlledNumberInput
                 label="Yield Average from All Crops"
-                value={form.cropYieldAverage}
-                onChangeText={(v) => onFieldChange('cropYieldAverage', v)}
+                name="cropYieldAverage"
+                control={control}
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
-                error={errors?.cropYieldAverage}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -415,20 +413,36 @@ export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
 
           <View className="flex w-full flex-row items-center">
             <View className="flex-1">
-              <NumberInput
+              <ControlledNumberInput
                 label="Income per year"
-                value={form.income}
-                onChangeText={(v) => onFieldChange('income', v)}
+                name="income"
+                control={control}
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
-                error={errors?.income}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
+          </View>
+
+          <View className="flex-row gap-2">
+            <View className="flex-1">
+              <Button
+                variant="secondary"
+                label="Cancel"
+                onPress={() => router.back()}
+              />
+            </View>
+            <View className="flex-1">
+              <Button
+                variant="default"
+                label="Save"
+                onPress={handleSubmit(handleFormSubmit)}
+              />
+            </View>
           </View>
         </FormCard>
       </View>
     </View>
   );
-}
+};

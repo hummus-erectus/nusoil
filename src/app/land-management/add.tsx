@@ -1,200 +1,155 @@
 /* eslint-disable max-lines-per-function */
 import { router } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  BackHandler,
-  Modal as RNModal,
-  View,
-} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { type SubmitHandler } from 'react-hook-form';
+import { ActivityIndicator, Alert, Modal as RNModal, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { z } from 'zod';
 
-import { LandForm } from '@/components/land-form';
-import { landFormSchema } from '@/components/land-form';
+import { LandForm, type LandFormSchema } from '@/components/land-form';
 import { Button, colors, Text } from '@/components/ui';
 import {
   ArrowLeftFull as ArrowLeftFullIcon,
   CircleTick,
 } from '@/components/ui/icons';
 import { useNotifications } from '@/features/notifications/notifications-context';
-import { useTemporaryStore } from '@/stores/temporary-store';
+// import { useTemporaryStore } from '@/stores/temporary-store';
 import { useUserStore } from '@/stores/user-store';
 
 export default function AddLand() {
   const { addLand, setHasCompletedOnboarding } = useUserStore();
   const { addNotification } = useNotifications();
-  const { polygonCoordinates, clearPolygonCoordinates } = useTemporaryStore();
-  const [hasChanges, setHasChanges] = useState(false);
+  // const { polygonCoordinates, clearPolygonCoordinates } = useTemporaryStore();
+  //TODO: reinstate hasChanges functionality
+  // const [hasChanges, setHasChanges] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [saveState, setSaveState] = useState<'loading' | 'success'>('loading');
-  const [form, setForm] = useState({
-    id: `land_${Date.now()}`,
-    farmLocationName: '',
-    farmCity: '',
-    size: '',
-    irrigationType: '',
-    latLong: '',
-    ownershipType: '',
-    yearsOperated: null,
-    leasedAmount: null,
-    rainWater: '',
-    groundWater: '',
-    waterIrrigationType: '',
-    waterDays: null,
-    waterPump: '',
-    tillageType: '',
-    cropsPerYear: '',
-    cropDuration: null,
-    cropType: '',
-    leasedLandCost: null,
-    tillageCost: null,
-    fertilizerCost: null,
-    pestDiseaseCost: null,
-    cropYieldAverage: null,
-    income: null,
-    coordinates: polygonCoordinates.length > 0 ? polygonCoordinates : [],
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [landId, setLandId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (polygonCoordinates.length > 0) {
-      setForm((prev) => ({ ...prev, coordinates: polygonCoordinates }));
-    }
-  }, [polygonCoordinates]);
+  const tempId = `temp_land_${Date.now()}`;
 
-  useEffect(() => {
-    const backAction = () => {
-      if (hasChanges || polygonCoordinates.length > 0) {
-        Alert.alert(
-          'Unsaved Changes',
-          'You have unsaved changes. Are you sure you want to go back?',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'Discard',
-              style: 'destructive',
-              onPress: () => router.back(),
-            },
-          ]
-        );
-        return true;
-      }
-      return false;
-    };
+  // useEffect(() => {
+  //   if (polygonCoordinates.length > 0) {
+  //     setForm((prev) => ({ ...prev, coordinates: polygonCoordinates }));
+  //   }
+  // }, [polygonCoordinates]);
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    );
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     if (hasChanges || polygonCoordinates.length > 0) {
+  //       Alert.alert(
+  //         'Unsaved Changes',
+  //         'You have unsaved changes. Are you sure you want to go back?',
+  //         [
+  //           {
+  //             text: 'Cancel',
+  //             style: 'cancel',
+  //           },
+  //           {
+  //             text: 'Discard',
+  //             style: 'destructive',
+  //             onPress: () => router.back(),
+  //           },
+  //         ]
+  //       );
+  //       return true;
+  //     }
+  //     return false;
+  //   };
 
-    return () => backHandler.remove();
-  }, [hasChanges, polygonCoordinates.length]);
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction
+  //   );
 
-  useEffect(() => {
-    return () => {
-      clearPolygonCoordinates();
-    };
-  }, []);
+  //   return () => backHandler.remove();
+  // }, [hasChanges, polygonCoordinates.length]);
 
-  const handleSave = useCallback(() => {
+  // useEffect(() => {
+  //   return () => {
+  //     clearPolygonCoordinates();
+  //   };
+  // }, []);
+
+  const handleSave: SubmitHandler<LandFormSchema> = async (data) => {
     try {
-      const validatedData = landFormSchema.parse(form);
-      setErrors({});
       setModalVisible(true);
+      setSaveState('loading');
 
-      setTimeout(() => {
-        const newLand = {
-          ...form,
-          ...validatedData,
-        };
-        addLand(newLand);
-        console.log('Land saved with coordinates:', newLand.coordinates);
-        clearPolygonCoordinates();
-        setHasChanges(false);
+      const newLand = {
+        ...data,
+        id: `land_${Date.now()}`, // Generate ID here
+      };
 
-        // Mark onboarding as completed
-        setHasCompletedOnboarding(true);
+      addLand(newLand);
+      setLandId(newLand.id);
+      // clearPolygonCoordinates();
 
-        // Show success state
-        setSaveState('success');
+      // Mark onboarding as completed
+      setHasCompletedOnboarding(true);
 
-        // Add notification
-        addNotification({
-          title: 'Land Added',
-          message: `Your land account for ${validatedData.farmLocationName} has been successfully added.`,
-          type: 'success',
-          read: false,
-          action: {
-            label: 'Manage Land Accounts',
-            onPress: () => {
-              router.replace({
-                pathname: '/land-management',
-              });
-            },
+      // Show success state
+      setSaveState('success');
+
+      // Add notification
+      addNotification({
+        title: 'Land Added',
+        message: `Your land account for ${data.farmLocationName} has been successfully added.`,
+        type: 'success',
+        read: false,
+        action: {
+          label: 'Manage Land Accounts',
+          onPress: () => {
+            router.replace('/land-management');
           },
-        });
-      }, 2000);
+        },
+      });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors = error.errors.reduce(
-          (acc, curr) => {
-            acc[curr.path[0]] = curr.message;
-            return acc;
-          },
-          {} as Record<string, string>
-        );
-        setErrors(newErrors);
-      }
+      Alert.alert('Error', 'Failed to save land. Please try again.');
     }
-  }, [form, addLand, addNotification, setHasCompletedOnboarding]);
+  };
 
   const handleGoToSoilTestForm = useCallback(() => {
     setModalVisible(false);
     router.replace({
       pathname: '/soil-test/form',
-      params: { landId: form.id },
+      params: { landId: landId },
     });
-  }, [form.id]);
+  }, [landId]);
 
   const handleGoToSoilTestOrder = useCallback(() => {
     setModalVisible(false);
     router.replace({
       pathname: '/soil-test/order',
-      params: { landId: form.id },
+      params: { landId: landId },
     });
-  }, [form.id]);
+  }, [landId]);
 
   const handleNotNow = useCallback(() => {
     setModalVisible(false);
     router.replace('/');
   }, []);
 
-  const handleBack = () => {
-    if (hasChanges) {
-      Alert.alert(
-        'Unsaved Changes',
-        'You have unsaved changes. Are you sure you want to go back?',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Discard',
-            style: 'destructive',
-            onPress: () => router.back(),
-          },
-        ]
-      );
-    } else {
-      router.back();
-    }
-  };
+  // const handleBack = () => {
+  //   if (hasChanges) {
+  //     Alert.alert(
+  //       'Unsaved Changes',
+  //       'You have unsaved changes. Are you sure you want to go back?',
+  //       [
+  //         {
+  //           text: 'Cancel',
+  //           style: 'cancel',
+  //         },
+  //         {
+  //           text: 'Discard',
+  //           style: 'destructive',
+  //           onPress: () => router.back(),
+  //         },
+  //       ]
+  //     );
+  //   } else {
+  //     router.back();
+  //   }
+  // };
 
   return (
     <KeyboardAwareScrollView
@@ -205,7 +160,8 @@ export default function AddLand() {
         <View className="-ml-10 self-start">
           <Button
             variant="ghost"
-            onPress={handleBack}
+            // onPress={handleBack}
+            onPress={() => router.back()}
             fullWidth={false}
             label={
               <View className="flex-row items-center justify-center">
@@ -218,26 +174,7 @@ export default function AddLand() {
         <Text className="text-center font-lora text-3xl text-primary">
           Add New Land
         </Text>
-        <LandForm
-          form={form}
-          onFieldChange={(field, value) => {
-            setForm((prev) => ({ ...prev, [field]: value }));
-            setHasChanges(true);
-          }}
-          errors={errors}
-        />
-        <View className="flex-row gap-2">
-          <View className="flex-1">
-            <Button
-              variant="secondary"
-              label="Cancel"
-              onPress={() => router.back()}
-            />
-          </View>
-          <View className="flex-1">
-            <Button variant="default" label="Save" onPress={handleSave} />
-          </View>
-        </View>
+        <LandForm onSubmit={handleSave} tempId={tempId} />
         <RNModal visible={modalVisible} transparent={true} animationType="fade">
           <View className="flex-1 items-center justify-center bg-black/50">
             <View className="w-4/5 items-center rounded-2xl bg-white p-6 shadow-lg">

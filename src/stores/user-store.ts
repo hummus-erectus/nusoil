@@ -16,29 +16,29 @@ export interface Land {
   id: string;
   farmLocationName: string;
   farmCity: string;
-  irrigationType: string;
-  latLong: string;
-  ownershipType: string;
-  yearsOperated: number | null;
-  leasedAmount: number | null;
-  rainWater: string;
-  groundWater: string;
-  waterIrrigationType: string;
-  waterDays: number | null;
-  waterPump: string;
-  tillageType: string;
-  cropsPerYear: string;
-  cropDuration: number | null;
-  cropType: string;
-  leasedLandCost: number | null;
-  tillageCost: number | null;
-  fertilizerCost: number | null;
-  pestDiseaseCost: number | null;
-  cropYieldAverage: number | null;
-  income: number | null;
-  soilTests?: SoilTest[];
-  soilTestStatus?: SoilTestStatus;
-  coordinates?: PolygonCoordinate[];
+  irrigationType?: string; // Optional
+  latLong?: string;
+  ownershipType?: string; // Optional
+  yearsOperated?: number | null; // Optional
+  leasedAmount?: number | null; // Optional
+  rainWater?: string; // Optional
+  groundWater?: string; // Optional
+  waterIrrigationType?: string; // Optional
+  waterDays?: number | null; // Optional
+  waterPump?: string; // Optional
+  tillageType?: string; // Optional
+  cropsPerYear?: string; // Optional
+  cropDuration?: number | null; // Optional
+  cropType?: string; // Optional
+  leasedLandCost?: number | null; // Optional
+  tillageCost?: number | null; // Optional
+  fertilizerCost?: number | null; // Optional
+  pestDiseaseCost?: number | null; // Optional
+  cropYieldAverage?: number | null; // Optional
+  income?: number | null; // Optional
+  soilTests?: SoilTest[]; // Optional
+  soilTestStatus?: SoilTestStatus; // Optional
+  coordinates?: PolygonCoordinate[]; // Optional
 }
 
 export interface SoilTest {
