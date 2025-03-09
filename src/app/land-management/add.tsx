@@ -9,8 +9,10 @@ import {
   View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { z } from 'zod';
 
 import { LandForm } from '@/components/land-form';
+import { landFormSchema } from '@/components/land-form';
 import { Button, colors, Text } from '@/components/ui';
 import {
   ArrowLeftFull as ArrowLeftFullIcon,
@@ -54,6 +56,7 @@ export default function AddLand() {
     income: null,
     coordinates: polygonCoordinates.length > 0 ? polygonCoordinates : [],
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (polygonCoordinates.length > 0) {
@@ -99,48 +102,55 @@ export default function AddLand() {
   }, []);
 
   const handleSave = useCallback(() => {
-    // Show loading modal
-    setModalVisible(true);
+    try {
+      const validatedData = landFormSchema.parse(form);
+      setErrors({});
+      setModalVisible(true);
 
-    // Log the form data
-    console.log('Land management form data:', form);
+      setTimeout(() => {
+        const newLand = {
+          ...form,
+          ...validatedData,
+        };
+        addLand(newLand);
+        console.log('Land saved with coordinates:', newLand.coordinates);
+        clearPolygonCoordinates();
+        setHasChanges(false);
 
-    // Simulate API call with a timeout
-    setTimeout(() => {
-      console.log(
-        'Temporary polygon coordinates before saving:',
-        polygonCoordinates
-      );
-      const newLand = {
-        ...form,
-      };
-      addLand(newLand);
-      console.log('Land saved with coordinates:', newLand.coordinates);
-      clearPolygonCoordinates();
-      setHasChanges(false);
+        // Mark onboarding as completed
+        setHasCompletedOnboarding(true);
 
-      // Mark onboarding as completed
-      setHasCompletedOnboarding(true);
+        // Show success state
+        setSaveState('success');
 
-      // Show success state
-      setSaveState('success');
-
-      // Add notification
-      addNotification({
-        title: 'Land Added',
-        message: `Your land account for ${form.farmLocationName} has been successfully added.`,
-        type: 'success',
-        read: false,
-        action: {
-          label: 'Manage Land Accounts',
-          onPress: () => {
-            router.replace({
-              pathname: '/land-management',
-            });
+        // Add notification
+        addNotification({
+          title: 'Land Added',
+          message: `Your land account for ${validatedData.farmLocationName} has been successfully added.`,
+          type: 'success',
+          read: false,
+          action: {
+            label: 'Manage Land Accounts',
+            onPress: () => {
+              router.replace({
+                pathname: '/land-management',
+              });
+            },
           },
-        },
-      });
-    }, 2000);
+        });
+      }, 2000);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors = error.errors.reduce(
+          (acc, curr) => {
+            acc[curr.path[0]] = curr.message;
+            return acc;
+          },
+          {} as Record<string, string>
+        );
+        setErrors(newErrors);
+      }
+    }
   }, [form, addLand, addNotification, setHasCompletedOnboarding]);
 
   const handleGoToSoilTestForm = useCallback(() => {
@@ -214,6 +224,7 @@ export default function AddLand() {
             setForm((prev) => ({ ...prev, [field]: value }));
             setHasChanges(true);
           }}
+          errors={errors}
         />
         <View className="flex-row gap-2">
           <View className="flex-1">

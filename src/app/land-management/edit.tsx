@@ -3,8 +3,10 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { z } from 'zod';
 
 import { LandForm } from '@/components/land-form';
+import { landFormSchema } from '@/components/land-form';
 import { Button, colors, Text } from '@/components/ui';
 import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
 import { useUserStore } from '@/stores/user-store';
@@ -15,6 +17,7 @@ export default function EditLand() {
   const { lands, updateLand } = useUserStore();
   const [form, setForm] = useState(lands.find((land) => land.id === id));
   const [hasChanges, setHasChanges] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!form) {
@@ -79,11 +82,27 @@ export default function EditLand() {
 
   const handleSave = () => {
     if (!form) return;
-    updateLand(form.id, {
-      ...form,
-    });
-    setHasChanges(false);
-    router.back();
+    try {
+      const validatedData = landFormSchema.parse(form);
+      setErrors({});
+      updateLand(form.id, {
+        ...form,
+        ...validatedData,
+      });
+      setHasChanges(false);
+      router.back();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors = error.errors.reduce(
+          (acc, curr) => {
+            acc[curr.path[0]] = curr.message;
+            return acc;
+          },
+          {} as Record<string, string>
+        );
+        setErrors(newErrors);
+      }
+    }
   };
 
   const handleBack = () => {
@@ -139,6 +158,7 @@ export default function EditLand() {
               setForm((prev) => (prev ? { ...prev, [field]: value } : prev));
               setHasChanges(true);
             }}
+            errors={errors}
           />
         </View>
       </KeyboardAwareScrollView>

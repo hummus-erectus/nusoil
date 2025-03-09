@@ -1,6 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import { router } from 'expo-router';
 import { View } from 'react-native';
+import { z } from 'zod';
 
 import { type PolygonCoordinate } from '@/components/polygon-map';
 import {
@@ -62,6 +63,65 @@ const irrigationOptions = [
   { label: 'Flood Irrigation', value: 'Flood Irrigation' },
 ];
 
+export const landFormSchema = z.object({
+  farmLocationName: z
+    .string({
+      required_error: 'Location name is required',
+    })
+    .min(3, 'Location name must be at least 3 characters'),
+  farmCity: z
+    .string({
+      required_error: 'City/Town is required',
+    })
+    .min(3, 'City/Town must be at least 3 characters'),
+  yearsOperated: z
+    .number()
+    .min(0, 'Years operated cannot be negative')
+    .nullable()
+    .optional(),
+  leasedAmount: z
+    .number()
+    .min(0, 'Leased amount cannot be negative')
+    .nullable()
+    .optional(),
+  waterDays: z
+    .number()
+    .min(0, 'Water days cannot be negative')
+    .nullable()
+    .optional(),
+  cropDuration: z
+    .number()
+    .min(0, 'Crop duration cannot be negative')
+    .nullable()
+    .optional(),
+  leasedLandCost: z
+    .number()
+    .min(0, 'Leased land cost cannot be negative')
+    .nullable()
+    .optional(),
+  tillageCost: z
+    .number()
+    .min(0, 'Tillage cost cannot be negative')
+    .nullable()
+    .optional(),
+  fertilizerCost: z
+    .number()
+    .min(0, 'Fertilizer cost cannot be negative')
+    .nullable()
+    .optional(),
+  pestDiseaseCost: z
+    .number()
+    .min(0, 'Pest and disease cost cannot be negative')
+    .nullable()
+    .optional(),
+  cropYieldAverage: z
+    .number()
+    .min(0, 'Yield average cannot be negative')
+    .nullable()
+    .optional(),
+  income: z.number().min(0, 'Income cannot be negative').nullable().optional(),
+});
+
 export interface LandFormProps {
   form: {
     id: string;
@@ -93,9 +153,10 @@ export interface LandFormProps {
     field: keyof LandFormProps['form'],
     value: string | number | null
   ) => void;
+  errors?: Partial<Record<keyof LandFormProps['form'], string>>;
 }
 
-export function LandForm({ form, onFieldChange }: LandFormProps) {
+export function LandForm({ form, onFieldChange, errors }: LandFormProps) {
   const handleOpenPolygonMap = () => {
     router.push({
       pathname: '/land-management/polygon-map',
@@ -116,12 +177,14 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             value={form.farmLocationName}
             onChangeText={(v) => onFieldChange('farmLocationName', v)}
             placeholder="e.g. 'Shibata North'"
+            error={errors?.farmLocationName}
           />
           <Input
             label="City/ Town"
             value={form.farmCity}
             onChangeText={(v) => onFieldChange('farmCity', v)}
             placeholder="e.g. 'Niigata'"
+            error={errors?.farmCity}
           />
         </FormCard>
         <FormCard className="gap-6">
@@ -165,6 +228,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             onChangeText={(v) => onFieldChange('yearsOperated', v)}
             placeholder="0"
             min={0}
+            error={errors?.yearsOperated}
           />
           <NumberInput
             label="Leased Amount"
@@ -173,6 +237,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             placeholder="0"
             min={0}
             allowDecimals={true}
+            error={errors?.leasedAmount}
           />
         </FormCard>
       </View>
@@ -205,6 +270,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             onChangeText={(v) => onFieldChange('waterDays', v)}
             placeholder="0"
             min={0}
+            error={errors?.waterDays}
           />
         </FormCard>
       </View>
@@ -257,6 +323,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
             onChangeText={(v) => onFieldChange('cropDuration', v)}
             placeholder="0"
             min={0}
+            error={errors?.cropDuration}
           />
           <Select
             label="Type"
@@ -280,6 +347,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
+                error={errors?.leasedLandCost}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -294,6 +362,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
+                error={errors?.tillageCost}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -308,6 +377,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
+                error={errors?.fertilizerCost}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -322,6 +392,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
+                error={errors?.pestDiseaseCost}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -336,6 +407,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
+                error={errors?.cropYieldAverage}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
@@ -350,6 +422,7 @@ export function LandForm({ form, onFieldChange }: LandFormProps) {
                 placeholder="00.00"
                 min={0}
                 allowDecimals={true}
+                error={errors?.income}
               />
             </View>
             <Text className="ml-4 pt-2 text-sm text-neutral-600">EUR</Text>
