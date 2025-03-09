@@ -9,7 +9,6 @@ import { LandForm, type LandFormSchema } from '@/components/land-form';
 import { landFormSchema } from '@/components/land-form';
 import { Button, colors, Text } from '@/components/ui';
 import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
-import { SafeAreaView } from '@/components/ui/safe-area-view';
 import { useUserStore } from '@/stores/user-store';
 
 export default function EditLand() {
@@ -121,37 +120,35 @@ export default function EditLand() {
   if (!land) return null;
 
   return (
-    <SafeAreaView>
-      <KeyboardAwareScrollView
-        bottomOffset={62}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <View className="flex-1 gap-6 bg-neutral-100 p-6 pb-28">
-          <View className="-ml-10 self-start">
-            <Button
-              variant="ghost"
-              // onPress={handleBack}
-              fullWidth={false}
-              label={
-                <View className="flex-row items-center justify-center">
-                  <ArrowLeftFullIcon color={colors.neutral[600]} />
-                  <Text className="ml-4 text-neutral-600">Back</Text>
-                </View>
-              }
-            />
-          </View>
-          <Text className="text-center font-lora text-3xl text-primary">
-            Edit Land
-          </Text>
-          <LandForm
-            defaultValues={land}
-            onSubmit={handleSave}
-            // onFieldChange={(field, value) => {
-            //   setHasChanges(true);
-            // }}
+    <KeyboardAwareScrollView
+      bottomOffset={62}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <View className="flex-1 gap-6 bg-neutral-100 p-6 pb-28">
+        <View className="-ml-10 self-start">
+          <Button
+            variant="ghost"
+            onPress={() => router.back()}
+            fullWidth={false}
+            label={
+              <View className="flex-row items-center justify-center">
+                <ArrowLeftFullIcon color={colors.neutral[600]} />
+                <Text className="ml-4 text-neutral-600">Back</Text>
+              </View>
+            }
           />
         </View>
-      </KeyboardAwareScrollView>
-    </SafeAreaView>
+        <Text className="text-center font-lora text-3xl text-primary">
+          Edit Land
+        </Text>
+        <LandForm
+          defaultValues={land}
+          onSubmit={handleSave}
+          // onFieldChange={(field, value) => {
+          //   setHasChanges(true);
+          // }}
+        />
+      </View>
+    </KeyboardAwareScrollView>
   );
 }
