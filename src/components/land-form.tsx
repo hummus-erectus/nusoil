@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { z } from 'zod';
@@ -145,17 +145,26 @@ export type LandFormProps = {
   onSubmit: SubmitHandler<LandFormSchema>;
   defaultValues?: Partial<LandFormSchema>;
   tempId?: string;
+  onDirtyChange?: (dirty: boolean) => void;
 };
 
 export const LandForm = ({
   onSubmit,
   defaultValues,
+  onDirtyChange,
   // tempId,
 }: LandFormProps) => {
-  const { handleSubmit, control } = useForm<LandFormSchema>({
+  const { handleSubmit, control, formState } = useForm<LandFormSchema>({
     resolver: zodResolver(landFormSchema),
     defaultValues,
   });
+
+  useEffect(() => {
+    if (onDirtyChange) {
+      onDirtyChange(formState.isDirty);
+    }
+  }, [formState.isDirty, onDirtyChange]);
+
   // const handleOpenPolygonMap = () => {
   //   // If we are adding a new land but generating the id upon creation, it won't exist at this point
   //   // TODO: Generate the id upon creation

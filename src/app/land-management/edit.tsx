@@ -1,8 +1,8 @@
 /* eslint-disable max-lines-per-function */
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { type SubmitHandler } from 'react-hook-form';
-import { Alert, View } from 'react-native';
+import { Alert, BackHandler, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { LandForm, type LandFormSchema } from '@/components/land-form';
@@ -15,7 +15,7 @@ export default function EditLand() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { lands, updateLand } = useUserStore();
-  // const [hasChanges, setHasChanges] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const land = lands.find((land) => land.id === id);
 
@@ -25,36 +25,22 @@ export default function EditLand() {
     }
   }, [land, router]);
 
-  // useEffect(() => {
-  //   const backAction = () => {
-  //     if (hasChanges) {
-  //       Alert.alert(
-  //         'Unsaved Changes',
-  //         'You have unsaved changes. Are you sure you want to go back?',
-  //         [
-  //           {
-  //             text: 'Cancel',
-  //             style: 'cancel',
-  //           },
-  //           {
-  //             text: 'Discard',
-  //             style: 'destructive',
-  //             onPress: () => router.back(),
-  //           },
-  //         ]
-  //       );
-  //       return true;
-  //     }
-  //     return false;
-  //   };
+  useEffect(() => {
+    const backAction = () => {
+      if (hasChanges) {
+        showUnsavedChangesAlert(() => router.back());
+        return true;
+      }
+      return false;
+    };
 
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     backAction
-  //   );
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
 
-  //   return () => backHandler.remove();
-  // }, [hasChanges, router]);
+    return () => backHandler.remove();
+  }, [hasChanges, router]);
 
   // Listen for updates to coordinates when returning from polygon map screen
   // useFocusEffect(
@@ -88,34 +74,38 @@ export default function EditLand() {
         ...land,
         ...validatedData,
       });
-      // setHasChanges(false);
+      setHasChanges(false);
       router.back();
     } catch (error) {
       Alert.alert('Error', 'Failed to save land. Please try again.');
     }
   };
 
-  // const handleBack = () => {
-  //   if (hasChanges) {
-  //     Alert.alert(
-  //       'Unsaved Changes',
-  //       'You have unsaved changes. Are you sure you want to go back?',
-  //       [
-  //         {
-  //           text: 'Cancel',
-  //           style: 'cancel',
-  //         },
-  //         {
-  //           text: 'Discard',
-  //           style: 'destructive',
-  //           onPress: () => router.back(),
-  //         },
-  //       ]
-  //     );
-  //   } else {
-  //     router.back();
-  //   }
-  // };
+  const handleBack = () => {
+    if (hasChanges) {
+      showUnsavedChangesAlert(() => router.back());
+    } else {
+      router.back();
+    }
+  };
+
+  const showUnsavedChangesAlert = (onDiscard: () => void) => {
+    Alert.alert(
+      'Unsaved Changes',
+      'You have unsaved changes. Are you sure you want to go back?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Discard',
+          style: 'destructive',
+          onPress: onDiscard,
+        },
+      ]
+    );
+  };
 
   if (!land) return null;
 
@@ -128,7 +118,7 @@ export default function EditLand() {
         <View className="-ml-10 self-start">
           <Button
             variant="ghost"
-            onPress={() => router.back()}
+            onPress={handleBack}
             fullWidth={false}
             label={
               <View className="flex-row items-center justify-center">
@@ -144,9 +134,7 @@ export default function EditLand() {
         <LandForm
           defaultValues={land}
           onSubmit={handleSave}
-          // onFieldChange={(field, value) => {
-          //   setHasChanges(true);
-          // }}
+          onDirtyChange={setHasChanges}
         />
       </View>
     </KeyboardAwareScrollView>
