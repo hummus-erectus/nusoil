@@ -80,6 +80,7 @@ export default function AddLand() {
     return () => {
       clearPolygonCoordinates();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSave: SubmitHandler<LandFormSchema> = async (data) => {
