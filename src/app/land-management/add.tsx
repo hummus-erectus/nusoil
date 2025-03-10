@@ -18,13 +18,13 @@ import {
   CircleTick,
 } from '@/components/ui/icons';
 import { useNotifications } from '@/features/notifications/notifications-context';
-// import { useTemporaryStore } from '@/stores/temporary-store';
+import { useTemporaryStore } from '@/stores/temporary-store';
 import { useUserStore } from '@/stores/user-store';
 
 export default function AddLand() {
   const { addLand, setHasCompletedOnboarding } = useUserStore();
   const { addNotification } = useNotifications();
-  // const { polygonCoordinates, clearPolygonCoordinates } = useTemporaryStore();
+  const { clearPolygonCoordinates } = useTemporaryStore();
   const [hasChanges, setHasChanges] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [saveState, setSaveState] = useState<'loading' | 'success'>('loading');
@@ -59,12 +59,6 @@ export default function AddLand() {
     coordinates: [],
   };
 
-  // useEffect(() => {
-  //   if (polygonCoordinates.length > 0) {
-  //     setForm((prev) => ({ ...prev, coordinates: polygonCoordinates }));
-  //   }
-  // }, [polygonCoordinates]);
-
   useEffect(() => {
     const backAction = () => {
       if (hasChanges) {
@@ -82,11 +76,11 @@ export default function AddLand() {
     return () => backHandler.remove();
   }, [hasChanges, router]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     clearPolygonCoordinates();
-  //   };
-  // }, []);
+  useEffect(() => {
+    return () => {
+      clearPolygonCoordinates();
+    };
+  }, []);
 
   const handleSave: SubmitHandler<LandFormSchema> = async (data) => {
     try {

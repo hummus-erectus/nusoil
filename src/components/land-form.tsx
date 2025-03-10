@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { zodResolver } from '@hookform/resolvers/zod';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { View } from 'react-native';
@@ -8,12 +8,17 @@ import { z } from 'zod';
 
 import {
   Button,
+  colors,
   ControlledInput,
   ControlledNumberInput,
   ControlledSelect,
   FormCard,
   Text,
 } from '@/components/ui';
+import { Map as MapIcon } from '@/components/ui/icons';
+
+import { useTemporaryStore } from '../stores/temporary-store';
+import { useUserStore } from '../stores/user-store';
 
 const ownershipOptions = [
   { label: 'Leased Land', value: 'Leased Land' },
@@ -144,6 +149,7 @@ export type LandFormSchema = z.infer<typeof landFormSchema>;
 export type LandFormProps = {
   onSubmit: SubmitHandler<LandFormSchema>;
   defaultValues?: Partial<LandFormSchema>;
+  landId?: string;
   tempId?: string;
   onDirtyChange?: (dirty: boolean) => void;
 };
@@ -152,12 +158,27 @@ export const LandForm = ({
   onSubmit,
   defaultValues,
   onDirtyChange,
-  // tempId,
+  tempId,
+  landId,
 }: LandFormProps) => {
-  const { handleSubmit, control, formState } = useForm<LandFormSchema>({
-    resolver: zodResolver(landFormSchema),
-    defaultValues,
-  });
+  const { handleSubmit, control, formState, setValue } =
+    useForm<LandFormSchema>({
+      resolver: zodResolver(landFormSchema),
+      defaultValues,
+    });
+
+  const temporaryStore = useTemporaryStore();
+  const hasCoordinates =
+    temporaryStore.polygonCoordinates.length > 0 ||
+    (defaultValues &&
+      defaultValues.coordinates &&
+      defaultValues.coordinates.length > 0);
+
+  useEffect(() => {
+    if (temporaryStore.polygonCoordinates.length > 0) {
+      setValue('coordinates', temporaryStore.polygonCoordinates);
+    }
+  }, [temporaryStore.polygonCoordinates, setValue]);
 
   useEffect(() => {
     if (onDirtyChange) {
@@ -165,15 +186,29 @@ export const LandForm = ({
     }
   }, [formState.isDirty, onDirtyChange]);
 
-  // const handleOpenPolygonMap = () => {
-  //   // If we are adding a new land but generating the id upon creation, it won't exist at this point
-  //   // TODO: Generate the id upon creation
-  //   // TODO: Pass existing ID if exists
-  //   router.push({
-  //     pathname: '/land-management/polygon-map',
-  //     params: { landId: tempId },
-  //   });
-  // };
+  const handleOpenPolygonMap = () => {
+    // If we are adding a new land but generating the id upon creation, it won't exist at this point
+    // TODO: Generate the id upon creation
+    // TODO: Pass existing ID if exists
+    router.push({
+      pathname: '/land-management/polygon-map',
+      params: { landId: landId || tempId },
+    });
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!landId) return;
+
+      // Check if we have land coordinates in the store
+      const { lands } = useUserStore.getState();
+      const land = lands.find((l) => l.id === landId);
+
+      if (land && land.coordinates && land.coordinates.length > 0) {
+        setValue('coordinates', land.coordinates);
+      }
+    }, [landId, setValue])
+  );
 
   const handleFormSubmit = useCallback<SubmitHandler<LandFormSchema>>(
     (data, event) => {
@@ -203,7 +238,7 @@ export const LandForm = ({
             placeholder="e.g. 'Niigata'"
           />
         </FormCard>
-        {/* <FormCard className="gap-6">
+        <FormCard className="gap-6">
           <Text className="text-sm text-neutral-600">Create a Polygon Map</Text>
           <Button
             variant="secondary"
@@ -212,20 +247,25 @@ export const LandForm = ({
               <View className="flex-row items-center justify-center">
                 <MapIcon color={colors.primary} />
                 <Text className="ml-2 text-primary">
-                  {form.coordinates && form.coordinates.length > 0
-                    ? 'Edit Map'
-                    : 'Create Map'}
+                  {hasCoordinates ? 'Edit Map' : 'Create Map'}
                 </Text>
               </View>
             }
             onPress={handleOpenPolygonMap}
           />
-          {form.coordinates && form.coordinates.length > 0 && (
+          {((defaultValues?.coordinates &&
+            defaultValues.coordinates.length > 0) ||
+            temporaryStore.polygonCoordinates.length > 0) && (
             <Text className="text-center text-xs text-success">
-              Polygon map created with {form.coordinates.length} points
+              Polygon map created with{' '}
+              {defaultValues?.coordinates &&
+              defaultValues.coordinates.length > 0
+                ? defaultValues.coordinates.length
+                : temporaryStore.polygonCoordinates.length}{' '}
+              points
             </Text>
           )}
-        </FormCard> */}
+        </FormCard>
       </View>
 
       {/* Ownership */}

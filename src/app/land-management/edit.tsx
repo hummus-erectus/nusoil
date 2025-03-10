@@ -42,30 +42,6 @@ export default function EditLand() {
     return () => backHandler.remove();
   }, [hasChanges, router]);
 
-  // Listen for updates to coordinates when returning from polygon map screen
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (!id) return;
-
-  //     // Check if we have land coordinates in the store
-  //     const { lands } = useUserStore.getState();
-  //     const land = lands.find((l) => l.id === id);
-
-  //     if (land && land.coordinates && land.coordinates.length > 0) {
-  //       setForm((prev) =>
-  //         prev
-  //           ? {
-  //               ...prev,
-  //               coordinates: land.coordinates || [],
-  //               latLong: land.latLong || prev.latLong,
-  //             }
-  //           : prev
-  //       );
-  //       setHasChanges(true);
-  //     }
-  //   }, [id])
-  // );
-
   const handleSave: SubmitHandler<LandFormSchema> = async (data) => {
     if (!land) return;
     try {
@@ -132,6 +108,7 @@ export default function EditLand() {
           Edit Land
         </Text>
         <LandForm
+          landId={land.id}
           defaultValues={land}
           onSubmit={handleSave}
           onDirtyChange={setHasChanges}
