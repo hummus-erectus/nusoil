@@ -63,8 +63,8 @@ export default function SoilTest() {
     const valueAsString = value.toString();
     setSelectedLandId(valueAsString);
 
-    // Use router.replace instead of setParams to maintain navigation context
-    router.replace({
+    // Use router.push instead of setParams to maintain navigation context
+    router.push({
       pathname: '/soil-test',
       params: { landId: valueAsString },
     });
