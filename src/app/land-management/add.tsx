@@ -1,6 +1,7 @@
 /* eslint-disable max-lines-per-function */
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
+import { type SubmitHandler } from 'react-hook-form';
 import {
   ActivityIndicator,
   Alert,
@@ -10,7 +11,7 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { LandForm } from '@/components/land-form';
+import { LandForm, type LandFormSchema } from '@/components/land-form';
 import { Button, colors, Text } from '@/components/ui';
 import {
   ArrowLeftFull as ArrowLeftFullIcon,
@@ -23,62 +24,45 @@ import { useUserStore } from '@/stores/user-store';
 export default function AddLand() {
   const { addLand, setHasCompletedOnboarding } = useUserStore();
   const { addNotification } = useNotifications();
-  const { polygonCoordinates, clearPolygonCoordinates } = useTemporaryStore();
+  const { clearPolygonCoordinates } = useTemporaryStore();
   const [hasChanges, setHasChanges] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [saveState, setSaveState] = useState<'loading' | 'success'>('loading');
-  const [form, setForm] = useState({
-    id: `land_${Date.now()}`,
+  const [landId, setLandId] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  const tempId = `temp_land_${Date.now()}`;
+
+  const defaultValues = {
     farmLocationName: '',
     farmCity: '',
-    size: '',
-    irrigationType: '',
-    latLong: '',
+    yearsOperated: null,
+    leasedAmount: null,
+    waterDays: null,
+    cropDuration: null,
+    leasedLandCost: null,
+    tillageCost: null,
+    fertilizerCost: null,
+    pestDiseaseCost: null,
+    cropYieldAverage: null,
+    income: null,
     ownershipType: '',
-    yearsOperated: '',
-    leasedAmount: '',
     rainWater: '',
     groundWater: '',
-    waterIrrigationType: '',
-    waterDays: '',
+    irrigationType: '',
     waterPump: '',
-    tillageType: '',
+    tillage: '',
     cropsPerYear: '',
-    cropDuration: '',
     cropType: '',
-    leasedLandCost: '',
-    tillageCost: '',
-    fertilizerCost: '',
-    pestDiseaseCost: '',
-    cropYieldAverage: '',
-    income: '',
-    coordinates: polygonCoordinates.length > 0 ? polygonCoordinates : [],
-  });
-
-  useEffect(() => {
-    if (polygonCoordinates.length > 0) {
-      setForm((prev) => ({ ...prev, coordinates: polygonCoordinates }));
-    }
-  }, [polygonCoordinates]);
+    irrigation: '',
+    coordinates: [],
+  };
 
   useEffect(() => {
     const backAction = () => {
-      if (hasChanges || polygonCoordinates.length > 0) {
-        Alert.alert(
-          'Unsaved Changes',
-          'You have unsaved changes. Are you sure you want to go back?',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'Discard',
-              style: 'destructive',
-              onPress: () => router.back(),
-            },
-          ]
-        );
+      if (hasChanges) {
+        showUnsavedChangesAlert(() => router.back());
         return true;
       }
       return false;
@@ -90,37 +74,33 @@ export default function AddLand() {
     );
 
     return () => backHandler.remove();
-  }, [hasChanges, polygonCoordinates.length]);
+  }, [hasChanges, router]);
 
   useEffect(() => {
     return () => {
       clearPolygonCoordinates();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSave = useCallback(() => {
-    // Show loading modal
-    setModalVisible(true);
+  const handleSave: SubmitHandler<LandFormSchema> = async (data) => {
+    try {
+      setModalVisible(true);
+      setSaveState('loading');
 
-    // Log the form data
-    console.log('Land management form data:', form);
-
-    // Simulate API call with a timeout
-    setTimeout(() => {
-      console.log(
-        'Temporary polygon coordinates before saving:',
-        polygonCoordinates
-      );
       const newLand = {
-        ...form,
+        ...data,
+        id: `land_${Date.now()}`, // Generate ID here
       };
+
       addLand(newLand);
-      console.log('Land saved with coordinates:', newLand.coordinates);
-      clearPolygonCoordinates();
-      setHasChanges(false);
+      setLandId(newLand.id);
+      // clearPolygonCoordinates();
 
       // Mark onboarding as completed
       setHasCompletedOnboarding(true);
+
+      setHasChanges(false);
 
       // Show success state
       setSaveState('success');
@@ -128,62 +108,66 @@ export default function AddLand() {
       // Add notification
       addNotification({
         title: 'Land Added',
-        message: `Your land account for ${form.farmLocationName} has been successfully added.`,
+        message: `Your land account for ${data.farmLocationName} has been successfully added.`,
         type: 'success',
         read: false,
         action: {
           label: 'Manage Land Accounts',
           onPress: () => {
-            router.replace({
-              pathname: '/land-management',
-            });
+            router.replace('/land-management');
           },
         },
       });
-    }, 2000);
-  }, [form, addLand, addNotification, setHasCompletedOnboarding]);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save land. Please try again.');
+    }
+  };
 
   const handleGoToSoilTestForm = useCallback(() => {
     setModalVisible(false);
     router.replace({
       pathname: '/soil-test/form',
-      params: { landId: form.id },
+      params: { landId: landId },
     });
-  }, [form.id]);
+  }, [landId, router]);
 
   const handleGoToSoilTestOrder = useCallback(() => {
     setModalVisible(false);
     router.replace({
       pathname: '/soil-test/order',
-      params: { landId: form.id },
+      params: { landId: landId },
     });
-  }, [form.id]);
+  }, [landId, router]);
 
   const handleNotNow = useCallback(() => {
     setModalVisible(false);
     router.replace('/');
-  }, []);
+  }, [router, setModalVisible]);
 
   const handleBack = () => {
     if (hasChanges) {
-      Alert.alert(
-        'Unsaved Changes',
-        'You have unsaved changes. Are you sure you want to go back?',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Discard',
-            style: 'destructive',
-            onPress: () => router.back(),
-          },
-        ]
-      );
+      showUnsavedChangesAlert(() => router.back());
     } else {
       router.back();
     }
+  };
+
+  const showUnsavedChangesAlert = (onDiscard: () => void) => {
+    Alert.alert(
+      'Unsaved Changes',
+      'You have unsaved changes. Are you sure you want to go back?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Discard',
+          style: 'destructive',
+          onPress: onDiscard,
+        },
+      ]
+    );
   };
 
   return (
@@ -209,24 +193,11 @@ export default function AddLand() {
           Add New Land
         </Text>
         <LandForm
-          form={form}
-          onFieldChange={(field, value) => {
-            setForm((prev) => ({ ...prev, [field]: value }));
-            setHasChanges(true);
-          }}
+          onSubmit={handleSave}
+          tempId={tempId}
+          onDirtyChange={setHasChanges}
+          defaultValues={defaultValues}
         />
-        <View className="flex-row gap-2">
-          <View className="flex-1">
-            <Button
-              variant="secondary"
-              label="Cancel"
-              onPress={() => router.back()}
-            />
-          </View>
-          <View className="flex-1">
-            <Button variant="default" label="Save" onPress={handleSave} />
-          </View>
-        </View>
         <RNModal visible={modalVisible} transparent={true} animationType="fade">
           <View className="flex-1 items-center justify-center bg-black/50">
             <View className="w-4/5 items-center rounded-2xl bg-white p-6 shadow-lg">

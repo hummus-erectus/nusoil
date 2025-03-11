@@ -1,10 +1,12 @@
 /* eslint-disable max-lines-per-function */
-import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { type SubmitHandler } from 'react-hook-form';
 import { Alert, BackHandler, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { LandForm } from '@/components/land-form';
+import { LandForm, type LandFormSchema } from '@/components/land-form';
+import { landFormSchema } from '@/components/land-form';
 import { Button, colors, Text } from '@/components/ui';
 import { ArrowLeftFull as ArrowLeftFullIcon } from '@/components/ui/icons';
 import { useUserStore } from '@/stores/user-store';
@@ -13,33 +15,20 @@ export default function EditLand() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { lands, updateLand } = useUserStore();
-  const [form, setForm] = useState(lands.find((land) => land.id === id));
   const [hasChanges, setHasChanges] = useState(false);
 
+  const land = lands.find((land) => land.id === id);
+
   useEffect(() => {
-    if (!form) {
+    if (!land) {
       router.back();
     }
-  }, [form, router]);
+  }, [land, router]);
 
   useEffect(() => {
     const backAction = () => {
       if (hasChanges) {
-        Alert.alert(
-          'Unsaved Changes',
-          'You have unsaved changes. Are you sure you want to go back?',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'Discard',
-              style: 'destructive',
-              onPress: () => router.back(),
-            },
-          ]
-        );
+        showUnsavedChangesAlert(() => router.back());
         return true;
       }
       return false;
@@ -53,108 +42,78 @@ export default function EditLand() {
     return () => backHandler.remove();
   }, [hasChanges, router]);
 
-  // Listen for updates to coordinates when returning from polygon map screen
-  useFocusEffect(
-    useCallback(() => {
-      if (!id) return;
-
-      // Check if we have land coordinates in the store
-      const { lands } = useUserStore.getState();
-      const land = lands.find((l) => l.id === id);
-
-      if (land && land.coordinates && land.coordinates.length > 0) {
-        setForm((prev) =>
-          prev
-            ? {
-                ...prev,
-                coordinates: land.coordinates || [],
-                latLong: land.latLong || prev.latLong,
-              }
-            : prev
-        );
-        setHasChanges(true);
-      }
-    }, [id])
-  );
-
-  const handleSave = () => {
-    if (!form) return;
-    updateLand(form.id, {
-      ...form,
-    });
-    setHasChanges(false);
-    router.back();
+  const handleSave: SubmitHandler<LandFormSchema> = async (data) => {
+    if (!land) return;
+    try {
+      const validatedData = landFormSchema.parse(data);
+      updateLand(land.id, {
+        ...land,
+        ...validatedData,
+      });
+      setHasChanges(false);
+      router.back();
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save land. Please try again.');
+    }
   };
 
   const handleBack = () => {
     if (hasChanges) {
-      Alert.alert(
-        'Unsaved Changes',
-        'You have unsaved changes. Are you sure you want to go back?',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Discard',
-            style: 'destructive',
-            onPress: () => router.back(),
-          },
-        ]
-      );
+      showUnsavedChangesAlert(() => router.back());
     } else {
       router.back();
     }
   };
 
-  if (!form) return null;
+  const showUnsavedChangesAlert = (onDiscard: () => void) => {
+    Alert.alert(
+      'Unsaved Changes',
+      'You have unsaved changes. Are you sure you want to go back?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Discard',
+          style: 'destructive',
+          onPress: onDiscard,
+        },
+      ]
+    );
+  };
+
+  if (!land) return null;
 
   return (
-    <>
-      <KeyboardAwareScrollView
-        bottomOffset={62}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <View className="flex-1 gap-6 bg-neutral-100 p-6 pb-28">
-          <View className="-ml-10 self-start">
-            <Button
-              variant="ghost"
-              onPress={handleBack}
-              fullWidth={false}
-              label={
-                <View className="flex-row items-center justify-center">
-                  <ArrowLeftFullIcon color={colors.neutral[600]} />
-                  <Text className="ml-4 text-neutral-600">Back</Text>
-                </View>
-              }
-            />
-          </View>
-          <Text className="text-center font-lora text-3xl text-primary">
-            Edit Land
-          </Text>
-          <LandForm
-            form={form}
-            onFieldChange={(field, value) => {
-              setForm((prev) => (prev ? { ...prev, [field]: value } : prev));
-              setHasChanges(true);
-            }}
-          />
-        </View>
-      </KeyboardAwareScrollView>
-      <View className="absolute bottom-6 w-full flex-row items-center justify-center gap-2 px-6">
-        <View className="flex-1">
+    <KeyboardAwareScrollView
+      bottomOffset={62}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <View className="flex-1 gap-6 bg-neutral-100 p-6 pb-28">
+        <View className="-ml-10 self-start">
           <Button
-            variant="secondary"
-            className="bg-white"
-            label="Cancel"
-            onPress={() => router.back()}
+            variant="ghost"
+            onPress={handleBack}
+            fullWidth={false}
+            label={
+              <View className="flex-row items-center justify-center">
+                <ArrowLeftFullIcon color={colors.neutral[600]} />
+                <Text className="ml-4 text-neutral-600">Back</Text>
+              </View>
+            }
           />
         </View>
-        <View className="flex-1">
-          <Button variant="default" label="Save" onPress={handleSave} />
-        </View>
+        <Text className="text-center font-lora text-3xl text-primary">
+          Edit Land
+        </Text>
+        <LandForm
+          landId={land.id}
+          defaultValues={land}
+          onSubmit={handleSave}
+          onDirtyChange={setHasChanges}
+        />
       </View>
-    </>
+    </KeyboardAwareScrollView>
   );
 }
