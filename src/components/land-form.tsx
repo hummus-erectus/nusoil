@@ -144,6 +144,8 @@ export const landFormSchema = z.object({
     .optional(),
 });
 
+//TODO: Programmatically add indicator to required fields
+
 export type LandFormSchema = z.infer<typeof landFormSchema>;
 
 export type LandFormProps = {
@@ -187,9 +189,6 @@ export const LandForm = ({
   }, [formState.isDirty, onDirtyChange]);
 
   const handleOpenPolygonMap = () => {
-    // If we are adding a new land but generating the id upon creation, it won't exist at this point
-    // TODO: Generate the id upon creation
-    // TODO: Pass existing ID if exists
     router.push({
       pathname: '/land-management/polygon-map',
       params: { landId: landId || tempId },
