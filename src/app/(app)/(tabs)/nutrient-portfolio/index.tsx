@@ -8,6 +8,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Svg, { Path } from 'react-native-svg';
 
+import StaticPolygonMap from '@/components/static-polygon-map';
 import { Button, colors, FormCard, Text, View } from '@/components/ui';
 import {
   CaretDown as CaretDownIcon,
@@ -120,6 +121,36 @@ export default function NutrientPortfolio() {
               )}
             </View>
           )}
+
+          {/* Land Map Section */}
+          {selectedLand &&
+            selectedLand.coordinates &&
+            selectedLand.coordinates.length >= 3 && (
+              <View className="mt-2">
+                <FormCard>
+                  <View className="gap-2">
+                    <Text className="font-poppins-semibold text-lg">
+                      Land Boundaries
+                    </Text>
+                    <View
+                      className="overflow-hidden rounded-lg"
+                      style={{ height: 200 }}
+                    >
+                      <StaticPolygonMap
+                        key={`land-map-${selectedLand.id}`}
+                        coordinates={selectedLand.coordinates}
+                        height={200}
+                        showArea={true}
+                        mapType="STANDARD"
+                      />
+                    </View>
+                    <Text className="mt-2 text-center font-poppins-light text-sm">
+                      {selectedLand.farmCity || 'Location not specified'}
+                    </Text>
+                  </View>
+                </FormCard>
+              </View>
+            )}
 
           {lands && lands.length > 0 ? (
             <>
