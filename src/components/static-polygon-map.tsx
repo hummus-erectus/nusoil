@@ -74,26 +74,40 @@ const StaticPolygonMap: React.FC<StaticPolygonMapProps> = ({
     return areaInHectares;
   };
 
-  // Initialize map with polygon center
+  // Initialize map with polygon center and appropriate zoom level
   useEffect(() => {
     if (coordinates && coordinates.length > 0) {
-      // Calculate the center of the polygon for the region
-      const sumLat = coordinates.reduce(
-        (sum, coord) => sum + coord.latitude,
-        0
-      );
-      const sumLng = coordinates.reduce(
-        (sum, coord) => sum + coord.longitude,
-        0
-      );
-      const centerLat = sumLat / coordinates.length;
-      const centerLng = sumLng / coordinates.length;
+      // Find the min and max coordinates to calculate the bounds
+      let minLat = coordinates[0].latitude;
+      let maxLat = coordinates[0].latitude;
+      let minLng = coordinates[0].longitude;
+      let maxLng = coordinates[0].longitude;
+
+      // Find the bounds of the polygon
+      coordinates.forEach((coord) => {
+        minLat = Math.min(minLat, coord.latitude);
+        maxLat = Math.max(maxLat, coord.latitude);
+        minLng = Math.min(minLng, coord.longitude);
+        maxLng = Math.max(maxLng, coord.longitude);
+      });
+
+      // Calculate the center of the polygon
+      const centerLat = (minLat + maxLat) / 2;
+      const centerLng = (minLng + maxLng) / 2;
+
+      // Calculate appropriate deltas with some padding (20%)
+      const latDelta = (maxLat - minLat) * 1.2;
+      const lngDelta = (maxLng - minLng) * 1.2;
+
+      // Ensure minimum zoom level for very small polygons
+      const finalLatDelta = Math.max(latDelta, LATITUDE_DELTA);
+      const finalLngDelta = Math.max(lngDelta, LONGITUDE_DELTA);
 
       setRegion({
         latitude: centerLat,
         longitude: centerLng,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
+        latitudeDelta: finalLatDelta,
+        longitudeDelta: finalLngDelta,
       });
 
       // Calculate area if showArea is true

@@ -6,6 +6,7 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { z } from 'zod';
 
+import StaticPolygonMap from '@/components/static-polygon-map';
 import {
   Button,
   colors,
@@ -255,14 +256,33 @@ export const LandForm = ({
           {((defaultValues?.coordinates &&
             defaultValues.coordinates.length > 0) ||
             temporaryStore.polygonCoordinates.length > 0) && (
-            <Text className="text-center text-xs text-success">
-              Polygon map created with{' '}
-              {defaultValues?.coordinates &&
-              defaultValues.coordinates.length > 0
-                ? defaultValues.coordinates.length
-                : temporaryStore.polygonCoordinates.length}{' '}
-              points
-            </Text>
+            <View className="mt-4">
+              <Text className="mb-2 text-xs text-neutral-500">
+                Temp store coordinates:{' '}
+                {JSON.stringify(temporaryStore.polygonCoordinates.length)}
+              </Text>
+              <StaticPolygonMap
+                coordinates={
+                  defaultValues?.coordinates &&
+                  defaultValues.coordinates.length >= 3
+                    ? defaultValues.coordinates
+                    : temporaryStore.polygonCoordinates.length >= 3
+                      ? temporaryStore.polygonCoordinates
+                      : []
+                }
+                height={200}
+                showArea={true}
+                mapType="STANDARD"
+              />
+              <Text className="mt-2 text-center text-xs text-success">
+                Polygon map created with{' '}
+                {defaultValues?.coordinates &&
+                defaultValues.coordinates.length > 0
+                  ? defaultValues.coordinates.length
+                  : temporaryStore.polygonCoordinates.length}{' '}
+                points
+              </Text>
+            </View>
           )}
         </FormCard>
       </View>
