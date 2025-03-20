@@ -126,7 +126,7 @@ export default function NutrientPortfolio() {
           {selectedLand &&
             selectedLand.coordinates &&
             selectedLand.coordinates.length >= 3 && (
-              <View className="mt-4">
+              <View className="mt-2">
                 <FormCard>
                   <View className="gap-2">
                     <Text className="font-poppins-semibold text-lg">
