@@ -137,6 +137,7 @@ export default function NutrientPortfolio() {
                       style={{ height: 200 }}
                     >
                       <StaticPolygonMap
+                        key={`land-map-${selectedLand.id}`}
                         coordinates={selectedLand.coordinates}
                         height={200}
                         showArea={true}

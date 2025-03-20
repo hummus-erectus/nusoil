@@ -262,6 +262,7 @@ export const LandForm = ({
                 {JSON.stringify(temporaryStore.polygonCoordinates.length)}
               </Text>
               <StaticPolygonMap
+                key={`polygon-${defaultValues?.coordinates ? 'default' : 'temp'}-${defaultValues?.coordinates?.length || temporaryStore.polygonCoordinates.length}`}
                 coordinates={
                   defaultValues?.coordinates &&
                   defaultValues.coordinates.length >= 3

@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -47,6 +47,7 @@ const StaticPolygonMap: React.FC<StaticPolygonMapProps> = ({
     longitudeDelta: LONGITUDE_DELTA,
   });
   const [polygonArea, setPolygonArea] = useState<number | null>(null);
+  const mapRef = useRef<MapView>(null);
 
   // Calculate area of polygon in hectares
   const calculatePolygonArea = (coords: PolygonCoordinate[]) => {
@@ -76,6 +77,9 @@ const StaticPolygonMap: React.FC<StaticPolygonMapProps> = ({
 
   // Initialize map with polygon center and appropriate zoom level
   useEffect(() => {
+    // Reset state when coordinates change
+    setIsLoading(true);
+
     if (coordinates && coordinates.length > 0) {
       // Find the min and max coordinates to calculate the bounds
       let minLat = coordinates[0].latitude;
@@ -103,12 +107,14 @@ const StaticPolygonMap: React.FC<StaticPolygonMapProps> = ({
       const finalLatDelta = Math.max(latDelta, LATITUDE_DELTA);
       const finalLngDelta = Math.max(lngDelta, LONGITUDE_DELTA);
 
-      setRegion({
+      const newRegion = {
         latitude: centerLat,
         longitude: centerLng,
         latitudeDelta: finalLatDelta,
         longitudeDelta: finalLngDelta,
-      });
+      };
+
+      setRegion(newRegion);
 
       // Calculate area if showArea is true
       if (showArea) {
@@ -141,17 +147,20 @@ const StaticPolygonMap: React.FC<StaticPolygonMapProps> = ({
 
   return (
     <View style={containerStyle}>
-      {isLoading ? (
+      {isLoading && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Loading map...</Text>
         </View>
-      ) : (
+      )}
+
+      <View style={[styles.mapContainer, { opacity: isLoading ? 0 : 1 }]}>
         <MapView
+          ref={mapRef}
           provider={PROVIDER_GOOGLE}
           style={styles.map}
           mapType={MAP_TYPES[mapType]}
-          initialRegion={region}
+          region={region}
           showsUserLocation={false}
           showsMyLocationButton={false}
           showsCompass={false}
@@ -174,7 +183,7 @@ const StaticPolygonMap: React.FC<StaticPolygonMapProps> = ({
             strokeWidth={2}
           />
         </MapView>
-      )}
+      </View>
 
       {showArea && polygonArea !== null && !isLoading && (
         <View style={styles.areaContainer}>
@@ -194,6 +203,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  mapContainer: {
     ...StyleSheet.absoluteFillObject,
   },
   loadingContainer: {
