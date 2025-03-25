@@ -257,10 +257,6 @@ export const LandForm = ({
             defaultValues.coordinates.length > 0) ||
             temporaryStore.polygonCoordinates.length > 0) && (
             <View className="mt-4">
-              <Text className="mb-2 text-xs text-neutral-500">
-                Temp store coordinates:{' '}
-                {JSON.stringify(temporaryStore.polygonCoordinates.length)}
-              </Text>
               <StaticPolygonMap
                 key={`polygon-${defaultValues?.coordinates ? 'default' : 'temp'}-${defaultValues?.coordinates?.length || temporaryStore.polygonCoordinates.length}`}
                 coordinates={
