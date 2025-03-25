@@ -335,7 +335,7 @@ export const LandForm = ({
             options={waterIrrigationTypeOptions}
           />
           <ControlledNumberInput
-            label="Number of Days"
+            label="Days of water availability (per year)"
             name="waterDays"
             control={control}
             placeholder="0"
