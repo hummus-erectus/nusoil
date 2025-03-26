@@ -29,6 +29,7 @@ interface StaticPolygonMapProps {
   fillColor?: string;
   strokeColor?: string;
   mapType?: keyof typeof MAP_TYPES;
+  interactive?: boolean;
 }
 
 const StaticPolygonMap: React.FC<StaticPolygonMapProps> = ({
@@ -38,6 +39,7 @@ const StaticPolygonMap: React.FC<StaticPolygonMapProps> = ({
   fillColor = 'rgba(0, 153, 102, 0.3)',
   strokeColor = colors.primary,
   mapType = 'HYBRID',
+  interactive = true,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [region, setRegion] = useState({
@@ -170,17 +172,19 @@ const StaticPolygonMap: React.FC<StaticPolygonMapProps> = ({
           showsTraffic={false}
           showsPointsOfInterest={false}
           toolbarEnabled={false}
-          zoomEnabled={true}
-          zoomTapEnabled={true}
+          zoomEnabled={interactive}
+          zoomTapEnabled={interactive}
           rotateEnabled={false}
-          scrollEnabled={true}
+          scrollEnabled={interactive}
           pitchEnabled={false}
+          onPress={interactive ? undefined : (e) => e.stopPropagation()}
         >
           <Polygon
             coordinates={coordinates}
             strokeColor={strokeColor}
             fillColor={fillColor}
             strokeWidth={2}
+            tappable={interactive}
           />
         </MapView>
       </View>

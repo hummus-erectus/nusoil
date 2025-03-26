@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import { router } from 'expo-router';
-import { Linking } from 'react-native';
 
+import StaticPolygonMap from '@/components/static-polygon-map';
 import { Button, colors, Text, TouchableOpacity, View } from '@/components/ui';
 import { Warning as WarningIcon } from '@/components/ui/icons';
 import { type Land } from '@/stores/user-store';
@@ -17,8 +17,6 @@ const landNeedsSoilTesting = (land: Land) =>
   (!land.soilTestStatus || land.soilTestStatus === 'report');
 
 const needsSoilTesting = (lands: Land[]) => lands.some(landNeedsSoilTesting);
-
-const getMapUrl = (coordinates: string) => `geo:${coordinates}`;
 
 export const LandAccountsCard = ({ lands }: LandAccountsCardProps) => {
   return (
@@ -46,41 +44,43 @@ export const LandAccountsCard = ({ lands }: LandAccountsCardProps) => {
       ) : (
         <View className="gap-4">
           {lands.slice(0, MAX_VISIBLE_LANDS).map((land) => (
-            <TouchableOpacity
+            <View
               key={land.id}
-              className="flex-row items-center justify-between rounded-lg border border-neutral-200 p-4"
-              onPress={() => {
-                router.push({
-                  pathname: '/(app)/(tabs)/nutrient-portfolio',
-                  params: { landId: land.id },
-                });
-              }}
+              className="overflow-hidden rounded-lg border border-neutral-200"
             >
-              <View>
-                <View>
-                  <Text className="font-poppins-semibold text-lg">
-                    {land.farmLocationName || 'Unnamed Land'}
-                  </Text>
-                </View>
-                <Text className="font-poppins text-neutral-600">
-                  {land.latLong ? (
-                    <Text
-                      className="text-primary underline"
-                      onPress={() => {
-                        Linking.openURL(getMapUrl(land.latLong!));
-                      }}
-                    >
-                      View on Map
+              <TouchableOpacity
+                className="flex-row items-center justify-between p-4"
+                onPress={() => {
+                  router.push({
+                    pathname: '/(app)/(tabs)/nutrient-portfolio',
+                    params: { landId: land.id },
+                  });
+                }}
+                activeOpacity={0.7}
+              >
+                <View className="flex-1">
+                  <View>
+                    <Text className="font-poppins-semibold text-lg">
+                      {land.farmLocationName || 'Unnamed Land'}
                     </Text>
-                  ) : (
-                    'No location data available'
-                  )}
-                </Text>
-              </View>
-              {landNeedsSoilTesting(land) && (
-                <WarningIcon color={colors.danger} width={24} height={24} />
+                  </View>
+                </View>
+                {landNeedsSoilTesting(land) && (
+                  <WarningIcon color={colors.danger} width={24} height={24} />
+                )}
+              </TouchableOpacity>
+              {land.coordinates && land.coordinates.length >= 3 && (
+                <View style={{ pointerEvents: 'none' }}>
+                  <StaticPolygonMap
+                    coordinates={land.coordinates}
+                    height={150}
+                    showArea={true}
+                    mapType="STANDARD"
+                    interactive={false}
+                  />
+                </View>
               )}
-            </TouchableOpacity>
+            </View>
           ))}
           {lands.length > MAX_VISIBLE_LANDS && (
             <Button
