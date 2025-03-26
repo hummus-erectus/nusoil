@@ -164,7 +164,7 @@ export const LandForm = ({
   tempId,
   landId,
 }: LandFormProps) => {
-  const { handleSubmit, control, formState, setValue } =
+  const { handleSubmit, control, formState, setValue, watch } =
     useForm<LandFormSchema>({
       resolver: zodResolver(landFormSchema),
       defaultValues,
@@ -217,6 +217,14 @@ export const LandForm = ({
     [onSubmit]
   );
 
+  const ownershipType = watch('ownershipType');
+
+  useEffect(() => {
+    if (ownershipType !== 'Leased Land') {
+      setValue('leasedAmount', null);
+    }
+  }, [ownershipType, setValue]);
+
   return (
     <View className="gap-4">
       {/* Physical Location */}
@@ -257,10 +265,6 @@ export const LandForm = ({
             defaultValues.coordinates.length > 0) ||
             temporaryStore.polygonCoordinates.length > 0) && (
             <View className="mt-4">
-              <Text className="mb-2 text-xs text-neutral-500">
-                Temp store coordinates:{' '}
-                {JSON.stringify(temporaryStore.polygonCoordinates.length)}
-              </Text>
               <StaticPolygonMap
                 key={`polygon-${defaultValues?.coordinates ? 'default' : 'temp'}-${defaultValues?.coordinates?.length || temporaryStore.polygonCoordinates.length}`}
                 coordinates={
@@ -305,14 +309,16 @@ export const LandForm = ({
             placeholder="0"
             min={0}
           />
-          <ControlledNumberInput
-            label="Leased Amount"
-            name="leasedAmount"
-            control={control}
-            placeholder="0"
-            min={0}
-            allowDecimals={true}
-          />
+          {ownershipType === 'Leased Land' && (
+            <ControlledNumberInput
+              label="Leased Amount"
+              name="leasedAmount"
+              control={control}
+              placeholder="0"
+              min={0}
+              allowDecimals={true}
+            />
+          )}
         </FormCard>
       </View>
 
@@ -339,7 +345,7 @@ export const LandForm = ({
             options={waterIrrigationTypeOptions}
           />
           <ControlledNumberInput
-            label="Number of Days"
+            label="Days of water availability (per year)"
             name="waterDays"
             control={control}
             placeholder="0"
@@ -407,6 +413,7 @@ export const LandForm = ({
       </View>
 
       {/* Cost */}
+      {/* TODO: Implement local currencies */}
       <View className="gap-4">
         <Text className="font-lora text-secondary">Cost</Text>
         <FormCard className="gap-4">
